@@ -33,11 +33,17 @@ Step 3) Configure python interpreter
 
   2) If on VSCode
      make sure python extension is downloaded before you do anything
+     
      a) Ctrl + Shift + X on windows or Cmd + Shift + X on mac
+     
      b) type in Select Interpreter and hit enter
+     
      c) select your virtual enviroment you made
+     
      d) open a terminal
+     
      e) type in conda activate yourenviroment name
+     
      f) pip install -r requirements.txt
 
 
