@@ -48,7 +48,7 @@ Step 3) Configure python interpreter
   3) If on VSCode
      make sure python extension is downloaded before you do anything
      
-     a) Ctrl + Shift + X on windows or Cmd + Shift + X on mac
+     a) Ctrl + Shift + P on windows or Cmd + Shift + P on mac
      
      b) type in Select Interpreter and hit enter
      
