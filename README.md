@@ -60,6 +60,19 @@ Step 3) Configure python interpreter
      
      f) pip install -r requirements.txt
 
+Steps for setting up frontend
+
+   1) Ensure you have node installed. Download instructions [here](https://nodejs.org/en/download/package-manager).
+
+   2) Navigate to the root directory of the project, and run `npm install` (Only need to do this once)
+   
+   3) `npm run dev` To start the servr
+
+   4) Go to http://localhost:3000. All of the frontend code is in the /app directory (Unfortunately it can't be renamed). Any changes made to the code should be recompiled automatically, and can be viewed by refreshing the browser. This project has been set up with the following specs: Next.JS framework (React with some convenience tooling) Typescript, ESLint, and App Router. 
+
+   5) Learn more about Next/React [here](https://nextjs.org/docs/getting-started/project-structure) 
+
+
 
 
 
