@@ -5,6 +5,7 @@ class AlphaVantage:
     quarterly_reports_dict = "quarterlyReports"
     time_series_dict = "Time Series (Daily)"
     quarterly_earnings_dict = "quarterlyEarnings"
+    feed = "feed"
 
 class Finance:
     fiscal_dates = "fiscalDateEnding"

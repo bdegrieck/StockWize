@@ -2,7 +2,8 @@ import pandas as pd
 
 from BackEnd.endpoints import CompanyEndpoints
 from BackEnd.constants import Finance, AlphaVantage, AllowedDataFrameOperations
-from BackEnd.helpers import get_data
+from BackEnd.helpers import get_data_df, get_raw_data
+from BackEnd.news import News
 
 
 class CompanyData:
@@ -46,7 +47,7 @@ class CompanyData:
             AllowedDataFrameOperations.columns: columns,
             AllowedDataFrameOperations.rename: renamed_columns
         }
-        df = get_data(endpoint=endpoint, key=key, filters=filters)
+        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
         return df
 
     @property
@@ -58,7 +59,7 @@ class CompanyData:
         endpoint = self.endpoints.overview
         columns = [Finance.symbol, Finance.name, Finance.description, Finance.year_high, Finance.year_low]
         filters = {AllowedDataFrameOperations.columns: columns}
-        df = get_data(endpoint=endpoint, filters=filters)
+        df = get_data_df(endpoint=endpoint, filters=filters)
         return df
 
     @property
@@ -71,7 +72,7 @@ class CompanyData:
         columns = [Finance.fiscal_dates, Finance.total_revenue, Finance.profit]
         filters = {AllowedDataFrameOperations.columns: columns}
         key = AlphaVantage.quarterly_reports_dict
-        df = get_data(endpoint=endpoint, key=key, filters=filters)
+        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
         return df
 
     @property
@@ -84,7 +85,7 @@ class CompanyData:
         key = AlphaVantage.quarterly_reports_dict
         columns = [Finance.fiscal_dates, Finance.operating_cash_flow, Finance.from_financing_cash_flow, Finance.from_investment_cash_flow]
         filters = {AllowedDataFrameOperations.columns: columns}
-        df = get_data(endpoint=endpoint, key=key, filters=filters)
+        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
         return df
 
     @property
@@ -97,5 +98,12 @@ class CompanyData:
         key = AlphaVantage.quarterly_reports_dict
         columns = [Finance.fiscal_dates, Finance.report_dates, Finance.reported_eps, Finance.estimated_eps, Finance.surprise_percentage]
         filters = {AllowedDataFrameOperations.columns: columns}
-        df = get_data(endpoint=endpoint, key=key, filters=filters)
+        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
         return df
+
+    @property
+    def news(self):
+        ticker = self.endpoints.ticker
+        endpoint = self.endpoints.news
+        news_instance = News(ticker=ticker, endpoint=endpoint)
+        return news_instance.get_news
