@@ -65,15 +65,14 @@ class MicroEndpoints:
     @property
     def real_gdp(self):
         """
-            Return: Real GDP Yearly at the beginning of the year
+            Return: Real GDP quarterly
         """
-        return f"https://www.alphavantage.co/query?function=REAL_GDP&symbol=AAPL&apikey={API_KEY}&datatype=json"
+        return f"https://www.alphavantage.co/query?function=REAL_GDP&symbol=AAPL&apikey={API_KEY}&datatype=json&interval=quarterly"
 
     @property
     def cpi(self):
         """
             Return: CPI reported monthly beginning of month
-        :return:
         """
         return f"https://www.alphavantage.co/query?function=CPI&symbol=AAPL&apikey={API_KEY}&datatype=json"
 

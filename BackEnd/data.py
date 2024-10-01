@@ -1,8 +1,8 @@
 import pandas as pd
 
-from BackEnd.endpoints import CompanyEndpoints
+from BackEnd.endpoints import CompanyEndpoints, MicroEndpoints, TechIndEndpoints
 from BackEnd.constants import Finance, AlphaVantage, AllowedDataFrameOperations
-from BackEnd.helpers import get_data_df, get_raw_data
+from BackEnd.helpers import get_data_df
 from BackEnd.news import News
 
 
@@ -76,7 +76,7 @@ class CompanyData:
         return df
 
     @property
-    def cash_flow(self):
+    def cash_flow(self) -> pd.DataFrame:
         """
         Returns:
             Quarter dates, operating cashflow quarterly, financing cash flow quarterly, from investment cash flow quarterly
@@ -89,7 +89,7 @@ class CompanyData:
         return df
 
     @property
-    def earnings(self):
+    def earnings(self) -> pd.DataFrame:
         """
         Returns:
             Quarter dates, report dates quarterly, eps quarterly, estimated eps quarterly, surprise percentage quarterly
@@ -102,8 +102,146 @@ class CompanyData:
         return df
 
     @property
-    def news(self):
+    def news(self) -> str:
         ticker = self.endpoints.ticker
         endpoint = self.endpoints.news
         news_instance = News(ticker=ticker, endpoint=endpoint)
         return news_instance.get_news
+
+class MicroData:
+
+    def __init__(self):
+        self.endpoints = MicroEndpoints()
+
+
+    @property
+    def real_gdp(self) -> pd.DataFrame:
+        """
+        Returns:
+            Real GDP quarterly at the beginning of the year, Date quarterly
+        """
+        endpoint = self.endpoints.real_gdp
+        key = AlphaVantage.data
+        df = get_data_df(endpoint=endpoint, key=key)
+        return df
+
+    @property
+    def cpi(self) -> pd.DataFrame:
+        """
+        Returns:
+            cpi value, first day of the monthy dates
+        """
+        endpoint = self.endpoints.cpi
+        key = AlphaVantage.data
+        df = get_data_df(endpoint=endpoint, key=key)
+        return df
+
+    @property
+    def inflation(self) -> pd.DataFrame:
+        """
+        Returns:
+            inflation percentage per year, dates first day of the year
+        """
+        endpoint = self.endpoints.inflation
+        key = AlphaVantage.data
+        df = get_data_df(endpoint=endpoint, key=key)
+        return df
+
+    @property
+    def federal_funds_rate(self) -> pd.DataFrame:
+        """
+        Returns:
+            federal funds rate monthly, first day of the month for dates
+        """
+        endpoint = self.endpoints.federal_funds_rate
+        key = AlphaVantage.data
+        df = get_data_df(endpoint=endpoint, key=key)
+        return df
+
+    @property
+    def retail_sales (self) -> pd.DataFrame:
+        """
+        Returns:
+            returns the retail sales in millions per month, date is first day of every month
+        """
+        endpoint = self.endpoints.retail_sales
+        key = AlphaVantage.data
+        df = get_data_df(endpoint=endpoint, key=key)
+        return df
+
+    @property
+    def unemployment_rate(self) -> pd.DataFrame:
+        """
+        Returns:
+`           Unemployment rate at the beginning of the month
+        """
+        endpoint = self.endpoints.unemployment_rate
+        key = AlphaVantage.data
+        df = get_data_df(endpoint=endpoint, key=key)
+        return df
+
+
+class TechIndData:
+
+    def __init__(self, endpoints: TechIndEndpoints):
+        self.endpoints = endpoints
+
+    @property
+    def sma(self) -> pd.DataFrame:
+        """
+        Returns:
+`           SMA value, weekly date
+        """
+        endpoint = self.endpoints.sma
+        key = AlphaVantage.sma
+        filters = {AllowedDataFrameOperations.transpose: True}
+        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
+        return df
+
+    @property
+    def ema(self) -> pd.DataFrame:
+        """
+        Returns:
+`           EMA values, weekly date
+        """
+        endpoint = self.endpoints.ema
+        key = AlphaVantage.ema
+        filters = {AllowedDataFrameOperations.transpose: True}
+        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
+        return df
+
+    @property
+    def rsi(self) -> pd.DataFrame:
+        """
+        Returns:
+`           RSI values, weekly date
+        """
+        endpoint = self.endpoints.rsi
+        key = AlphaVantage.rsi
+        filters = {AllowedDataFrameOperations.transpose: True}
+        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
+        return df
+
+    @property
+    def bbands(self) -> pd.DataFrame:
+        """
+        Returns:
+`           Bbands values, weekly date
+        """
+        endpoint = self.endpoints.bbands
+        key = AlphaVantage.bbands
+        filters = {AllowedDataFrameOperations.transpose: True}
+        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
+        return df
+
+    @property
+    def adx(self) -> pd.DataFrame:
+        """
+        Returns:
+`           ADX values, Daily date
+        """
+        endpoint = self.endpoints.adx
+        key = AlphaVantage.adx
+        filters = {AllowedDataFrameOperations.transpose: True}
+        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
+        return df

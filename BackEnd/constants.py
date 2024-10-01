@@ -6,6 +6,12 @@ class AlphaVantage:
     time_series_dict = "Time Series (Daily)"
     quarterly_earnings_dict = "quarterlyEarnings"
     feed = "feed"
+    data = "data"
+    sma = "Technical Analysis: SMA"
+    ema = "Technical Analysis: EMA"
+    rsi = "Technical Analysis: RSI"
+    bbands = "Technical Analysis: BBANDS"
+    adx = "Technical Analysis: ADX"
 
 class Finance:
     fiscal_dates = "fiscalDateEnding"
