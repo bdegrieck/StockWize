@@ -1,10 +1,9 @@
 import requests
 
-from BackEnd.api import CompanyEndpoints, MicroEndpoints, CalenderEndpoints, TechIndEndpoints
+from BackEnd.endpoints import CompanyEndpoints, MicroEndpoints, CalenderEndpoints, TechIndEndpoints
 
 
 class TestEndpoints:
-
 
     def test_company_endpoints(self):
         ticker = "AAPL"
@@ -14,7 +13,7 @@ class TestEndpoints:
         assert requests.get(instance.earnings).status_code == 200
         assert requests.get(instance.cash_flow).status_code == 200
         assert requests.get(instance.income_statement).status_code == 200
-        assert requests.get(instance.balance_sheet).status_code == 200
+        assert requests.get(instance.news).status_code == 200
 
     def test_micro_endpoints(self):
         instance = MicroEndpoints()
@@ -30,7 +29,6 @@ class TestEndpoints:
         instance = CalenderEndpoints(ticker=ticker)
         assert requests.get(instance.company_earnings).status_code == 200
         assert requests.get(instance.upcoming_earnings).status_code == 200
-
 
     def test_technical_indicator_endpoints(self):
         ticker = "AAPL"
