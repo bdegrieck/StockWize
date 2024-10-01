@@ -9,30 +9,23 @@ class CompanyEndpoints:
     @property
     def time_series(self):
         """
-            Return: endpoint for time series data
+            Return: endpoint for time series data daily
         """
-        return f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={self.ticker}&apikey={API_KEY}&outputsize=full&datatype=json"
+        return f'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={self.ticker}&apikey={API_KEY}&outputsize=full&datatype=json'
 
     @property
     def overview(self):
         """
             Return: Overview for a stock
         """
-        return f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={self.ticker}&apikey={API_KEY}&outputsize=full&datatype=json"
+        return f'https://www.alphavantage.co/query?function=OVERVIEW&symbol={self.ticker}&apikey={API_KEY}&outputsize=full&datatype=json'
 
     @property
     def income_statement(self):
         """
             Return: Income statement for a company
         """
-        return f"https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol={self.ticker}&apikey={API_KEY}&datatype=json"
-
-    @property
-    def balance_sheet(self):
-        """
-            Return: Balance sheet of a company
-        """
-        return f"https://www.alphavantage.co/query?function=BALANCE_SHEET&symbol={self.ticker}&apikey={API_KEY}&datatype=json"
+        return f'https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol={self.ticker}&apikey={API_KEY}&datatype=json'
 
     @property
     def cash_flow(self):
@@ -48,6 +41,24 @@ class CompanyEndpoints:
         """
         return f'https://www.alphavantage.co/query?function=EARNINGS&symbol={self.ticker}&apikey={API_KEY}&datatype=json'
 
+    @property
+    def news(self):
+        """
+            Returns a list of links of news articles relating to a ticker
+        """
+        return f'https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers={self.ticker}&apikey={API_KEY}&datatype=json'
+
+class ValidationEndpoints:
+
+    def __init__(self, keyword: str):
+        self.keyword = keyword
+
+    @property
+    def ticker_search(self):
+        """
+            Returns: Ticker search url
+        """
+        return f'https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords={self.keyword}&apikey={API_KEY}datatype=json'
 
 class MicroEndpoints:
 
