@@ -23,8 +23,7 @@ def get_raw_data(endpoint: str) -> dict[str, Any]:
         response = requests.get(endpoint)
         data = response.json()
     except:
-        message = f"Error connecting with endpoint: {endpoint} with response: {response.status_code}"
-        raise EndpointError(msg=message)
+        raise EndpointError(endpoint=endpoint)
     return data
 
 
@@ -66,8 +65,11 @@ def handle_none(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def get_data(endpoint: str, key: Optional[str] = None,
-             filters: Optional[dict[AllowedDataFrameOperations, Any]] = None) -> pd.DataFrame:
+def get_data_df(
+        endpoint: str,
+        key: Optional[str] = None,
+        filters: Optional[dict[AllowedDataFrameOperations, Any]] = None
+) -> pd.DataFrame:
     """
     Fetches raw data from a given endpoint, extracts the desired dictionary key, and formats it into a DataFrame.
 
@@ -87,16 +89,12 @@ def get_data(endpoint: str, key: Optional[str] = None,
         df = pd.DataFrame(raw_data, index=[0])
 
     if filters:
-
         if filters.get(AllowedDataFrameOperations.transpose):
             df = df.transpose()
-
         if filters.get(AllowedDataFrameOperations.drop):
             df = df.drop(columns=filters.get(AllowedDataFrameOperations.drop))
-
         if filters.get(AllowedDataFrameOperations.rename):
             df = df.rename(columns=filters.get(AllowedDataFrameOperations.rename))
-
         if filters.get(AllowedDataFrameOperations.columns):
             df = df[filters.get(AllowedDataFrameOperations.columns)]
 
