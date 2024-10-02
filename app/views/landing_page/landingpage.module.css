@@ -1,0 +1,34 @@
+.button {
+    background-color: #F8E371;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: large;
+    border: 1px solid black;
+    max-width: 75vw;
+    padding: .5em;
+  }
+  
+.button:hover {
+  background-color: #ffdf2b;
+}
+
+.title {
+  font-size: 56px;
+}
+
+.missionStatement {
+  max-width: 25em;
+  font-size: 24px;
+}
+
+.firstPageTextContent {
+  width: 60vw;
+}
+
+.brainLight {
+  position: absolute;
+  top: 0%;
+  right: 0%;
+} 
+
+
