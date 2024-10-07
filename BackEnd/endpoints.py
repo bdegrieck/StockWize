@@ -39,7 +39,7 @@ class CompanyEndpoints:
         """
             Return: Earnings for a company
         """
-        return f'https://www.alphavantage.co/query?function=EARNINGS&symbol={self.ticker}&apikey={API_KEY}&datatype=json'
+        return f'https://www.alphavantage.co/query?function=EARNINGS&symbol={self.ticker}&apikey={API_KEY}'
 
     @property
     def news(self):
@@ -122,7 +122,7 @@ class CalenderEndpoints:
         """
             Return: Upcoming Earnings for a company for the year
         """
-        return f"https://www.alphavantage.co/query?function=EARNINGS_CALENDAR&symbol={self.ticker}&horizon=12month&apikey={API_KEY}&datatype=json"
+        return f"https://www.alphavantage.co/query?function=EARNINGS_CALENDAR&symbol={self.ticker}&horizon=12month&apikey={API_KEY}"
 
 
 class TechIndEndpoints:

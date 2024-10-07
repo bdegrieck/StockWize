@@ -1,8 +1,8 @@
 import pandas as pd
 
-from BackEnd.endpoints import CompanyEndpoints, MicroEndpoints, TechIndEndpoints
+from BackEnd.endpoints import CompanyEndpoints, MicroEndpoints, TechIndEndpoints, CalenderEndpoints
 from BackEnd.constants import Finance, AlphaVantage, AllowedDataFrameOperations
-from BackEnd.helpers import get_data_df
+from BackEnd.helpers import get_data_df, get_raw_api_csv_df
 from BackEnd.news import News
 
 
@@ -95,7 +95,7 @@ class CompanyData:
             Quarter dates, report dates quarterly, eps quarterly, estimated eps quarterly, surprise percentage quarterly
         """
         endpoint = self.endpoints.earnings
-        key = AlphaVantage.quarterly_reports_dict
+        key = AlphaVantage.quarterly_earnings_dict
         columns = [Finance.fiscal_dates, Finance.report_dates, Finance.reported_eps, Finance.estimated_eps, Finance.surprise_percentage]
         filters = {AllowedDataFrameOperations.columns: columns}
         df = get_data_df(endpoint=endpoint, key=key, filters=filters)
@@ -244,4 +244,15 @@ class TechIndData:
         key = AlphaVantage.adx
         filters = {AllowedDataFrameOperations.transpose: True}
         df = get_data_df(endpoint=endpoint, key=key, filters=filters)
+        return df
+
+
+class CalenderData:
+    def __init__(self, endpoints: CalenderEndpoints):
+        self.endpoints = endpoints
+
+    @property
+    def calender(self):
+        endpoint = self.endpoints.company_earnings
+        df = get_raw_api_csv_df(endpoint=endpoint)
         return df
