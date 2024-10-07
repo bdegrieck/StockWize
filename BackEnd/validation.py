@@ -50,6 +50,11 @@ def get_ticker_symbol_from_keyword(keyword_data: dict[str, Any]) -> str:
 
 
 def check_extraneous_tickers(input_name: str):
+    """
+    Args:
+    input_name (str): Checks if input company name from the user is in the extraneous ticker dict. Alpha vantage does
+    not correctly match keywords with tickers. An example would be for Apple alpha vantage wouldn't return AAPL
+    """
     extraneous_tickers = {
         "apple": "AAPL",
         "target": "TGT",

@@ -28,7 +28,6 @@ class CompanyData:
             Finance.close,
             Finance.volume,
             Finance.dividend,
-            Finance.split
         ]
 
         renamed_columns = {
@@ -39,7 +38,6 @@ class CompanyData:
             "5. adjusted close": Finance.close,
             "6. volume": Finance.volume,
             "7. dividend amount": Finance.dividend,
-            "8. split coefficient": Finance.split
         }
 
         filters = {
@@ -129,7 +127,7 @@ class MicroData:
     def cpi(self) -> pd.DataFrame:
         """
         Returns:
-            cpi value, first day of the monthy dates
+            cpi value, first day of the monthly dates
         """
         endpoint = self.endpoints.cpi
         key = AlphaVantage.data

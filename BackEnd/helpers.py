@@ -7,8 +7,6 @@ from BackEnd.error import EndpointError
 from BackEnd.constants import AllowedDataFrameOperations
 
 
-# TODO handle no datq and wheterh dtype is csv or json
-
 def get_raw_data(endpoint: str) -> dict[str, Any]:
     """
     Grabs raw data from api source
@@ -81,11 +79,11 @@ def get_data_df(
         df (pd.DataFrame): The formatted DataFrame.
     """
     raw_data = get_raw_data(endpoint=endpoint)
-    if key:
+    if key is not None:
         raw_data = raw_data.get(key)
     try:
         df = pd.DataFrame.from_dict(raw_data)
-    except:
+    except ValueError:
         df = pd.DataFrame(raw_data, index=[0])
 
     if filters:
@@ -99,4 +97,13 @@ def get_data_df(
             df = df[filters.get(AllowedDataFrameOperations.columns)]
 
     df = format_df(df=df)
+    return df
+
+
+# decodes only csv
+def get_raw_api_csv_df(endpoint: str) -> pd.DataFrame:
+    with requests.Session() as s:
+        download = s.get(endpoint)
+        decoded_content = download.content.decode('utf-8')
+        df = pd.read_csv(pd.compat.StringIO(decoded_content))
     return df
