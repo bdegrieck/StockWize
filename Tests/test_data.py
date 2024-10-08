@@ -6,8 +6,7 @@ class TestCompanyData:
 
     def test_company_data(self):
         ticker = "AAPL"
-        endpoints = CompanyEndpoints(ticker=ticker)
-        instance = CompanyData(endpoints=endpoints)
+        instance = CompanyData(ticker=ticker)
 
         time_series = instance.time_series
         earnings = instance.earnings
@@ -23,8 +22,7 @@ class TestCompanyData:
 
     def test_tech_indicators(self):
         ticker = "AAPL"
-        endpoints = TechIndEndpoints(ticker=ticker)
-        instance = TechIndData(endpoints=endpoints)
+        instance = TechIndData(ticker=ticker)
 
         sma = instance.sma
         ema = instance.ema

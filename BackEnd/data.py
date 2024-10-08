@@ -1,24 +1,20 @@
 import pandas as pd
 
+from BackEnd.base import Micro, TechIndicators
 from BackEnd.endpoints import CompanyEndpoints, MicroEndpoints, TechIndEndpoints, CalenderEndpoints
 from BackEnd.constants import Finance, AlphaVantage, AllowedDataFrameOperations
 from BackEnd.helpers import get_data_df, get_raw_api_csv_df
 from BackEnd.news import News
 
 
-class CompanyData:
+class CompanyData(CompanyEndpoints):
 
-    def __init__(self, endpoints: CompanyEndpoints):
-        self.endpoints = endpoints
-
+    def __init__(self, ticker: str):
+        super().__init__(ticker)
 
     @property
     def time_series(self) -> pd.DataFrame:
-        """
-        Returns:
-            DataFrame with the following values: Open, High, Low, Close, Volume, Dividend, Split
-        """
-        endpoint = self.endpoints.time_series
+        endpoint = super().time_series
         key = AlphaVantage.time_series_dict
         columns = [
             Finance.open,
@@ -50,11 +46,7 @@ class CompanyData:
 
     @property
     def overview(self) -> pd.DataFrame:
-        """
-        Returns:
-            Symbol, Company name, Description of Company, Year high of the stock, Year low of the stock
-        """
-        endpoint = self.endpoints.overview
+        endpoint = super().overview
         columns = [Finance.symbol, Finance.name, Finance.description, Finance.year_high, Finance.year_low]
         filters = {AllowedDataFrameOperations.columns: columns}
         df = get_data_df(endpoint=endpoint, filters=filters)
@@ -62,11 +54,7 @@ class CompanyData:
 
     @property
     def income_statement(self) -> pd.DataFrame:
-        """
-        Returns:
-            Quarter dates, Total revenue quarterly, profit quarterly
-        """
-        endpoint = self.endpoints.income_statement
+        endpoint = super().income_statement
         columns = [Finance.fiscal_dates, Finance.total_revenue, Finance.profit]
         filters = {AllowedDataFrameOperations.columns: columns}
         key = AlphaVantage.quarterly_reports_dict
@@ -75,11 +63,7 @@ class CompanyData:
 
     @property
     def cash_flow(self) -> pd.DataFrame:
-        """
-        Returns:
-            Quarter dates, operating cashflow quarterly, financing cash flow quarterly, from investment cash flow quarterly
-        """
-        endpoint = self.endpoints.cash_flow
+        endpoint = super().cash_flow
         key = AlphaVantage.quarterly_reports_dict
         columns = [Finance.fiscal_dates, Finance.operating_cash_flow, Finance.from_financing_cash_flow, Finance.from_investment_cash_flow]
         filters = {AllowedDataFrameOperations.columns: columns}
@@ -88,11 +72,7 @@ class CompanyData:
 
     @property
     def earnings(self) -> pd.DataFrame:
-        """
-        Returns:
-            Quarter dates, report dates quarterly, eps quarterly, estimated eps quarterly, surprise percentage quarterly
-        """
-        endpoint = self.endpoints.earnings
+        endpoint = super().earnings
         key = AlphaVantage.quarterly_earnings_dict
         columns = [Finance.fiscal_dates, Finance.report_dates, Finance.reported_eps, Finance.estimated_eps, Finance.surprise_percentage]
         filters = {AllowedDataFrameOperations.columns: columns}
@@ -101,96 +81,62 @@ class CompanyData:
 
     @property
     def news(self) -> str:
-        ticker = self.endpoints.ticker
-        endpoint = self.endpoints.news
-        news_instance = News(ticker=ticker, endpoint=endpoint)
+        news_instance = News(ticker=self.ticker, endpoint=super().news)
         return news_instance.get_news
 
-class MicroData:
-
-    def __init__(self):
-        self.endpoints = MicroEndpoints()
-
+class MicroData(MicroEndpoints):
 
     @property
     def real_gdp(self) -> pd.DataFrame:
-        """
-        Returns:
-            Real GDP quarterly at the beginning of the year, Date quarterly
-        """
-        endpoint = self.endpoints.real_gdp
+        endpoint = super().real_gdp
         key = AlphaVantage.data
         df = get_data_df(endpoint=endpoint, key=key)
         return df
 
     @property
     def cpi(self) -> pd.DataFrame:
-        """
-        Returns:
-            cpi value, first day of the monthly dates
-        """
-        endpoint = self.endpoints.cpi
+        endpoint = super().cpi
         key = AlphaVantage.data
         df = get_data_df(endpoint=endpoint, key=key)
         return df
 
     @property
     def inflation(self) -> pd.DataFrame:
-        """
-        Returns:
-            inflation percentage per year, dates first day of the year
-        """
-        endpoint = self.endpoints.inflation
+        endpoint = super().inflation
         key = AlphaVantage.data
         df = get_data_df(endpoint=endpoint, key=key)
         return df
 
     @property
     def federal_funds_rate(self) -> pd.DataFrame:
-        """
-        Returns:
-            federal funds rate monthly, first day of the month for dates
-        """
-        endpoint = self.endpoints.federal_funds_rate
+        endpoint = super().federal_funds_rate
         key = AlphaVantage.data
         df = get_data_df(endpoint=endpoint, key=key)
         return df
 
     @property
     def retail_sales (self) -> pd.DataFrame:
-        """
-        Returns:
-            returns the retail sales in millions per month, date is first day of every month
-        """
-        endpoint = self.endpoints.retail_sales
+        endpoint = super().retail_sales
         key = AlphaVantage.data
         df = get_data_df(endpoint=endpoint, key=key)
         return df
 
     @property
     def unemployment_rate(self) -> pd.DataFrame:
-        """
-        Returns:
-`           Unemployment rate at the beginning of the month
-        """
-        endpoint = self.endpoints.unemployment_rate
+        endpoint = super().unemployment_rate
         key = AlphaVantage.data
         df = get_data_df(endpoint=endpoint, key=key)
         return df
 
 
-class TechIndData:
+class TechIndData(TechIndEndpoints):
 
-    def __init__(self, endpoints: TechIndEndpoints):
-        self.endpoints = endpoints
+    def __init__(self, ticker: str):
+        super().__init__(ticker=ticker)
 
     @property
     def sma(self) -> pd.DataFrame:
-        """
-        Returns:
-`           SMA value, weekly date
-        """
-        endpoint = self.endpoints.sma
+        endpoint = super().sma
         key = AlphaVantage.sma
         filters = {AllowedDataFrameOperations.transpose: True}
         df = get_data_df(endpoint=endpoint, key=key, filters=filters)
@@ -198,11 +144,7 @@ class TechIndData:
 
     @property
     def ema(self) -> pd.DataFrame:
-        """
-        Returns:
-`           EMA values, weekly date
-        """
-        endpoint = self.endpoints.ema
+        endpoint = super().ema
         key = AlphaVantage.ema
         filters = {AllowedDataFrameOperations.transpose: True}
         df = get_data_df(endpoint=endpoint, key=key, filters=filters)
@@ -210,11 +152,7 @@ class TechIndData:
 
     @property
     def rsi(self) -> pd.DataFrame:
-        """
-        Returns:
-`           RSI values, weekly date
-        """
-        endpoint = self.endpoints.rsi
+        endpoint = super().rsi
         key = AlphaVantage.rsi
         filters = {AllowedDataFrameOperations.transpose: True}
         df = get_data_df(endpoint=endpoint, key=key, filters=filters)
@@ -222,11 +160,7 @@ class TechIndData:
 
     @property
     def bbands(self) -> pd.DataFrame:
-        """
-        Returns:
-`           Bbands values, weekly date
-        """
-        endpoint = self.endpoints.bbands
+        endpoint = super().bbands
         key = AlphaVantage.bbands
         filters = {AllowedDataFrameOperations.transpose: True}
         df = get_data_df(endpoint=endpoint, key=key, filters=filters)
@@ -234,11 +168,7 @@ class TechIndData:
 
     @property
     def adx(self) -> pd.DataFrame:
-        """
-        Returns:
-`           ADX values, Daily date
-        """
-        endpoint = self.endpoints.adx
+        endpoint = super().adx
         key = AlphaVantage.adx
         filters = {AllowedDataFrameOperations.transpose: True}
         df = get_data_df(endpoint=endpoint, key=key, filters=filters)
