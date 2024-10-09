@@ -10,30 +10,6 @@ body {
   box-sizing: border-box;
 }
 
-h1, h2, h3, p, button {
-  font-family: 'Source Code Pro', monospace;
-}
-
-/* Utilities */
-
-.verticalFlex {
-  display: flex;
-  flex-direction: column;
-}
-
-.horizontalFlex {
-  display: flex;
-  flex-direction: row;
-}
-
-/* Necessary to put a gap between the title, mission statement, and button */
-.flexItem {
-  margin: 10px;
-}
-
-.center {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+h1, h2, h3, p, button, span {
+  font-family: 'Source Code Pro', monospace !important;
 }

@@ -4,7 +4,6 @@
     font-weight: 600;
     font-size: large;
     border: 1px solid black;
-    max-width: 75vw;
     padding: .5em;
   }
   
@@ -14,6 +13,7 @@
 
 .title {
   font-size: 56px;
+  font-weight: bold;
 }
 
 .missionStatement {
@@ -21,14 +21,7 @@
   font-size: 24px;
 }
 
-.firstPageTextContent {
-  width: 60vw;
+.companyName {
+  font-size: 20px;
+  font-weight: bold;
 }
-
-.brainLight {
-  position: absolute;
-  top: 0%;
-  right: 0%;
-} 
-
-
