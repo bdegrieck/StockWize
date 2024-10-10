@@ -1,6 +1,5 @@
 import pandas as pd
 
-from BackEnd.base import Micro, TechIndicators
 from BackEnd.endpoints import CompanyEndpoints, MicroEndpoints, TechIndEndpoints, CalenderEndpoints
 from BackEnd.constants import Finance, AlphaVantage, AllowedDataFrameOperations
 from BackEnd.helpers import get_data_df, get_raw_api_csv_df

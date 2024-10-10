@@ -77,7 +77,7 @@ class CalenderEndpoints:
         """
             Return: Upcmoing earnings forecasted in 3 months for any company
         """
-        return f"https://www.alphavantage.co/query?function=EARNINGS_CALENDAR&horizon=3month&apikey={API_KEY}&datatype=json"
+        return f"https://www.alphavantage.co/query?function=EARNINGS_CALENDAR&horizon=3month&apikey={API_KEY}"
 
     @property
     def company_earnings(self):
