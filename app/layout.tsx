@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import 'bootstrap/dist/css/bootstrap.css';
 import "./globals.css";
+import BootstrapClient from "./components/BootstrapClient";
 
 export const metadata: Metadata = {
   title: "StockWize",
@@ -16,7 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         {children}
-        {/* <BootstrapClient/> */}
+        <BootstrapClient/>
       </body>
     </html>
   );
