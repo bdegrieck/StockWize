@@ -37,14 +37,21 @@ export default function ContentLayout({
                         <Image src={Logo} alt="StockWize Logo" width={25}/>
                     </Link>
                     <Link href={'content/stocknews'}>
-
-
+                        <span className="p-2 companyName">Stock News</span>
+                        <Image src={Logo} alt="StockWize Logo" width={25}/>
+                    </Link>
+                    <Link href={'content/explanatory'}>
+                        <span className="p-2 companyName">Explanatory</span>
+                        <Image src={Logo} alt="StockWize Logo" width={25}/>
+                    </Link>
+                    <Link href={'content/microeconomics'}>
+                        <span className="p-2 companyName">Microeconomics</span>
+                        <Image src={Logo} alt="StockWize Logo" width={25}/>
                     </Link>
                     <Link href={'/content/compare'}>
                         <span className="p-2 companyName">Compare</span>
                         <Image src={Logo} alt="StockWize Logo" width={25}/>
                     </Link>
-
                 </div>
             </div>
             <div className="col-10 offset-3">
