@@ -1,11 +1,8 @@
 import pandas as pd
 from statsmodels.tsa.seasonal import MSTL
-
-from BackEnd.constants import Finance
 from BackEnd.plot import plot, Graph
 
 
-#TODO have box plots per month, seasonality trends, autocorrelation plot,
 
 class Eda:
 
@@ -14,9 +11,9 @@ class Eda:
         self.ticker = ticker
 
     @property
-    def mstl_close(self):
+    def mstl(self, value_column: str):
         periods = [7, 30, 365]
-        model = MSTL(self.time_series_data[Finance.close], periods=periods).fit()
+        model = MSTL(self.time_series_data[value_column], periods=periods).fit()
 
         trend = model.trend
         seasonal_7 = model.seasonal["seasonal_7"]
