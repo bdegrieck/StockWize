@@ -1,3 +1,6 @@
+from pydantic import BaseModel
+from tensorflow.python.data.ops.optional_ops import Optional
+
 API_KEY = "CRU63X7J4COJ46F2"
 
 
@@ -37,17 +40,20 @@ class Finance:
     reported_eps = "reportedEPS"
     estimated_eps = "estimatedEPS"
     surprise_percentage = "surprisePercentage"
+    date = "Date"
 
 
-class AllowedDataFrameOperations:
+class AllowedDataFrameOperations(BaseModel):
     """
     Allowed df operations
     transpose - transposing the df
     columns - grabbing certain columns from a df. Can be one or multiple
-    rename - ranaming columns
-    drop - droping certain columns
+    rename - renaming columns
+    drop - dropping certain columns
+    orient = orient of the dataframe
     """
-    transpose = "transpose"
-    columns = "columns"
-    drop = "drop columns"
-    rename = "rename"
+    transpose: Optional[bool] = None
+    columns: Optional[list[str]] = None
+    drop: Optional[list[str]] = None
+    rename: Optional[dict[str, str]] = None
+    orient: Optional[str] = None

@@ -1,6 +1,4 @@
 import pandas as pd
-
-from BackEnd.base import Micro, TechIndicators
 from BackEnd.endpoints import CompanyEndpoints, MicroEndpoints, TechIndEndpoints, CalenderEndpoints
 from BackEnd.constants import Finance, AlphaVantage, AllowedDataFrameOperations
 from BackEnd.helpers import get_data_df, get_raw_api_csv_df
@@ -17,6 +15,7 @@ class CompanyData(CompanyEndpoints):
         endpoint = super().time_series
         key = AlphaVantage.time_series_dict
         columns = [
+            Finance.date,
             Finance.open,
             Finance.high,
             Finance.low,
@@ -27,6 +26,7 @@ class CompanyData(CompanyEndpoints):
         ]
 
         renamed_columns = {
+            "index": Finance.date,
             "1. open": Finance.open,
             "2. high": Finance.high,
             "3. low": Finance.low,
@@ -36,11 +36,13 @@ class CompanyData(CompanyEndpoints):
             "7. dividend amount": Finance.dividend,
         }
 
-        filters = {
-            AllowedDataFrameOperations.transpose: True,
-            AllowedDataFrameOperations.columns: columns,
-            AllowedDataFrameOperations.rename: renamed_columns
-        }
+        filters = AllowedDataFrameOperations(
+            transpose=True,
+            orient="index",
+            columns=columns,
+            rename=renamed_columns,
+        )
+
         df = get_data_df(endpoint=endpoint, key=key, filters=filters)
         return df
 
