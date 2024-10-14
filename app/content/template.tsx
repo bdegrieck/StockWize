@@ -22,13 +22,18 @@ export default function ContentLayout({
     const searchParams = useSearchParams()
     const pathName = usePathname()
     const router = useRouter();
+    const pageName = pathName.split('/content/')[1] || ''; //Hacky way to get the page name, then it is capitalized in the display
     const company = searchParams.get('company') === null ? '' : searchParams.get('company')
     const [query, setQuery] = useState(company);
 
     const content = company === '' ? 
         (<div className="h-100 w-100 d-flex justify-content-center align-items-center">
             <p>Search for a Company or Stock Symbol to Get Started</p>
-        </div>) : children
+        </div>) : 
+        (<div>
+            <p className="fw-bold">{pageName.charAt(0).toUpperCase() + pageName.slice(1)}</p>
+            {children}
+        </div>)
 
     function onSubmit(e : FormEvent<HTMLFormElement>) {
         // This is a temporary solution. In reality, we will need to call backend for data
@@ -76,7 +81,7 @@ export default function ContentLayout({
                             onChange={(e) => setQuery(e.target.value)}
                         />
                     </form>
-                    <div className="rounded-start grey shadow h-100 flex-grow-1">
+                    <div className="rounded-start grey shadow h-100 flex-grow-1 p-3">
                         {content}
                     </div>  
             </div>
