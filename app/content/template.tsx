@@ -25,6 +25,11 @@ export default function ContentLayout({
     const company = searchParams.get('company') === null ? '' : searchParams.get('company')
     const [query, setQuery] = useState(company);
 
+    const content = company === '' ? 
+        (<div className="h-100 w-100 d-flex justify-content-center align-items-center">
+            <p>Search for a Company or Stock Symbol to Get Started</p>
+        </div>) : children
+
     function onSubmit(e : FormEvent<HTMLFormElement>) {
         // This is a temporary solution. In reality, we will need to call backend for data
         // If the company doesn't exist, we need to reroute to a 404 page.
@@ -33,7 +38,7 @@ export default function ContentLayout({
     }
 
     return (
-        <div>
+        <>
             <div className="d-flex flex-column col-3 vh-100 position-absolute pt-3">
                 <Link href="/" className="mx-3">
                     <div className="d-flex flex-row align-items-center">
@@ -60,23 +65,22 @@ export default function ContentLayout({
                     </div>    
                 </div>
             </div>
-            <div className="col-10 offset-3">
-                <form onSubmit={onSubmit}>
-                    <input 
-                        className="form-control my-3 w-75" 
-                        type="text" 
-                        placeholder="Search" 
-                        aria-label="Search" 
-                        value={query ? query : ''}
-                        onChange={(e) => setQuery(e.target.value)}
-                    />
-                </form>
-                <div className="mw-100 vh-100 rounded-start grey shadow">
-                    {children}
-                </div>  
-                
+            <div className="col-9 offset-3 d-flex flex-column vh-100">
+                    <form onSubmit={onSubmit} className="">
+                        <input 
+                            className="form-control my-3 w-75" 
+                            type="text" 
+                            placeholder="Company or Stock Symbol" 
+                            aria-label="Search" 
+                            value={query ? query : ''}
+                            onChange={(e) => setQuery(e.target.value)}
+                        />
+                    </form>
+                    <div className="rounded-start grey shadow h-100 flex-grow-1">
+                        {content}
+                    </div>  
             </div>
-        </div>
+        </>
     );
   }
 
