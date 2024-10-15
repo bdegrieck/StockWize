@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from enum import Enum
 
 class Company(ABC):
 
@@ -123,3 +124,6 @@ class TechIndicators(ABC):
         ADX values, Daily date
         """
         pass
+
+class StringEnum(str, Enum):
+    pass

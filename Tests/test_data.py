@@ -54,5 +54,3 @@ class TestMicroData:
         assert not interest_rates.empty
         assert not retail_sales.empty
         assert not unemployment_rate.empty
-
-

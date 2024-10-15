@@ -1,5 +1,4 @@
-from pydantic import BaseModel
-from tensorflow.python.data.ops.optional_ops import Optional
+from BackEnd.base import StringEnum
 
 API_KEY = "CRU63X7J4COJ46F2"
 
@@ -42,18 +41,6 @@ class Finance:
     surprise_percentage = "surprisePercentage"
     date = "Date"
 
-
-class AllowedDataFrameOperations(BaseModel):
-    """
-    Allowed df operations
-    transpose - transposing the df
-    columns - grabbing certain columns from a df. Can be one or multiple
-    rename - renaming columns
-    drop - dropping certain columns
-    orient = orient of the dataframe
-    """
-    transpose: Optional[bool] = None
-    columns: Optional[list[str]] = None
-    drop: Optional[list[str]] = None
-    rename: Optional[dict[str, str]] = None
-    orient: Optional[str] = None
+class AllowedOrientations(StringEnum):
+    index = "index"
+    columns = "columns"

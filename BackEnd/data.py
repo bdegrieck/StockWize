@@ -1,6 +1,6 @@
 import pandas as pd
 from BackEnd.endpoints import CompanyEndpoints, MicroEndpoints, TechIndEndpoints, CalenderEndpoints
-from BackEnd.constants import Finance, AlphaVantage, AllowedDataFrameOperations
+from BackEnd.constants import Finance, AlphaVantage, AllowedOrientations
 from BackEnd.helpers import get_data_df, get_raw_api_csv_df
 from BackEnd.news import News
 
@@ -19,7 +19,6 @@ class CompanyData(CompanyEndpoints):
             Finance.open,
             Finance.high,
             Finance.low,
-            Finance.non_adjust_close,
             Finance.close,
             Finance.volume,
             Finance.dividend,
@@ -36,31 +35,27 @@ class CompanyData(CompanyEndpoints):
             "7. dividend amount": Finance.dividend,
         }
 
-        filters = AllowedDataFrameOperations(
-            transpose=True,
-            orient="index",
-            columns=columns,
-            rename=renamed_columns,
-        )
-
-        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
+        df = get_data_df(endpoint=endpoint, key=key, orient=AllowedOrientations.index)
+        df.reset_index(inplace=True, names=Finance.date)
+        df.rename(columns=renamed_columns, inplace=True)
+        df = df[columns]
         return df
 
     @property
     def overview(self) -> pd.DataFrame:
         endpoint = super().overview
         columns = [Finance.symbol, Finance.name, Finance.description, Finance.year_high, Finance.year_low]
-        filters = {AllowedDataFrameOperations.columns: columns}
-        df = get_data_df(endpoint=endpoint, filters=filters)
+        df = get_data_df(endpoint=endpoint)
+        df = df[columns]
         return df
 
     @property
     def income_statement(self) -> pd.DataFrame:
         endpoint = super().income_statement
         columns = [Finance.fiscal_dates, Finance.total_revenue, Finance.profit]
-        filters = {AllowedDataFrameOperations.columns: columns}
         key = AlphaVantage.quarterly_reports_dict
-        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
+        df = get_data_df(endpoint=endpoint, key=key)
+        df = df[columns]
         return df
 
     @property
@@ -68,8 +63,8 @@ class CompanyData(CompanyEndpoints):
         endpoint = super().cash_flow
         key = AlphaVantage.quarterly_reports_dict
         columns = [Finance.fiscal_dates, Finance.operating_cash_flow, Finance.from_financing_cash_flow, Finance.from_investment_cash_flow]
-        filters = {AllowedDataFrameOperations.columns: columns}
-        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
+        df = get_data_df(endpoint=endpoint, key=key)
+        df = df[columns]
         return df
 
     @property
@@ -77,13 +72,14 @@ class CompanyData(CompanyEndpoints):
         endpoint = super().earnings
         key = AlphaVantage.quarterly_earnings_dict
         columns = [Finance.fiscal_dates, Finance.report_dates, Finance.reported_eps, Finance.estimated_eps, Finance.surprise_percentage]
-        filters = {AllowedDataFrameOperations.columns: columns}
-        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
+        df = get_data_df(endpoint=endpoint, key=key)
+        df = df[columns]
         return df
 
     @property
     def news(self) -> str:
-        news_instance = News(ticker=self.ticker, endpoint=super().news)
+        news_endpoint = super().news
+        news_instance = News(ticker=self.ticker, endpoint=news_endpoint)
         return news_instance.get_news
 
 class MicroData(MicroEndpoints):
@@ -140,40 +136,40 @@ class TechIndData(TechIndEndpoints):
     def sma(self) -> pd.DataFrame:
         endpoint = super().sma
         key = AlphaVantage.sma
-        filters = {AllowedDataFrameOperations.transpose: True}
-        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
+        df = get_data_df(endpoint=endpoint, key=key)
+        df = df.transpose()
         return df
 
     @property
     def ema(self) -> pd.DataFrame:
         endpoint = super().ema
         key = AlphaVantage.ema
-        filters = {AllowedDataFrameOperations.transpose: True}
-        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
+        df = get_data_df(endpoint=endpoint, key=key)
+        df = df.transpose()
         return df
 
     @property
     def rsi(self) -> pd.DataFrame:
         endpoint = super().rsi
         key = AlphaVantage.rsi
-        filters = {AllowedDataFrameOperations.transpose: True}
-        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
+        df = get_data_df(endpoint=endpoint, key=key)
+        df = df.transpose()
         return df
 
     @property
     def bbands(self) -> pd.DataFrame:
         endpoint = super().bbands
         key = AlphaVantage.bbands
-        filters = {AllowedDataFrameOperations.transpose: True}
-        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
+        df = get_data_df(endpoint=endpoint, key=key)
+        df = df.transpose()
         return df
 
     @property
     def adx(self) -> pd.DataFrame:
         endpoint = super().adx
         key = AlphaVantage.adx
-        filters = {AllowedDataFrameOperations.transpose: True}
-        df = get_data_df(endpoint=endpoint, key=key, filters=filters)
+        df = get_data_df(endpoint=endpoint, key=key)
+        df = df.transpose()
         return df
 
 

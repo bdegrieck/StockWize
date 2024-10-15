@@ -3,7 +3,6 @@ from statsmodels.tsa.seasonal import MSTL
 from BackEnd.plot import plot, Graph
 
 
-
 class Eda:
 
     def __init__(self, time_series_data: pd.DataFrame, ticker: str):

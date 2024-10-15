@@ -3,8 +3,8 @@ import pandas as pd
 import requests
 from typing import Any, Optional
 
+from BackEnd.constants import AllowedOrientations
 from BackEnd.error import EndpointError
-from BackEnd.constants import AllowedDataFrameOperations
 
 
 def get_raw_data(endpoint: str) -> dict[str, Any]:
@@ -63,39 +63,28 @@ def handle_none(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def get_data_df(endpoint: str, key: Optional[str] = None, filters: Optional[AllowedDataFrameOperations] = None) -> pd.DataFrame:
+def get_data_df(endpoint: str, key: Optional[str] = None, orient: Optional[AllowedOrientations] = None) -> pd.DataFrame:
     """
     Fetches raw data from a given endpoint, extracts the desired dictionary key, and formats it into a DataFrame.
 
     Args:
         endpoint (str): The API endpoint to query.
         key (str): The key in the response dictionary to extract the relevant data.
-        filters (AllowedDataFrameOperations): Allowed datafraem operations
+        orient (str): Setting keys of dict to column or index in AllowedOrient
     Returns:
         df (pd.DataFrame): The formatted DataFrame.
     """
     raw_data = get_raw_data(endpoint=endpoint)
-    if key is not None:
-        raw_data = raw_data.get(key)
-
-    if filters.orient is None:
-        filters.orient = "columns"
-
     try:
-        df = pd.DataFrame.from_dict(data=raw_data, orient=filters.orient)
-    except ValueError:
-        df = pd.DataFrame(raw_data, index=[0])
-
-    if filters is not None:
-        if filters.transpose is not None:
-            df = df.transpose()
-        if filters.drop is not None:
-            df = df.drop(columns=filters.get(AllowedDataFrameOperations.drop))
-        if filters.rename is not None:
-            df = df.rename(columns=filters.get(AllowedDataFrameOperations.rename))
-        if filters.columns is not None:
-            df = df[filters.get(AllowedDataFrameOperations.columns)]
-
+        if key and key in raw_data:
+            raw_data = raw_data.get(key)
+        if orient:
+            df = pd.DataFrame.from_dict(data=raw_data, orient=orient.value)
+        else:
+            df = pd.DataFrame(data=raw_data)
+    except ValueError as e:
+            df = pd.DataFrame(raw_data, index=[0])
+            print(e)
     df = format_df(df=df)
     return df
 
