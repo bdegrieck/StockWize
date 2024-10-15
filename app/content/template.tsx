@@ -30,10 +30,12 @@ export default function ContentLayout({
         (<div className="h-100 w-100 d-flex justify-content-center align-items-center">
             <p>Search for a Company or Stock Symbol to Get Started</p>
         </div>) : 
-        (<div>
+        (<div className="h-100 d-flex flex-column">
             <p className="fw-bold">{pageName.charAt(0).toUpperCase() + pageName.slice(1)}</p>
-            {children}
-        </div>)
+            <div className="flex-grow-1 d-flex flex-column">
+                {children}
+            </div>
+        </div>);
 
     function onSubmit(e : FormEvent<HTMLFormElement>) {
         // This is a temporary solution. In reality, we will need to call backend for data
