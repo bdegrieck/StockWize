@@ -1,3 +1,4 @@
+from BackEnd.base import Company, Micro, TechIndicators
 from BackEnd.constants import API_KEY
 
 
