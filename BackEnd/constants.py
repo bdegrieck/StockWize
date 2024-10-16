@@ -40,6 +40,7 @@ class Finance:
     estimated_eps = "estimatedEPS"
     surprise_percentage = "surprisePercentage"
     date = "Date"
+    market_cap = "MarketCapitalization"
 
 class AllowedOrientations(StringEnum):
     index = "index"

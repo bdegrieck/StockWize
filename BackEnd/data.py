@@ -34,17 +34,17 @@ class CompanyData(CompanyEndpoints):
             "6. volume": Finance.volume,
             "7. dividend amount": Finance.dividend,
         }
-
         df = get_data_df(endpoint=endpoint, key=key, orient=AllowedOrientations.index)
         df.reset_index(inplace=True, names=Finance.date)
         df.rename(columns=renamed_columns, inplace=True)
         df = df[columns]
         return df
 
+    # TODO market cap
     @property
     def overview(self) -> pd.DataFrame:
         endpoint = super().overview
-        columns = [Finance.symbol, Finance.name, Finance.description, Finance.year_high, Finance.year_low]
+        columns = [Finance.symbol, Finance.name, Finance.description, Finance.year_high, Finance.year_low, Finance.market_cap]
         df = get_data_df(endpoint=endpoint)
         df = df[columns]
         return df

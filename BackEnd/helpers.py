@@ -42,7 +42,7 @@ def format_df(df: pd.DataFrame) -> pd.DataFrame:
         except:
             pass
         try:
-            df[column] = pd.to_datetime(df[column])
+            df[column] = pd.to_datetime(df[column], format="%d/%m/%Y")
         except:
             pass
     df = handle_none(df=df)
