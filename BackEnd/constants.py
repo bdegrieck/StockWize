@@ -1,4 +1,4 @@
-from BackEnd.base import StringEnum
+from BackEnd.Data.base import StringEnum
 
 API_KEY = "CRU63X7J4COJ46F2"
 
