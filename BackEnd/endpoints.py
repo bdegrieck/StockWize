@@ -1,5 +1,36 @@
-from BackEnd.base import Company, Micro, TechIndicators
 from BackEnd.constants import API_KEY
+
+def get_raw_data(api_url: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Fetch raw data from the Alpha Vantage API.
+
+        :param api_url: The endpoint URL for Alpha Vantage.
+        :param params: The query parameters including the API key, function, etc.
+        :return: The data fetched from Alpha Vantage as a dictionary.
+        :raises ValueError: If an invalid response is received or there is an error.
+        """
+        try:
+            # Send a GET request to the API endpoint with the parameters
+            response = requests.get(api_url, params=params)
+            
+            # Check if the response status is OK (200)
+            if response.status_code == 200:
+                # Convert response to JSON
+                data = response.json()
+                
+                # Check if there's an error message in the API response itself
+                if 'Error Message' in data:
+                    raise ValueError(f"API Error: {data['Error Message']}")
+                
+                return data
+            else:
+                # Handle non-200 responses
+                raise ValueError(f"Failed to fetch data: {response.status_code}, {response.text}")
+        
+        except requests.RequestException as e:
+            # Handle connection errors, timeouts, etc.
+            raise ValueError(f"An error occurred while fetching data: {str(e)}")
+
 
 
 class CompanyEndpoints(Company):
@@ -111,3 +142,7 @@ class TechIndEndpoints(TechIndicators):
     @property
     def adx(self):
         return f'https://www.alphavantage.co/query?function=ADX&symbol={self.ticker}&interval=daily&time_period=10&apikey={API_KEY}&datatype=json'
+    
+
+    
+    
