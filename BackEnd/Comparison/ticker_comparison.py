@@ -1,6 +1,6 @@
 from typing import Dict
-from BackEnd.endpoints import CompanyEndpoints
-from BackEnd.helpers import get_raw_data
+from BackEnd.Data.endpoints import CompanyEndpoints
+from BackEnd.Data.helpers import get_raw_data
 
 
 class TickerComparison:

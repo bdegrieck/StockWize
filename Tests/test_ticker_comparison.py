@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch
-from BackEnd.ticker_comparison import TickerComparison
+from BackEnd.Comparison.ticker_comparison import TickerComparison
 
 # Mock data for the test
 mock_data_ticker1 = {

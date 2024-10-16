@@ -1,7 +1,7 @@
 from typing import Any
 
 from BackEnd.constants import AlphaVantage
-from BackEnd.helpers import get_raw_data
+from BackEnd.Data.helpers import get_raw_data
 
 
 class News:

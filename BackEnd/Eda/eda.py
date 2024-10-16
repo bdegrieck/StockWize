@@ -1,6 +1,10 @@
 import pandas as pd
 from statsmodels.tsa.seasonal import MSTL
-from BackEnd.plot import plot, Graph
+from statsmodels.tsa.stattools import acf, pacf
+
+from BackEnd.Eda.helpers import CorrelationData, ConfidenceIntervalBounds
+from BackEnd.Eda.plot import plot, MSTLGraph
+from BackEnd.constants import Finance
 
 
 class Eda:
@@ -20,28 +24,28 @@ class Eda:
         seasonal_365 = model.seasonal["seasonal_365"]
 
         graphs = [
-            Graph(
+            MSTLGraph(
                 xaxis_data=pd.Series(trend.index),
                 yaxis_data=trend,
                 x_title="Date",
                 y_title="Trend",
                 title="Trend stock"
             ),
-            Graph(
+            MSTLGraph(
                 xaxis_data=pd.Series(seasonal_7.index),
                 yaxis_data=seasonal_7,
                 x_title="Date",
                 y_title="Seasonal 7",
                 title="Seasonal Weekly"
             ),
-            Graph(
+            MSTLGraph(
                 xaxis_data=pd.Series(seasonal_30.index),
                 yaxis_data=seasonal_30,
                 x_title="Date",
                 y_title="Seasonal 30",
                 title="Seasonal Monthly"
             ),
-            Graph(
+            MSTLGraph(
                 xaxis_data=pd.Series(seasonal_365.index),
                 yaxis_data=seasonal_365,
                 x_title="Date",
@@ -54,3 +58,27 @@ class Eda:
         fig = plot(graphs=graphs, main_title=main_title)
 
         return fig
+
+    @property
+    def acf(self) -> CorrelationData:
+        acf_coef = acf(self.time_series_data[Finance.close], alpha=.05)
+        acf_data = CorrelationData(
+            coefficients=acf_coef[0],
+            confidence_interval=ConfidenceIntervalBounds(
+                lower_bound=acf_coef[1][:, 0],
+                upper_bound=acf_coef[1][:, 1]
+            )
+        )
+        return acf_data
+
+    @property
+    def pacf(self) -> CorrelationData:
+        pacf_coef = pacf(self.time_series_data[Finance.close], alpha=.05)
+        pacf_data = CorrelationData(
+            coefficients=pacf_coef[0],
+            confidence_interval=ConfidenceIntervalBounds(
+                lower_bound=pacf_coef[1][:, 0],
+                upper_bound=pacf_coef[1][:, 1]
+            )
+        )
+        return pacf_data

@@ -1,8 +1,8 @@
 import pandas as pd
-from BackEnd.endpoints import CompanyEndpoints, MicroEndpoints, TechIndEndpoints, CalenderEndpoints
+from BackEnd.Data.endpoints import CompanyEndpoints, MicroEndpoints, TechIndEndpoints, CalenderEndpoints
 from BackEnd.constants import Finance, AlphaVantage, AllowedOrientations
-from BackEnd.helpers import get_data_df, get_raw_api_csv_df
-from BackEnd.news import News
+from BackEnd.Data.helpers import get_data_df, get_raw_api_csv_df
+from BackEnd.News.news import News
 
 
 class CompanyData(CompanyEndpoints):
@@ -40,7 +40,6 @@ class CompanyData(CompanyEndpoints):
         df = df[columns]
         return df
 
-    # TODO market cap
     @property
     def overview(self) -> pd.DataFrame:
         endpoint = super().overview

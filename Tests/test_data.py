@@ -1,5 +1,4 @@
-from BackEnd.data import CompanyData, MicroData, TechIndData
-from BackEnd.endpoints import CompanyEndpoints, TechIndEndpoints
+from BackEnd.Data.data import CompanyData, MicroData, TechIndData
 
 
 class TestCompanyData:

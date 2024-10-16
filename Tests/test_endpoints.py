@@ -1,5 +1,5 @@
 import requests
-from BackEnd.endpoints import CompanyEndpoints, MicroEndpoints, CalenderEndpoints, TechIndEndpoints
+from BackEnd.Data.endpoints import CompanyEndpoints, MicroEndpoints, CalenderEndpoints, TechIndEndpoints
 
 class TestEndpoints:
 
