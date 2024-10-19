@@ -85,7 +85,6 @@ def get_data_df(endpoint: str, key: Optional[str] = None, orient: Optional[Allow
     except ValueError as e:
             df = pd.DataFrame(raw_data, index=[0])
             print(e)
-    df = format_df(df=df)
     return df
 
 

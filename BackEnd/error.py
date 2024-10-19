@@ -1,4 +1,5 @@
 from BackEnd.Data.base import StockWizeException
+from BackEnd.constants import Inequality
 
 
 class TickerError(Exception):
@@ -30,14 +31,16 @@ class ColumnError(StockWizeException):
     def message(self):
         return f"Invalid column: {self.error_column}, allowed columns are: {self.allowed_columns}"
 
-class ArrayShapeError(StockWizeException):
-    def __init__(self, array_size: int, allowed_size: int):
-        self.array_size = array_size
+
+class ShapeError(StockWizeException):
+    def __init__(self, inputted_size: int, allowed_size: int, inequality: Inequality):
+        self.inputted_size = inputted_size
         self.allowed_size = allowed_size
+        self.inequality = inequality
 
     def __str__(self):
         return self.message
 
     @property
     def message(self):
-        return f"Invalid array size inputted: {self.array_size}, allowed size is: {self.allowed_size}"
+        return f"Invalid size inputted: {self.inputted_size}, allowed size is {self.inequality}: {self.allowed_size}"

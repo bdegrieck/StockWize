@@ -1,7 +1,7 @@
 import pandas as pd
 from BackEnd.Data.endpoints import CompanyEndpoints, MicroEndpoints, TechIndEndpoints, CalenderEndpoints
-from BackEnd.constants import Finance, AlphaVantage, AllowedOrientations
-from BackEnd.Data.helpers import get_data_df, get_raw_api_csv_df
+from BackEnd.constants import Finance, AlphaVantage, AllowedOrientations, MicroEconomic, TechnicalIndicators
+from BackEnd.Data.helpers import get_data_df, get_raw_api_csv_df, format_df
 from BackEnd.News.news import News
 
 
@@ -88,6 +88,8 @@ class MicroData(MicroEndpoints):
         endpoint = super().real_gdp
         key = AlphaVantage.data
         df = get_data_df(endpoint=endpoint, key=key)
+        columns_renamed = {"date": Finance.date, "value": MicroEconomic.real_gdp}
+        df = df.rename(columns=columns_renamed)
         return df
 
     @property
@@ -95,6 +97,8 @@ class MicroData(MicroEndpoints):
         endpoint = super().cpi
         key = AlphaVantage.data
         df = get_data_df(endpoint=endpoint, key=key)
+        columns_renamed = {"date": Finance.date, "value": MicroEconomic.cpi}
+        df = df.rename(columns=columns_renamed)
         return df
 
     @property
@@ -102,6 +106,8 @@ class MicroData(MicroEndpoints):
         endpoint = super().inflation
         key = AlphaVantage.data
         df = get_data_df(endpoint=endpoint, key=key)
+        columns_renamed = {"date": Finance.date, "value": MicroEconomic.inflation}
+        df = df.rename(columns=columns_renamed)
         return df
 
     @property
@@ -109,6 +115,8 @@ class MicroData(MicroEndpoints):
         endpoint = super().federal_funds_rate
         key = AlphaVantage.data
         df = get_data_df(endpoint=endpoint, key=key)
+        columns_renamed = {"date": Finance.date, "value": MicroEconomic.interest_rates}
+        df = df.rename(columns=columns_renamed)
         return df
 
     @property
@@ -116,6 +124,8 @@ class MicroData(MicroEndpoints):
         endpoint = super().retail_sales
         key = AlphaVantage.data
         df = get_data_df(endpoint=endpoint, key=key)
+        columns_renamed = {"date": Finance.date, "value": MicroEconomic.retail_sales}
+        df = df.rename(columns=columns_renamed)
         return df
 
     @property
@@ -123,6 +133,8 @@ class MicroData(MicroEndpoints):
         endpoint = super().unemployment_rate
         key = AlphaVantage.data
         df = get_data_df(endpoint=endpoint, key=key)
+        columns_renamed = {"date": Finance.date, "value": MicroEconomic.unemployment_rate}
+        df = df.rename(columns=columns_renamed)
         return df
 
 
@@ -135,40 +147,64 @@ class TechIndData(TechIndEndpoints):
     def sma(self) -> pd.DataFrame:
         endpoint = super().sma
         key = AlphaVantage.sma
-        df = get_data_df(endpoint=endpoint, key=key)
-        df = df.transpose()
+        orient = AllowedOrientations.index
+        df = get_data_df(endpoint=endpoint, key=key, orient=orient)
+        df.reset_index(inplace=True, names=Finance.date)
+        df = format_df(df=df)
+        columns_renamed = {"SMA": TechnicalIndicators.sma}
+        df = df.rename(columns=columns_renamed)
         return df
 
     @property
     def ema(self) -> pd.DataFrame:
         endpoint = super().ema
         key = AlphaVantage.ema
-        df = get_data_df(endpoint=endpoint, key=key)
-        df = df.transpose()
+        orient = AllowedOrientations.index
+        df = get_data_df(endpoint=endpoint, key=key, orient=orient)
+        df.reset_index(inplace=True, names=Finance.date)
+        df = format_df(df=df)
+        columns_renamed = {"EMA": TechnicalIndicators.ema}
+        df = df.rename(columns=columns_renamed)
         return df
 
     @property
     def rsi(self) -> pd.DataFrame:
         endpoint = super().rsi
         key = AlphaVantage.rsi
-        df = get_data_df(endpoint=endpoint, key=key)
-        df = df.transpose()
+        orient = AllowedOrientations.index
+        df = get_data_df(endpoint=endpoint, key=key, orient=orient)
+        df.reset_index(inplace=True, names=Finance.date)
+        df = format_df(df=df)
+        columns_renamed = {"RSI": TechnicalIndicators.rsi}
+        df = df.rename(columns=columns_renamed)
         return df
 
     @property
     def bbands(self) -> pd.DataFrame:
         endpoint = super().bbands
         key = AlphaVantage.bbands
-        df = get_data_df(endpoint=endpoint, key=key)
-        df = df.transpose()
+        orient = AllowedOrientations.index
+        df = get_data_df(endpoint=endpoint, key=key, orient=orient)
+        df.reset_index(inplace=True, names=Finance.date)
+        df = format_df(df=df)
+        columns_renamed = {
+            "Real Upper Band": TechnicalIndicators.bbands_upper,
+            "Real Middle Band": TechnicalIndicators.bbands_middle,
+            "Real Lower Band": TechnicalIndicators.bbands_lower
+        }
+        df = df.rename(columns=columns_renamed)
         return df
 
     @property
     def adx(self) -> pd.DataFrame:
         endpoint = super().adx
         key = AlphaVantage.adx
-        df = get_data_df(endpoint=endpoint, key=key)
-        df = df.transpose()
+        orient = AllowedOrientations.index
+        df = get_data_df(endpoint=endpoint, key=key, orient=orient)
+        df.reset_index(inplace=True, names=Finance.date)
+        df = format_df(df=df)
+        columns_renamed = {"ADX": TechnicalIndicators.adx}
+        df = df.rename(columns=columns_renamed)
         return df
 
 

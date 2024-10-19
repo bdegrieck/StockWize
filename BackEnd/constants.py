@@ -42,6 +42,30 @@ class Finance:
     date = "Date"
     market_cap = "MarketCapitalization"
 
+class MicroEconomic:
+    real_gdp = "Real GDP"
+    cpi = "Cpi"
+    inflation = "Inflation"
+    interest_rates = "Interest Rates"
+    retail_sales = "Retail Sales"
+    unemployment_rate = "Unemployment Rate"
+
+class TechnicalIndicators:
+    sma = "Sma"
+    ema = "Ema"
+    rsi = "Rsi"
+    bbands_lower = "Lower Band"
+    bbands_upper = "Upper Band"
+    bbands_middle = "Middle Band"
+    adx = "Adx"
+
 class AllowedOrientations(StringEnum):
     index = "index"
     columns = "columns"
+
+class Inequality(StringEnum):
+    lt = "<"
+    lt_equal_to = "<="
+    gt = ">"
+    gt_equal_to = ">="
+    equal = "="
