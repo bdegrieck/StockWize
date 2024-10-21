@@ -1,6 +1,7 @@
 from typing import Any
-from pydantic import BaseModel
-from pydantic.v1 import validator
+
+from pydantic.v1 import validator, BaseModel
+
 from BackEnd.error import TickerError
 
 

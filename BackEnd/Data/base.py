@@ -126,4 +126,26 @@ class TechIndicators(ABC):
         pass
 
 class StringEnum(str, Enum):
+    """
+    String Enum class
+    """
     pass
+
+
+class StockWizeException(Exception, ABC):
+
+    @abstractmethod
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def __str__(self):
+        pass
+
+    @property
+    @abstractmethod
+    def message(self):
+        """
+        Returns the message of the error raised
+        """
+        pass

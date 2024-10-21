@@ -1,4 +1,4 @@
-from BackEnd.base import Company, Micro, TechIndicators
+from BackEnd.Data.base import Company, Micro, TechIndicators
 from BackEnd.constants import API_KEY
 
 
@@ -111,7 +111,3 @@ class TechIndEndpoints(TechIndicators):
     @property
     def adx(self):
         return f'https://www.alphavantage.co/query?function=ADX&symbol={self.ticker}&interval=daily&time_period=10&apikey={API_KEY}&datatype=json'
-    
-
-    
-    

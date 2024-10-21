@@ -1,7 +1,8 @@
+from typing import Any, Optional
+
 import numpy as np
 import pandas as pd
 import requests
-from typing import Any, Optional
 
 from BackEnd.constants import AllowedOrientations
 from BackEnd.error import EndpointError
@@ -27,7 +28,7 @@ def get_raw_data(endpoint: str) -> dict[str, Any]:
 
 def format_df(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Formats the date columns as pd.datetime and converts values to floats
+    Converts column values to floats
 
     Args:
         df (pd.DataFrame): dataframe of the raw data
@@ -38,13 +39,8 @@ def format_df(df: pd.DataFrame) -> pd.DataFrame:
     for column in columns:
         try:
             df[column] = df[column].astype("float")
+        except:
             continue
-        except:
-            pass
-        try:
-            df[column] = pd.to_datetime(df[column], format="%d/%m/%Y")
-        except:
-            pass
     df = handle_none(df=df)
     return df
 
@@ -85,7 +81,6 @@ def get_data_df(endpoint: str, key: Optional[str] = None, orient: Optional[Allow
     except ValueError as e:
             df = pd.DataFrame(raw_data, index=[0])
             print(e)
-    df = format_df(df=df)
     return df
 
 
