@@ -113,7 +113,7 @@ class Arima:
         return forecast_df
 
     @staticmethod
-    def _get_significant_lags(correlation_data: CorrelationData):
+    def _get_significant_lags(correlation_data: CorrelationData) -> list[int]:
         """
         Args:
             correlation_data: Coefficients and confidence intervals from acf and pacf calculations
