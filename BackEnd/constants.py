@@ -41,6 +41,7 @@ class Finance:
     surprise_percentage = "surprisePercentage"
     date = "Date"
     market_cap = "MarketCapitalization"
+    forecast = "Forecast"
 
 class MicroEconomic:
     real_gdp = "Real GDP"

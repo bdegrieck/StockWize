@@ -5,6 +5,7 @@ from pydantic.v1 import validator
 from BackEnd.constants import Inequality
 from BackEnd.error import ShapeError
 
+
 class ConfidenceIntervalBounds(BaseModel):
     """
     lower_bounds: lower bounds of the coefficients

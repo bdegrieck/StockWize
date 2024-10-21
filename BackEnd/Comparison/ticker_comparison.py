@@ -1,4 +1,5 @@
 from typing import Dict
+
 from BackEnd.Data.endpoints import CompanyEndpoints
 from BackEnd.Data.helpers import get_raw_data
 

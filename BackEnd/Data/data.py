@@ -1,8 +1,9 @@
 import pandas as pd
+
 from BackEnd.Data.endpoints import CompanyEndpoints, MicroEndpoints, TechIndEndpoints, CalenderEndpoints
-from BackEnd.constants import Finance, AlphaVantage, AllowedOrientations, MicroEconomic, TechnicalIndicators
 from BackEnd.Data.helpers import get_data_df, get_raw_api_csv_df, format_df
 from BackEnd.News.news import News
+from BackEnd.constants import Finance, AlphaVantage, AllowedOrientations, MicroEconomic, TechnicalIndicators
 
 
 class CompanyData(CompanyEndpoints):
@@ -36,6 +37,7 @@ class CompanyData(CompanyEndpoints):
         }
         df = get_data_df(endpoint=endpoint, key=key, orient=AllowedOrientations.index)
         df.reset_index(inplace=True, names=Finance.date)
+        df = format_df(df=df)
         df.rename(columns=renamed_columns, inplace=True)
         df = df[columns]
         return df
@@ -45,6 +47,7 @@ class CompanyData(CompanyEndpoints):
         endpoint = super().overview
         columns = [Finance.symbol, Finance.name, Finance.description, Finance.year_high, Finance.year_low, Finance.market_cap]
         df = get_data_df(endpoint=endpoint)
+        df = format_df(df=df)
         df = df[columns]
         return df
 
@@ -54,6 +57,7 @@ class CompanyData(CompanyEndpoints):
         columns = [Finance.fiscal_dates, Finance.total_revenue, Finance.profit]
         key = AlphaVantage.quarterly_reports_dict
         df = get_data_df(endpoint=endpoint, key=key)
+        df = format_df(df=df)
         df = df[columns]
         return df
 
@@ -63,6 +67,7 @@ class CompanyData(CompanyEndpoints):
         key = AlphaVantage.quarterly_reports_dict
         columns = [Finance.fiscal_dates, Finance.operating_cash_flow, Finance.from_financing_cash_flow, Finance.from_investment_cash_flow]
         df = get_data_df(endpoint=endpoint, key=key)
+        df = format_df(df=df)
         df = df[columns]
         return df
 
@@ -72,6 +77,7 @@ class CompanyData(CompanyEndpoints):
         key = AlphaVantage.quarterly_earnings_dict
         columns = [Finance.fiscal_dates, Finance.report_dates, Finance.reported_eps, Finance.estimated_eps, Finance.surprise_percentage]
         df = get_data_df(endpoint=endpoint, key=key)
+        df = format_df(df=df)
         df = df[columns]
         return df
 

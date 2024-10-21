@@ -1,8 +1,9 @@
 import pandas as pd
-from plotly.subplots import make_subplots
-from pydantic.v1 import BaseModel
 import plotly.graph_objects as go
 import statsmodels.api as sma
+from plotly.subplots import make_subplots
+from pydantic.v1 import BaseModel
+
 
 class MSTLGraph(BaseModel):
     """
