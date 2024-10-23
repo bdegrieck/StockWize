@@ -35,6 +35,5 @@ class News:
         """
         raw_news_data = get_raw_data(endpoint=self.endpoint)
         feed = raw_news_data.get(AlphaVantage.feed)
-        sorted_articles_latest = feed[::-1]
-        article = News.get_most_relevant_article(feed=sorted_articles_latest, ticker=self.ticker)
+        article = News.get_most_relevant_article(feed=feed, ticker=self.ticker)
         return article

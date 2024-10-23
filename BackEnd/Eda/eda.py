@@ -58,7 +58,6 @@ class Eda:
         self.time_series_data = time_series_data
         self.ticker = ticker
 
-    @property
     def mstl(self, value_column: str):
         """
 
@@ -107,7 +106,7 @@ class Eda:
             )
         ]
 
-        main_title = f"Closing Prices MSTL of {self.ticker}"
+        main_title = f"Trend and Seasonal Trends of {self.ticker}"
         fig = plot(graphs=graphs, main_title=main_title)
 
         return fig

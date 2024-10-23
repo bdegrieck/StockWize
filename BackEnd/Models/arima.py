@@ -66,7 +66,7 @@ class Arima:
             df = df.iloc[-1000:]
 
         ar_lags = get_pacf(df=df, value_column=self.value_column, alpha=0.05)
-        ma_lags = get_acf(df=df, value_column=self.value_column, alpha=.05)
+        ma_lags = get_acf(df=df, value_column=self.value_column, alpha=0.05)
         sig_lags_ar = Arima._get_significant_lags(correlation_data=ar_lags)
         sig_lags_ma = Arima._get_significant_lags(correlation_data=ma_lags)
 
