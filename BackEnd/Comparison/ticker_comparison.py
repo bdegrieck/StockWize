@@ -1,5 +1,7 @@
 from typing import Dict
-from BackEnd.endpoints import CompanyEndpoints, get_raw_data
+import pandas as pd
+from Data.endpoints import CompanyEndpoints, get_raw_data
+from BackEnd.constants import Finance
 
 class TickerComparison:
     
@@ -7,33 +9,28 @@ class TickerComparison:
         self.ticker1 = ticker1
         self.ticker2 = ticker2
 
-    def fetch_company_data(self, ticker: str) -> Dict[str, float]:
+    def fetch_company_data(self, ticker: str) -> pd.DataFrame:
         """
-        Fetch and return the required data for comparison for a given ticker.
+        Fetch and return the required data for comparison for a given ticker as a DataFrame.
         """
         endpoints = CompanyEndpoints(ticker)
         overview_data = get_raw_data(endpoints.overview, {})
         time_series_data = get_raw_data(endpoints.time_series, {})
+        income_statement_data = get_raw_data(endpoints.income_statement, {})
 
-        # Debugging: Print the raw data for better inspection
-        print(f"Overview Data for {ticker}: {overview_data}")
-        print(f"Time Series Data for {ticker}: {time_series_data}")
-        
         # Extract relevant metrics
         market_cap = float(overview_data.get("MarketCapitalization", "0").replace(",", ""))
         eps = float(overview_data.get("EPS", 0))
-        latest_date = max(time_series_data["Time Series (Daily)"].keys())
-        stock_price = float(time_series_data["Time Series (Daily)"][latest_date]["4. close"])
+        latest_date = max(time_series_data[Finance.time_series_dict].keys())
+        stock_price = float(time_series_data[Finance.time_series_dict][latest_date][Finance.close])
         
         # Extract financial data
-        income_statement_data = get_raw_data(endpoints.income_statement, {})
-        annual_reports = income_statement_data.get("annualReports", [])
-        print(f"Income Statement Data for {ticker}: {income_statement_data}")
-
+        annual_reports = income_statement_data.get(Finance.quarterly_reports_dict, [])
+        
         if annual_reports:
             latest_report = annual_reports[0]  # Assume sorted by fiscal year
-            revenue = float(latest_report.get("totalRevenue", 0).replace(",", ""))
-            profit = float(latest_report.get("netIncome", 0).replace(",", ""))
+            revenue = float(latest_report.get(Finance.total_revenue, 0).replace(",", ""))
+            profit = float(latest_report.get(Finance.profit, 0).replace(",", ""))
         else:
             revenue = 0
             profit = 0
@@ -41,36 +38,40 @@ class TickerComparison:
         # Calculate price per earnings (PPE)
         ppe = stock_price / eps if eps else 0
 
-        return {
-            "market_cap": market_cap,
-            "stock_price": stock_price,
-            "eps": eps,
-            "revenue": revenue,
-            "profit": profit,
-            "ppe": ppe
+        # Convert to DataFrame
+        data = {
+            Finance.market_cap: [market_cap],
+            Finance.close: [stock_price],
+            Finance.reported_eps: [eps],
+            Finance.total_revenue: [revenue],
+            Finance.profit: [profit],
+            "ppe": [ppe]
         }
 
-    def compare_tickers(self) -> Dict[str, Dict[str, float]]:
+        return pd.DataFrame(data)
+
+    def compare_tickers(self) -> pd.DataFrame:
         """
-        Fetch data for both tickers and provide a comparison.
+        Fetch data for both tickers and provide a comparison using DataFrames.
         """
         data_ticker1 = self.fetch_company_data(self.ticker1)
         data_ticker2 = self.fetch_company_data(self.ticker2)
 
-        print(f"Data for {self.ticker1}: {data_ticker1}")
-        print(f"Data for {self.ticker2}: {data_ticker2}")
-        
-        comparison = {
-            "ticker1": data_ticker1,
-            "ticker2": data_ticker2,
-            "difference": {
-                "market_cap": data_ticker1["market_cap"] - data_ticker2["market_cap"],
-                "stock_price": data_ticker1["stock_price"] - data_ticker2["stock_price"],
-                "eps": data_ticker1["eps"] - data_ticker2["eps"],
-                "revenue": data_ticker1["revenue"] - data_ticker2["revenue"],
-                "profit": data_ticker1["profit"] - data_ticker2["profit"],
-                "ppe": data_ticker1["ppe"] - data_ticker2["ppe"]
-            }
+        # Calculate differences and round the values for consistency
+        difference = {
+            Finance.market_cap: round(data_ticker1[Finance.market_cap].iloc[0] - data_ticker2[Finance.market_cap].iloc[0], 2),
+            Finance.close: round(data_ticker1[Finance.close].iloc[0] - data_ticker2[Finance.close].iloc[0], 2),
+            Finance.reported_eps: round(data_ticker1[Finance.reported_eps].iloc[0] - data_ticker2[Finance.reported_eps].iloc[0], 2),
+            Finance.total_revenue: round(data_ticker1[Finance.total_revenue].iloc[0] - data_ticker2[Finance.total_revenue].iloc[0], 2),
+            Finance.profit: round(data_ticker1[Finance.profit].iloc[0] - data_ticker2[Finance.profit].iloc[0], 2),
+            "ppe": round(data_ticker1["ppe"].iloc[0] - data_ticker2["ppe"].iloc[0], 2)
         }
-        
-        return comparison
+
+        # Combine into a DataFrame
+        comparison_df = pd.DataFrame({
+            "Ticker1": data_ticker1.iloc[0],
+            "Ticker2": data_ticker2.iloc[0],
+            "Difference": difference
+        })
+
+        return comparison_df
