@@ -1,7 +1,9 @@
 from typing import Any
 
+import requests
 from pydantic.v1 import validator, BaseModel
 
+from BackEnd.constants import AlphaVantage, API_KEY
 from BackEnd.error import TickerError
 
 
@@ -31,19 +33,26 @@ class ValidTickerType(BaseModel):
             raise TickerError(msg=message)
 
 
-def get_ticker_symbol_from_keyword(keyword_data: dict[str, Any]) -> str:
+def validate_ticker(symbol: str) -> str:
     """
     Method to get a ticker symbol from a dictionary of keyword matches from the api
 
     Args:
-        keyword_data (dict[str, Any]): dictionary of a list of tickers that are most relevant to the keyword
+        input (str): Input from the user
     Returns:
         ticker (str): ticker of the closest match
     """
+    endpoint = f'https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords={symbol}&apikey={API_KEY}datatype=json'
+    response = requests.get(endpoint)
+    keyword_data = response.json()
     try:
-        matches = keyword_data.get("bestMatches")
+        matches = keyword_data.get(AlphaVantage.best_matches)
         for match in matches:
-            meta_data = ValidTickerType(currency=match.get("8. currency"), region=match.get("4. region"), ticker=match.get("1. symbol"))
+            meta_data = ValidTickerType(
+                currency=match.get(AlphaVantage.currency),
+                region=match.get(AlphaVantage.region),
+                ticker=match.get(AlphaVantage.symbol)
+            )
             ticker = meta_data.ticker
             return ticker
     except TickerError as e:

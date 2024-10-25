@@ -5,6 +5,10 @@ API_KEY = "CRU63X7J4COJ46F2"
 
 class AlphaVantage:
     quarterly_reports_dict = "quarterlyReports"
+    symbol = "1. symbol"
+    currency = "8. currency"
+    region = "4. region"
+    best_matches = "bestMatches"
     time_series_dict = "Time Series (Daily)"
     quarterly_earnings_dict = "quarterlyEarnings"
     feed = "feed"
