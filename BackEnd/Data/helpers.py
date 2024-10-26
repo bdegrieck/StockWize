@@ -41,7 +41,6 @@ def format_df(df: pd.DataFrame) -> pd.DataFrame:
             df[column] = df[column].astype("float")
         except:
             continue
-    df = handle_none(df=df)
     return df
 
 
