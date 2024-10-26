@@ -5,6 +5,11 @@ from BackEnd.Data.helpers import get_data_df, get_raw_api_csv_df, format_df
 from BackEnd.News.news import News
 from BackEnd.constants import Finance, AlphaVantage, AllowedOrientations, MicroEconomic, TechnicalIndicators
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # Load variables from .env file into the environment
+
 
 class CompanyData(CompanyEndpoints):
 

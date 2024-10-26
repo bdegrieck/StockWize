@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Optional
 
 import requests
 from pydantic.v1 import validator, BaseModel
@@ -14,49 +14,28 @@ class AllowedTickerType:
 
 
 class ValidTickerType(BaseModel):
-    currency: str   # currency of stock ex: USD
-    region: str     # country of the stock ex: United States
-    ticker: str    # inputted keyword
+    currency: Optional[str] = None
+    region: Optional[str] = None
+    ticker: Optional[str] = None # Keeps track of overall validity
+    valid: bool = True
 
-    @validator("currency", "region", "ticker")
-    def validate_ticker(cls, currency, region, ticker):
-        if region != AllowedTickerType.region:
-            message = f"Your input: {ticker} is not supported because it is a foreign stock in region {region}"
-            raise TickerError(msg=message)
+    @validator("currency", "region", "ticker", pre=True, each_item=True)
+    def validate_ticker(cls, v, field):
+        if field.name == "region" and v != AllowedTickerType.region:
+            return None
 
-        if AllowedTickerType.invalid_char in ticker:
-            message = f"Your input: {ticker} is not supported because it is a foreign stock symbol {AllowedTickerType.invalid_char}"
-            raise TickerError(msg=message)
+        if field.name == "ticker" and AllowedTickerType.invalid_char in v:
+            return None
 
-        if currency != AllowedTickerType.currency:
-            message = f"Your input: {ticker} is not supported because it is a foreign stock with currency {currency}"
-            raise TickerError(msg=message)
+        if field.name == "currency" and v != AllowedTickerType.currency:
+            return None
 
+        return v
 
-def validate_ticker(symbol: str) -> str:
-    """
-    Method to get a ticker symbol from a dictionary of keyword matches from the api
-
-    Args:
-        input (str): Input from the user
-    Returns:
-        ticker (str): ticker of the closest match
-    """
-    endpoint = f'https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords={symbol}&apikey={API_KEY}datatype=json'
-    response = requests.get(endpoint)
-    keyword_data = response.json()
-    try:
-        matches = keyword_data.get(AlphaVantage.best_matches)
-        for match in matches:
-            meta_data = ValidTickerType(
-                currency=match.get(AlphaVantage.currency),
-                region=match.get(AlphaVantage.region),
-                ticker=match.get(AlphaVantage.symbol)
-            )
-            ticker = meta_data.ticker
-            return ticker
-    except TickerError as e:
-        return f"Error: {e.message}"
+    def __post_init__(self):
+        # If any field is None due to validation, mark as invalid
+        if not all([self.currency, self.region, self.ticker]):
+            self.valid = False
 
 
 def check_extraneous_tickers(input_name: str):
@@ -85,3 +64,36 @@ def check_extraneous_tickers(input_name: str):
     }
     if input_name in extraneous_tickers.keys():
         return extraneous_tickers[input_name]
+
+
+def validate_ticker(symbol: str) -> str:
+    """
+    Method to get a ticker symbol from a dictionary of keyword matches from the api
+
+    Args:
+        symbol (str): Input from the user
+    Returns:
+        ticker (str): ticker of the closest match
+    """
+    symbol = symbol.lower()
+    extraneous_ticker = check_extraneous_tickers(input_name=symbol)
+    if extraneous_ticker is not None:
+        return extraneous_ticker
+
+    endpoint = f'https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords={symbol}&apikey={API_KEY}'
+    response = requests.get(endpoint)
+    keyword_data = response.json()
+    matches = keyword_data.get(AlphaVantage.best_matches)
+    for match in matches:
+        meta_data = ValidTickerType(
+            currency=match.get(AlphaVantage.currency),
+            region=match.get(AlphaVantage.region),
+            ticker=match.get(AlphaVantage.symbol)
+        )
+        if meta_data is not None:
+            ticker = meta_data.ticker
+            return ticker
+
+    # If a ticker isn't returned
+    raise TickerError(input=symbol)
+

@@ -3,9 +3,15 @@ from BackEnd.constants import Inequality
 
 
 class TickerError(Exception):
-    def __init__(self, msg: str):
-        self.message = msg
-        super().__init__(self.message)
+    def __init__(self, input: str):
+        self.input = input
+
+    def __str__(self):
+        return self.message
+
+    @property
+    def message(self):
+        return f"Invalid input: {self.input}"
 
 
 class EndpointError(StockWizeException):
