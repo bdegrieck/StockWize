@@ -4,7 +4,7 @@ from flask_restful import Api, Resource
 
 from BackEnd.Data.data import CompanyData
 from BackEnd.constants import Finance
-from BackEnd.validation import validate_ticker, TickerError  # Import TickerError
+from BackEnd.validation import validate_ticker, TickerError
 
 app = Flask(__name__)
 CORS(app)
@@ -17,11 +17,9 @@ class Overview(Resource):
         symbol = request.args.get('company')
         try:
             ticker = validate_ticker(symbol=symbol)
-
-            # Fetch company data
             instance = CompanyData(ticker=ticker)
             overview = instance.overview
-            time_series = instance.time_series.sort_values(by=Finance.date, ascending=True)
+            time_series = instance.time_series.sort_values(by=Finance.date, ascending=False)
 
             if len(time_series) > 700:
                 time_series = time_series.iloc[0:700]
@@ -34,6 +32,7 @@ class Overview(Resource):
                 Finance.date: time_series[Finance.date].to_list(),
                 Finance.close: time_series[Finance.close].to_list()
             }
+
             return jsonify(data)
 
         except TickerError as e:
