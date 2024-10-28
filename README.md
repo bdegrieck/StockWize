@@ -76,5 +76,5 @@ Steps for setting up frontend
 To run app
 
      1) activate your virtual enviroment 
-     2) go to root directory of project
+     2) go to root directory of project in a terminal
      3) type in npm start
