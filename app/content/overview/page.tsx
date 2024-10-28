@@ -4,6 +4,7 @@ import { TextBox, TextBoxContainer } from "@/app/components/TextBox";
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { LineChart } from "@mui/x-charts/LineChart";
+import { NEXT_PUBLIC_CLOSE, NEXT_PUBLIC_DATE, NEXT_PUBLIC_DESCRIPTION, NEXT_PUBLIC_MARKET_CAP, NEXT_PUBLIC_YEAR_HIGH, NEXT_PUBLIC_YEAR_LOW } from "@/app/constants/api_properties";
 
 export default function Overview() {
     const searchParams = useSearchParams();
@@ -31,14 +32,14 @@ export default function Overview() {
                 }
 
                 setData({
-                    high: data[process.env.NEXT_PUBLIC_YEAR_HIGH],
-                    low: data[process.env.NEXT_PUBLIC_YEAR_LOW],
-                    marketCap: data[process.env.NEXT_PUBLIC_MARKET_CAP],
-                    description: data[process.env.NEXT_PUBLIC_DESCRIPTION]
+                    high: data[NEXT_PUBLIC_YEAR_HIGH],
+                    low: data[NEXT_PUBLIC_YEAR_LOW],
+                    marketCap: data[NEXT_PUBLIC_MARKET_CAP],
+                    description: data[NEXT_PUBLIC_DESCRIPTION]
                 });
 
-                const dates = data[process.env.NEXT_PUBLIC_DATE];
-                const closes = data[process.env.NEXT_PUBLIC_CLOSE];
+                const dates = data[NEXT_PUBLIC_DATE];
+                const closes = data[NEXT_PUBLIC_CLOSE];
                 const formattedChartData = dates.map((date, index) => ({
                     date,
                     close: closes[index]
@@ -78,7 +79,7 @@ export default function Overview() {
                         grid={{ vertical: true, horizontal: true }}
                         dataset={chartData}
                         xAxis={[{ scaleType: "point", dataKey: "date" }]}
-                        series={[{ dataKey: "close", color: "#FF0000" }]}
+                        series={[{ dataKey: "close", color: "#FF0000", showMark: false }]}
                     />
                 </>
             )}
