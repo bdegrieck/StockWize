@@ -10,7 +10,6 @@ import Money from "@/app/assets/images/Money.png";
 import News from "@/app/assets/images/News.png";
 import Scale from "@/app/assets/images/Scale.png";
 import Image, { StaticImageData } from "next/image";
-import "./layout.css";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { FormEvent, useState } from "react";
 
@@ -61,10 +60,10 @@ export default function ContentLayout({
         <h1 className="mt-4 mx-3 col-10" style={{ fontWeight: "bold" }}>
           {company}
         </h1>
-        <p style={{ color: "grey" }} className="mx-3 col-10">
+        <p className="mx-3 col-10 text-muted">
           Last Updated Blorptober 32nd
         </p>
-        <div className="flex-grow-1 d-flex flex-column col-11 rounded-end grey align-items-center">
+        <div className="flex-grow-1 d-flex flex-column col-11 rounded-end align-items-center bg-light">
           <NavBarItem
             route="/content/overview"
             company={company}
@@ -123,7 +122,7 @@ export default function ContentLayout({
             onChange={(e) => setQuery(e.target.value)}
           />
         </form>
-        <div className="rounded-start grey shadow h-100 flex-grow-1 p-3">
+        <div className="rounded-start bg-light shadow h-100 flex-grow-1 p-3">
           {content}
         </div>
       </div>
@@ -144,12 +143,14 @@ function NavBarItem({
 }) {
   const href = company === null ? route : `${route}?company=${company}`;
   const pathName = usePathname();
+
+  // Can't seem to bootstrap this style, since it must explicitly be declared as background color.
   const background_color = pathName === route ? "#E8E8E8" : "clear";
   return (
     <Link
       href={href}
       className="mt-2 w-100 d-flex align-items-center justify-content-center"
-      style={{ backgroundColor: background_color }}
+      style={{ backgroundColor: background_color }} 
     >
       <span className="p-2 companyName">{text}</span>
       <Image src={img} alt="StockWize Logo" width={25} />

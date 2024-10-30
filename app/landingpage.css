@@ -1,27 +1,3 @@
-.button {
-    background-color: #F8E371;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: large;
-    border: 1px solid black;
-    padding: .5em;
-  }
-  
-.button:hover {
-  background-color: #ffdf2b;
-}
-
-.title {
-  font-size: 56px;
-  font-weight: bold;
-}
-
-.missionStatement {
-  max-width: 25em;
-  font-size: 24px;
-}
-
-.companyName {
-  font-size: 20px;
-  font-weight: bold;
+p {
+    font-size: 24px;
 }

@@ -9,19 +9,19 @@ export default function Home() {
       <div>
         <div className="p-3">
           <Image src={Logo} alt="StockWize Logo" width={50}  />
-          <span className="p-2 companyName">StockWize</span>
+          <span className="p-2 fw-bold">StockWize</span>
         </div>
         <div className="position-absolute top-50 start-50 translate-middle container-sm">
           <div className='d-flex flex-row justify-content-around'>
             <div id= "textContainer" className="d-flex flex-column">
-              <h1 className="pb-3 title">Empower <br/> Your <br/> Investments</h1>
-              <p className="pb-3 missionStatement">
+              <h1 className="pb-3 fw-bold">Empower <br/> Your <br/> Investments</h1>
+              <p className="pb-3">
                 Stockwise unlocks your financial potential, 
                 empowering you to make smarter investment decisions with ease.
               </p>
               <Link href={'content/overview'}>
-                <button className="p-10 w-100 button">
-                  Search for Stock Tickers & Companies
+                <button className="p-10 w-100 btn btn-primary">
+                   Get Started!
                 </button>
               </Link>
             </div>

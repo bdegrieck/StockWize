@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap');
+
+// Most style variables we want to override will be in node_modules/bootstrap/scss/_variables.scss
+// To find out what variable you need to override, inspect element and find what bootstrap variable is causing undesired appearance.
+// It may not show the exact name. For example, the link color was called "bs-link-color-rgb". Just try overriding some variables
+// that seem like they will be close.
+
+// Any CSS variable overrides will go here. Note these should only be applied if we want them to be the default for the entire website.
+$font-family-base: 'Source Code Pro';
+$link-color: black;
+$link-decoration: none;
+$primary: #F8E371;
+$secondary: #F8F8F8;
+
+@import "bootstrap/scss/bootstrap";
