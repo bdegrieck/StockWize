@@ -14,6 +14,7 @@ import "./layout.css";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { FormEvent, useState } from "react";
 
+//import { motion } from 'framer-motion';
 
 export default function ContentLayout({
   children,
@@ -51,7 +52,10 @@ export default function ContentLayout({
 
   return (
     <>
-      <div className="d-flex flex-column col-3 vh-100 position-absolute pt-3">
+      <div
+        className="d-flex flex-column col-3 vh-100 position-absolute pt-3"
+        style={{ width: 350 }}
+      >
         <Link href="/" className="mx-3">
           <div className="d-flex flex-row align-items-center">
             <Image src={Logo} alt="StockWize Logo" width={50} />
@@ -64,18 +68,12 @@ export default function ContentLayout({
         <p style={{ color: "grey" }} className="mx-3 col-10">
           Last Updated Blorptober 32nd
         </p>
-        <div className="flex-grow-1 d-flex flex-column col-11 rounded-end grey align-items-center">
+        <div className="flex-grow-1 pt-2 d-flex flex-column col-11 rounded-end grey shadow">
           <NavBarItem
             route="/content/overview"
             company={company}
             img={Binoculars}
             text="Overview"
-          />
-          <NavBarItem
-            route="/content/historical"
-            company={company}
-            img={Clock}
-            text="Historical"
           />
           <NavBarItem
             route="/content/forecasted"
@@ -112,10 +110,13 @@ export default function ContentLayout({
           </div>
         </div>
       </div>
-      <div className="col-9 offset-3 d-flex flex-column vh-100">
+      <div
+        className="d-flex flex-column flex-grow-1 vh-100"
+        style={{ marginLeft: 350 }}
+      >
         <form onSubmit={onSubmit} className="">
           <input
-            className="form-control my-3 w-75"
+            className="form-control my-4 w-75 fs-5"
             type="text"
             placeholder="Company or Stock Symbol"
             aria-label="Search"
@@ -148,12 +149,11 @@ function NavBarItem({
   return (
     <Link
       href={href}
-      className="mt-2 w-100 d-flex align-items-center justify-content-center"
+      className="mt-2 w-100 d-flex align-items-center"
       style={{ backgroundColor: background_color }}
     >
+      <Image src={img} alt="StockWize Logo" width={25} className="ms-5 me-2" />
       <span className="p-2 companyName">{text}</span>
-      <Image src={img} alt="StockWize Logo" width={25} />
     </Link>
   );
 }
-
