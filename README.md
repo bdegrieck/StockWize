@@ -66,8 +66,15 @@ Steps for setting up frontend
 
    2) Navigate to the root directory of the project, and run `npm install` (Only need to do this once)
    
-   3) `npm run dev` To start the servr
+   3) `npm start` To start the servr
 
    4) Go to http://localhost:3000. All of the frontend code is in the /app directory (Unfortunately it can't be renamed). Any changes made to the code should be recompiled automatically, and can be viewed by refreshing the browser. This project has been set up with the following specs: Next.JS framework (React with some convenience tooling) Typescript, ESLint, and App Router. 
 
    5) Learn more about Next/React [here](https://nextjs.org/docs/getting-started/project-structure)
+
+
+To run app
+
+     1) activate your virtual enviroment 
+     2) go to root directory of project in a terminal
+     3) type in npm start
