@@ -13,6 +13,8 @@ import Image, { StaticImageData } from "next/image";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { FormEvent, useState } from "react";
 
+import { motion } from "framer-motion";
+
 export default function ContentLayout({
   children,
 }: Readonly<{
@@ -33,9 +35,6 @@ export default function ContentLayout({
       </div>
     ) : (
       <div className="h-100 d-flex flex-column">
-        <p className="fw-bold">
-          {pageName.charAt(0).toUpperCase() + pageName.slice(1)}
-        </p>
         <div className="flex-grow-1 d-flex flex-column">{children}</div>
       </div>
     );
@@ -56,20 +55,19 @@ export default function ContentLayout({
         <Link href="/" className="mx-3">
           <div className="d-flex flex-row align-items-center">
             <Image src={Logo} alt="StockWize Logo" width={50} />
-            <span className="p-2 companyName">StockWize</span>
+            <span className="p-2 fs-5 fw-bold companyName">StockWize</span>
           </div>
         </Link>
-        <h1 className="mt-4 mx-3 col-10" style={{ fontWeight: "bold" }}>
-          {company}
-        </h1>
+        <h1 className="mt-4 mx-3 col-10 fw-bold display-4">{company}</h1>
         <p className="mx-3 col-10 text-muted">Last Updated Blorptober 32nd</p>
-        <div className="flex-grow-1 d-flex flex-column col-11 rounded-end bg-light shadow">
+        <div className="flex-grow-1 d-flex pt-2 flex-column col-11 rounded-end bg-light shadow">
           <NavBarItem
             route="/content/overview"
             company={company}
             img={Binoculars}
             text="Overview"
           />
+
           <NavBarItem
             route="/content/forecasted"
             company={company}
@@ -119,9 +117,14 @@ export default function ContentLayout({
             onChange={(e) => setQuery(e.target.value)}
           />
         </form>
-        <div className="rounded-start bg-light shadow h-100 flex-grow-1 p-3">
+        <motion.div
+          initial={{ opacity: 0, scale: 1 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ ease: "easeInOut", duration: 0.5 }}
+          className="rounded-start bg-light shadow h-100 flex-grow-1 p-4 overflow-auto"
+        >
           {content}
-        </div>
+        </motion.div>
       </div>
     </>
   );
@@ -150,7 +153,7 @@ function NavBarItem({
       style={{ backgroundColor: background_color }}
     >
       <Image src={img} alt="StockWize Logo" width={25} className="ms-5 me-2" />
-      <span className="p-2 companyName">{text}</span>
+      <span className="p-2 fs-5 companyName">{text}</span>
     </Link>
   );
 }

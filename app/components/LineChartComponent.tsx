@@ -1,18 +1,18 @@
 import * as React from "react";
 import { LineChart } from "@mui/x-charts/LineChart";
-import { dataset } from "./basicDataset";
+//import { dataset } from "./basicDataset";
 
-const reversedDataset = [...dataset].reverse();
+//const reversedDataset = [...dataset].reverse();
 
-export default function SimpleLineChart() {
+export default function SimpleLineChart({ sentData }) {
   return (
-    <LineChart
-      width={1250}
-      height={500}
-      grid={{ vertical: true, horizontal: true }}
-      dataset={reversedDataset}
-      xAxis={[{ scaleType: "point", dataKey: "x" }]}
-      series={[{ dataKey: "y", color: "#FF0000" }]}
-    />
+    <div className="card shadow-sm align-items-center w-100 h-75">
+      <LineChart
+        grid={{ horizontal: true }}
+        dataset={[...sentData].reverse()}
+        xAxis={[{ scaleType: "point", dataKey: "date" }]}
+        series={[{ dataKey: "close", color: "#EFBF04", showMark: false }]}
+      />
+    </div>
   );
 }
