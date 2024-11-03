@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { LineChart } from "@mui/x-charts/LineChart";
-import { NEXT_PUBLIC_TREND, NEXT_PUBLIC_SEASONAL_7, NEXT_PUBLIC_DATE, NEXT_PUBLIC_SEASONAL_30, NEXT_PUBLIC_SEASONAL_365 } from "@/app/constants/api_properties";
+import { NEXT_PUBLIC_SYMBOL, NEXT_PUBLIC_TREND, NEXT_PUBLIC_SEASONAL_7, NEXT_PUBLIC_DATE, NEXT_PUBLIC_SEASONAL_30, NEXT_PUBLIC_SEASONAL_365 } from "@/app/constants/api_properties";
 
 export default function Overview() {
     const searchParams = useSearchParams();
@@ -12,6 +12,7 @@ export default function Overview() {
 
     const [data, setData] = useState({
        dates: null,
+       symbol: null,
        trend: null,
        seasonal_7: null,
        seasonal_30: null,
@@ -39,9 +40,11 @@ export default function Overview() {
                 const seasonal_7 = data[NEXT_PUBLIC_SEASONAL_7] || [];
                 const seasonal_30 = data[NEXT_PUBLIC_SEASONAL_30] || [];
                 const seasonal_365 = data[NEXT_PUBLIC_SEASONAL_365] || [];
+                const symbol = data[NEXT_PUBLIC_SYMBOL] || "Unknown Symbol";
 
                 setData({
                     dates,
+                    symbol,
                     trend: trends,
                     seasonal_7,
                     seasonal_30,
@@ -103,10 +106,10 @@ export default function Overview() {
         }
     }, [input]);
 
-    const renderChartOrMessage = (chartData, title) => (
+    const renderChartOrMessage = (chartData, title, symbol) => (
         chartData.length > 0 ? (
             <>
-                <h4>{title}</h4>
+                <h4>{title}: {symbol ? `(${symbol})` : ''}</h4>
                 <LineChart
                     width={1250}
                     height={500}
@@ -132,10 +135,10 @@ export default function Overview() {
                 </div>
             ) : (
                 <>
-                    {renderChartOrMessage(chartTrend, "Trend Chart")}
-                    {renderChartOrMessage(chartSeasonal7, "Seasonal 7-Day Chart")}
-                    {renderChartOrMessage(chartSeasonal30, "Seasonal 30-Day Chart")}
-                    {renderChartOrMessage(chartSeasonal365, "Seasonal 365-Day Chart")}
+                    {renderChartOrMessage(chartTrend, "Trend Chart", data.symbol)}
+                    {renderChartOrMessage(chartSeasonal7, "Seasonal 7-Day Chart", data.symbol)}
+                    {renderChartOrMessage(chartSeasonal30, "Seasonal 30-Day Chart", data.symbol)}
+                    {renderChartOrMessage(chartSeasonal365, "Seasonal 365-Day Chart", data.symbol)}
                 </>
             )}
         </div>

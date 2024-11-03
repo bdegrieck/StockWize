@@ -53,6 +53,7 @@ class EDA(Resource):
                 if len(values) > 1000:
                     values = values.iloc[0: 1000]
                 data[key] = values.to_list()
+            data[Finance.symbol] = ticker
             return jsonify(data)
 
         except TickerError as e:
