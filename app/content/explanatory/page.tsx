@@ -1,6 +1,5 @@
 "use client";
 
-import { TextBox, TextBoxContainer } from "@/app/components/TextBox";
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { LineChart } from "@mui/x-charts/LineChart";
@@ -35,44 +34,62 @@ export default function Overview() {
                     return;
                 }
 
+                const dates = data[NEXT_PUBLIC_DATE] || [];
+                const trends = data[NEXT_PUBLIC_TREND] || [];
+                const seasonal_7 = data[NEXT_PUBLIC_SEASONAL_7] || [];
+                const seasonal_30 = data[NEXT_PUBLIC_SEASONAL_30] || [];
+                const seasonal_365 = data[NEXT_PUBLIC_SEASONAL_365] || [];
+
                 setData({
-                    dates: data[NEXT_PUBLIC_DATE],
-                    trend: data[NEXT_PUBLIC_TREND],
-                    seasonal_7: data[NEXT_PUBLIC_SEASONAL_7],
-                    seasonal_30: data[NEXT_PUBLIC_SEASONAL_30],
-                    seasonal_365: data[NEXT_PUBLIC_SEASONAL_365]
+                    dates,
+                    trend: trends,
+                    seasonal_7,
+                    seasonal_30,
+                    seasonal_365
                 });
 
-                const dates = data[NEXT_PUBLIC_DATE];
-                const trends = data[NEXT_PUBLIC_TREND]
-                const seasonal_7 = data[NEXT_PUBLIC_SEASONAL_7]
-                const seasonal_30 = data[NEXT_PUBLIC_SEASONAL_30]
-                const seasonal_365 = data[NEXT_PUBLIC_SEASONAL_365]
+                if (dates.length > 0) {
+                    setTrendData(
+                        trends.length > 0
+                            ? dates.map((date, index) => ({
+                                  date,
+                                  trend: trends[index] ?? null
+                              }))
+                            : []
+                    );
 
-                const formattedTrendData = dates.map((date, index) => ({
-                    date,
-                    trend: trends[index]
-                }));
+                    setSeasonal7Data(
+                        seasonal_7.length > 0
+                            ? dates.map((date, index) => ({
+                                  date,
+                                  seasonal_7: seasonal_7[index] ?? null
+                              }))
+                            : []
+                    );
 
-                const formattedSeasonal7Data = dates.map((date, index) => ({
-                    date,
-                    seasonal_7: seasonal_7[index]
-                }));
+                    setSeasonal30Data(
+                        seasonal_30.length > 0
+                            ? dates.map((date, index) => ({
+                                  date,
+                                  seasonal_30: seasonal_30[index] ?? null
+                              }))
+                            : []
+                    );
 
-                const formattedSeasonal30Data = dates.map((date, index) => ({
-                    date,
-                    seasonal_30: seasonal_30[index]
-                }));
-
-                const formattedSeasonal365Data = dates.map((date, index) => ({
-                    date,
-                    seasonal_365: seasonal_365[index]
-                }));
-
-                setTrendData(formattedTrendData);
-                setSeasonal7Data(formattedSeasonal7Data);
-                setSeasonal30Data(formattedSeasonal30Data);
-                setSeasonal365Data(formattedSeasonal365Data);
+                    setSeasonal365Data(
+                        seasonal_365.length > 0
+                            ? dates.map((date, index) => ({
+                                  date,
+                                  seasonal_365: seasonal_365[index] ?? null
+                              }))
+                            : []
+                    );
+                } else {
+                    setTrendData([]);
+                    setSeasonal7Data([]);
+                    setSeasonal30Data([]);
+                    setSeasonal365Data([]);
+                }
 
                 setError(null);
             } catch (error) {
@@ -86,6 +103,26 @@ export default function Overview() {
         }
     }, [input]);
 
+    const renderChartOrMessage = (chartData, title) => (
+        chartData.length > 0 ? (
+            <>
+                <h4>{title}</h4>
+                <LineChart
+                    width={1250}
+                    height={500}
+                    grid={{ vertical: true, horizontal: true }}
+                    dataset={chartData}
+                    xAxis={[{ scaleType: "point", dataKey: "date" }]}
+                    series={[{ dataKey: Object.keys(chartData[0])[1], color: "#FF0000", showMark: false }]}
+                />
+            </>
+        ) : (
+            <div style={{ textAlign: 'center', margin: '20px 0', fontStyle: 'italic' }}>
+                No data available for {title}.
+            </div>
+        )
+    );
+
     return (
         <div className="container-fluid h-100 d-flex flex-column gap-3">
             {error ? (
@@ -95,42 +132,10 @@ export default function Overview() {
                 </div>
             ) : (
                 <>
-                    <h4>Trend Chart</h4>
-                    <LineChart
-                        width={1250}
-                        height={500}
-                        grid={{ vertical: true, horizontal: true }}
-                        dataset={chartTrend}
-                        xAxis={[{ scaleType: "point", dataKey: "date" }]}
-                        series={[{ dataKey: "trend", color: "#FF0000", showMark: false }]}
-                    />
-                    <h4>Seasonal 7-Day Chart</h4>
-                    <LineChart
-                        width={1250}
-                        height={500}
-                        grid={{ vertical: true, horizontal: true }}
-                        dataset={chartSeasonal7}
-                        xAxis={[{ scaleType: "point", dataKey: "date" }]}
-                        series={[{ dataKey: "seasonal_7", color: "#FF0000", showMark: false }]}
-                    />
-                    <h4>Seasonal 30-Day Chart</h4>
-                    <LineChart
-                        width={1250}
-                        height={500}
-                        grid={{ vertical: true, horizontal: true }}
-                        dataset={chartSeasonal30}
-                        xAxis={[{ scaleType: "point", dataKey: "date" }]}
-                        series={[{ dataKey: "seasonal_30", color: "#FF0000", showMark: false }]}
-                    />
-                    <h4>Seasonal 365-Day Chart</h4>
-                    <LineChart
-                        width={1250}
-                        height={500}
-                        grid={{ vertical: true, horizontal: true }}
-                        dataset={chartSeasonal365}
-                        xAxis={[{ scaleType: "point", dataKey: "date" }]}
-                        series={[{ dataKey: "seasonal_365", color: "#FF0000", showMark: false }]}
-                    />
+                    {renderChartOrMessage(chartTrend, "Trend Chart")}
+                    {renderChartOrMessage(chartSeasonal7, "Seasonal 7-Day Chart")}
+                    {renderChartOrMessage(chartSeasonal30, "Seasonal 30-Day Chart")}
+                    {renderChartOrMessage(chartSeasonal365, "Seasonal 365-Day Chart")}
                 </>
             )}
         </div>

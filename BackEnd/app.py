@@ -50,8 +50,8 @@ class EDA(Resource):
             eda_instance = Eda(ticker=ticker, time_series_data=time_series)
             data = eda_instance.mstl(value_column=Finance.close)
             for key, values in data.items():
-                if len(values) > 700:
-                    values = values.iloc[0: 700]
+                if len(values) > 1000:
+                    values = values.iloc[0: 1000]
                 data[key] = values.to_list()
             return jsonify(data)
 

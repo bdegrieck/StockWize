@@ -79,9 +79,10 @@ class Eda:
         data = {
             Finance.date: self.time_series_data[Finance.date],
             MstlTerms.TREND: model.trend,
-            MstlTerms.SEASONAL_7: model.seasonal[MstlTerms.SEASONAL_7],
-            MstlTerms.SEASONAL_30: model.seasonal[MstlTerms.SEASONAL_30],
-            MstlTerms.SEASONAL_365: model.seasonal[MstlTerms.SEASONAL_365]
+            MstlTerms.SEASONAL_7: model.seasonal.get(MstlTerms.SEASONAL_7),
+            MstlTerms.SEASONAL_30: model.seasonal.get(MstlTerms.SEASONAL_30),
+            MstlTerms.SEASONAL_365: model.seasonal.get(MstlTerms.SEASONAL_365)
         }
+        data = {k: v for k, v in data.items() if v is not None}
 
         return data
