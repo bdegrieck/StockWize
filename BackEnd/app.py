@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)
 api = Api(app)
 
-
+# TODO handle AAOL
 class Overview(Resource):
     def get(self):
         symbol = request.args.get('company')

@@ -61,6 +61,8 @@ def check_extraneous_tickers(input_name: str):
         "johnson and johnson": "JNJ",
         "coca cola": "KO",
         "mcdonalds": "MCD",
+        "microsoft": "MSFT",
+        "ford": "F"
     }
     if input_name in extraneous_tickers.keys():
         return extraneous_tickers[input_name]
