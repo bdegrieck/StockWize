@@ -8,10 +8,24 @@ export default function SimpleLineChart({ sentData }) {
   return (
     <div className="card shadow-sm align-items-center w-100 h-75">
       <LineChart
-        grid={{ horizontal: true }}
-        dataset={[...sentData].reverse()}
-        xAxis={[{ scaleType: "point", dataKey: "date" }]}
-        series={[{ dataKey: "close", color: "#EFBF04", showMark: false }]}
+        grid={{ vertical: true, horizontal: true }}
+        dataset={sentData}
+        xAxis={[
+          {
+            scaleType: "point",
+            dataKey: "date",
+            tickInterval(value, index) {
+              return index % 25 === 0;
+            },
+          },
+        ]}
+        series={[
+          {
+            dataKey: "close",
+            color: "#EFBF04",
+            showMark: false,
+          },
+        ]}
       />
     </div>
   );

@@ -30,6 +30,15 @@ export default function Overview() {
 
   const [chartData, setChartData] = useState([]);
 
+  // Use to get the company name
+  // function getCompanyName(description: string): string {
+  //   if (!description) return "";
+  //   const tokens = description.split(",");
+  //   return tokens[0].trim();
+  // }
+
+  // const companyName = getCompanyName(data.description);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
