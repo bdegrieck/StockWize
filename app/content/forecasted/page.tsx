@@ -1,6 +1,6 @@
 "use client"
 
-import "./forecasted.css";
+
 import ForecastedGraph from "@/app/components/ForecastedGraph";
 
 export default function Forecasted() {
@@ -9,12 +9,12 @@ export default function Forecasted() {
     return (
         <>
             <p>How many days into the future would you like to predict? Note - The further out, the less accurate the prediction will become!</p>
-            <form className="d-flex flex-row">
+            <div className="d-flex flex-row">
                 <select className="form-select mb-3 me-3" aria-label="Default select example">
                     {options}
                 </select>
-                <button>Submit</button> { /*The css wont work on this button for some reason */}
-            </form>
+                <button className="btn btn-lg btn-primary mb-3">Submit</button>
+            </div>
             <LineGraph />
         </>
     )
