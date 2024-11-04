@@ -2,8 +2,8 @@ from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 from flask_restful import Api, Resource
 
-from BackEnd.Data.data import CompanyData
-from BackEnd.constants import Finance
+from BackEnd.Data.data import CompanyData, MicroData
+from BackEnd.constants import Finance, MicroEconomic
 from BackEnd.validation import validate_ticker, TickerError
 from BackEnd.Eda.eda import Eda
 
@@ -61,6 +61,30 @@ class EDA(Resource):
         except Exception as e:
             return jsonify({"error": "An unexpected error occurred"}), 500
 
+
+class Micro(Resource):
+    def get(self):
+        try:
+            micro_instance = MicroData()
+            data = {
+                MicroEconomic.cpi_date: micro_instance.cpi[Finance.date].to_list(),
+                MicroEconomic.cpi: micro_instance.cpi[MicroEconomic.cpi].to_list(),
+                MicroEconomic.real_gdp: micro_instance.real_gdp[MicroEconomic.real_gdp].to_list(),
+                MicroEconomic.real_gdp_date: micro_instance.real_gdp[Finance.date].to_list(),
+                MicroEconomic.inflation: micro_instance.inflation[MicroEconomic.inflation].to_list(),
+                MicroEconomic.inflation_date: micro_instance.inflation[Finance.date].to_list(),
+                MicroEconomic.retail_sales: micro_instance.retail_sales[MicroEconomic.retail_sales].to_list(),
+                MicroEconomic.retail_sales_date: micro_instance.retail_sales[Finance.date].to_list(),
+                MicroEconomic.interest_rates: micro_instance.federal_funds_rate[MicroEconomic.interest_rates].to_list(),
+                MicroEconomic.interest_rates_date: micro_instance.federal_funds_rate[Finance.date].to_list(),
+                MicroEconomic.unemployment_rate: micro_instance.unemployment_rate[MicroEconomic.unemployment_rate].to_list(),
+                MicroEconomic.unemployment_rate_date: micro_instance.unemployment_rate[Finance.date].to_list()
+            }
+            return jsonify(data)
+        except Exception as e:
+            return jsonify({"error": "An unexpected error occurred"}), 500
+
+
 class Test(Resource):
     def get(self):
         return jsonify({"Test": "Test Success"})
@@ -69,6 +93,7 @@ class Test(Resource):
 api.add_resource(Overview, '/api/overview')
 api.add_resource(EDA, '/api/eda')
 api.add_resource(Test, '/api/test')
+api.add_resource(Micro, '/api/micro')
 
 if __name__ == "__main__":
     app.run(debug=True)

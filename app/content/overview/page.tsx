@@ -13,7 +13,6 @@ import {
   NEXT_PUBLIC_YEAR_HIGH,
   NEXT_PUBLIC_YEAR_LOW,
 } from "@/app/constants/api_properties";
-import SimpleLineChart from "@/app/components/LineChartComponent";
 import SkeletonTextBox from "@/app/components/SkeletonTextBox";
 
 export default function Overview() {

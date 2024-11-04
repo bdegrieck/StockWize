@@ -49,11 +49,17 @@ class Finance:
 
 class MicroEconomic:
     real_gdp = "Real GDP"
+    real_gdp_date = "Real GDP Date"
     cpi = "Cpi"
+    cpi_date = "Cpi Date"
     inflation = "Inflation"
+    inflation_date = "Inflation Date"
     interest_rates = "Interest Rates"
+    interest_rates_date = "Interest Rates Date"
     retail_sales = "Retail Sales"
+    retail_sales_date = "Retail Sales Date"
     unemployment_rate = "Unemployment Rate"
+    unemployment_rate_date = "Unemployment Rate Date"
 
 class TechnicalIndicators:
     sma = "Sma"
