@@ -3,7 +3,7 @@
 import { TextBox, TextBoxContainer } from "@/app/components/TextBox";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { LineChart } from "@mui/x-charts/LineChart";
+import SimpleLineChart from "@/app/components/LineChartComponent";
 import Skeleton from "@mui/material/Skeleton";
 import {
   NEXT_PUBLIC_CLOSE,
