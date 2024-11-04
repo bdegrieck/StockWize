@@ -11,9 +11,10 @@ import News from "@/app/assets/images/News.png";
 import Scale from "@/app/assets/images/Scale.png";
 import Image, { StaticImageData } from "next/image";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 import { motion } from "framer-motion";
+import { FUN_FACT, LAST_UPDATED } from "../constants/api_properties";
 
 export default function ContentLayout({
   children,
@@ -27,6 +28,9 @@ export default function ContentLayout({
   const company =
     searchParams.get("company") === null ? "" : searchParams.get("company");
   const [query, setQuery] = useState(company);
+  const [metadata, setMetadata] = useState({} as any);
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   const content =
     company === "" ? (
@@ -46,6 +50,36 @@ export default function ContentLayout({
     router.push(`${pathName}?company=${query}`);
   }
 
+  useEffect(() => {
+    async function fetchMetadata() {
+      try {
+        setLoading(true)
+        const response = await fetch(
+          `http://127.0.0.1:5000/api/metadata`
+        );
+        const data = await response.json();
+  
+        if (!response.ok) {
+          setError(true);
+          return;
+        }
+  
+        setMetadata({
+          fun_fact: data[FUN_FACT],
+          last_updated: data[LAST_UPDATED]
+        });
+  
+        setError(false);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error getting stock data:", error);
+        setError(true);
+      }
+    };
+
+    fetchMetadata()
+  }, metadata)
+
   return (
     <>
       <div
@@ -59,7 +93,7 @@ export default function ContentLayout({
           </div>
         </Link>
         <h1 className="mt-4 mx-3 col-10 fw-bold display-4">{company}</h1>
-        <p className="mx-3 col-10 text-muted">Last Updated {getLastWeekday()}</p>
+        <p className="mx-3 col-10 text-muted">Last Updated {metadata[LAST_UPDATED]}</p>
         <div className="flex-grow-1 d-flex pt-2 flex-column col-11 rounded-end bg-light shadow">
           <NavBarItem
             route="/content/overview"
@@ -99,7 +133,14 @@ export default function ContentLayout({
             text="Compare"
           />
           <div className="flex-fill d-flex justify-content-center align-items-center mx-3">
-            <p>Fun fact of the day</p>
+            {loading ? <>
+              <div className="d-flex align-items-center justify-content-center w-100 h-100">
+                <div
+                  className="spinner-border text-primary"
+                  style={{ width: 100, height: 100 }}
+                ></div>
+              </div>
+            </> : (error ? <p>There was an error loading a fun fact</p> : <p><b>Fun Fact:</b> {metadata[FUN_FACT]}</p>)} 
           </div>
         </div>
       </div>
@@ -156,20 +197,4 @@ function NavBarItem({
       <span className="p-2 fs-5 companyName">{text}</span>
     </Link>
   );
-}
-
-function getLastWeekday() {
-  let lastDate = new Date();  
-  let day = lastDate.getDay();
-
-  if (day === 0) {
-      lastDate.setDate(lastDate.getDate() - 2);
-  } else if (day === 6) {
-      lastDate.setDate(lastDate.getDate() - 1);
-  } else {
-      lastDate.setDate(lastDate.getDate() - 1);  // For weekdays, just go back one day
-  }
-
-  const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
-  return lastDate.toLocaleDateString('en-US', options);
 }

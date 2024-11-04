@@ -6,6 +6,7 @@ from BackEnd.Data.data import CompanyData, MicroData
 from BackEnd.constants import Finance, MicroEconomic
 from BackEnd.validation import validate_ticker, TickerError
 from BackEnd.Eda.eda import Eda
+from BackEnd.Metadata.metadata import StockWizeMetadata
 
 app = Flask(__name__)
 CORS(app)
@@ -83,7 +84,21 @@ class Micro(Resource):
             return jsonify(data)
         except Exception as e:
             return jsonify({"error": "An unexpected error occurred"}), 500
+        
+class Metadata(Resource):
+    def get(self):
+        try:
+            metadata = StockWizeMetadata()
+            data = {
+                "fun_fact" : metadata.fun_fact(),
+                "last_updated" : metadata.get_last_weekday()
+            }
 
+            print(data)
+
+            return jsonify(data)
+        except Exception as e:
+            return jsonify({"error": "An unexpected error occurred"}), 500
 
 class Test(Resource):
     def get(self):
@@ -94,6 +109,7 @@ api.add_resource(Overview, '/api/overview')
 api.add_resource(EDA, '/api/eda')
 api.add_resource(Test, '/api/test')
 api.add_resource(Micro, '/api/micro')
+api.add_resource(Metadata, '/api/metadata')
 
 if __name__ == "__main__":
     app.run(debug=True)
