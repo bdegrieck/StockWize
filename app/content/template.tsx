@@ -59,7 +59,7 @@ export default function ContentLayout({
           </div>
         </Link>
         <h1 className="mt-4 mx-3 col-10 fw-bold display-4">{company}</h1>
-        <p className="mx-3 col-10 text-muted">Last Updated Blorptober 32nd</p>
+        <p className="mx-3 col-10 text-muted">Last Updated {getLastWeekday()}</p>
         <div className="flex-grow-1 d-flex pt-2 flex-column col-11 rounded-end bg-light shadow">
           <NavBarItem
             route="/content/overview"
@@ -156,4 +156,20 @@ function NavBarItem({
       <span className="p-2 fs-5 companyName">{text}</span>
     </Link>
   );
+}
+
+function getLastWeekday() {
+  let lastDate = new Date();  
+  let day = lastDate.getDay();
+
+  if (day === 0) {
+      lastDate.setDate(lastDate.getDate() - 2);
+  } else if (day === 6) {
+      lastDate.setDate(lastDate.getDate() - 1);
+  } else {
+      lastDate.setDate(lastDate.getDate() - 1);  // For weekdays, just go back one day
+  }
+
+  const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
+  return lastDate.toLocaleDateString('en-US', options);
 }
