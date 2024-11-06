@@ -1,80 +1,65 @@
 # StockWize
+
 Stock Management Application for CSI4999
 
+## One Time Setup for Backend
 
-Steps for setting up stockwize 
+The following assumes you have an up to date version of python installed, as well as the appropriate IDE for the different setup options.
 
-Step 1) Download miniconda
+### Option 1. Miniconda/Pycharm
 
-https://docs.anaconda.com/miniconda/
+- [Download miniconda](https://docs.anaconda.com/miniconda/)
+- Create Virtual Enviroment
 
-Step 2) Create Virtual Enviroment
+   1. Open terminal
+   2. `conda create --name myenv python=3.12 # "myenv" can be whatever you want` 
+   3. `conda activate myenv # activates virtual env`
 
-   1) open terminal
-      
-   2) conda create --name myenv python=3.12 # note myenv can be whatever you want
-      
-   3) conda activate myenv # activates virtual env
+- Configure python interpreter 
 
-Step 3) Configure python interpreter 
+  1. If on pycharm community edition, go to `Settings> Python Interpreter> Add interpreter> Add Local Interpreter> Conda Enviroment > Use Existing Enviroment`. Your conda.exe file should be something like `/Users/bende/miniconda3/condabin/conda`
 
-  1) If on pycharm community edition
-     a) Settings
-     
-     b) Python Interpreter
-     
-     c) add interpreter
-     
-     d) add local interpreter
-     
-     e) conda enviroment
-     
-     f) use existing enviroment
-     
-     g) If the conda executable field: go to your conda.exe file should be something like this
-       
-      /Users/bende/miniconda3/condabin/conda
-     
-     h) use existing enviroment: name of your virutal enviroment and then click ok
-     
-     i) you should see your enviroment name in the lower right hand corner
-     
-     j) open terminal in pycharm
-     
-     k) conda activate yourenviromentname
-     
-     l) pip install -r requirements.txt
+  2. `Use existing enviroment` - name of your virutal enviroment and then click `Ok`
+  3. You should see your enviroment name in the lower right hand corner
+  4. Open terminal in pycharm
+  5. `conda activate yourenviromentname` and `pip install -r requirements.txt`
+    
+### Option 2. Miniconda/VSCode
 
-  3) If on VSCode
-     make sure python extension is downloaded before you do anything
+   1. Install the VSCode Python Extension
      
-     a) Ctrl + Shift + P on windows or Cmd + Shift + P on mac
-     
-     b) type in Select Interpreter and hit enter
-     
-     c) select your virtual enviroment you made
-     
-     d) open a terminal
-     
-     e) type in conda activate yourenviroment name
-     
-     f) pip install -r requirements.txt
-
-Steps for setting up frontend
-
-   1) Ensure you have node installed. Download instructions [here](https://nodejs.org/en/download/package-manager).
-
-   2) Navigate to the root directory of the project, and run `npm install` (Only need to do this once)
+   2. `Ctrl + Shift + P` on Windows or `Cmd + Shift + P` on Mac, type `Select Interpreter` and press Enter
    
-   3) `npm start` To start the servr
+   3. Select your virtual enviroment you made
+     
+   4. Open a terminal and run `conda activate yourenviromentname` and `pip install -r requirements.txt`
 
-   4) Go to http://localhost:3000. All of the frontend code is in the /app directory (Unfortunately it can't be renamed). Any changes made to the code should be recompiled automatically, and can be viewed by refreshing the browser. This project has been set up with the following specs: Next.JS framework (React with some convenience tooling) Typescript, ESLint, and App Router. 
+### Option 3. Terminal Only
 
-   5) Learn more about Next/React [here](https://nextjs.org/docs/getting-started/project-structure)
+   1. Create a virtual environment with `py -m venv yourenvironmentname`
 
+   2. Activate the environment with `.\yourenvironmentname\Scripts\activate` on Windows or `source yourenvname/bin/activate` on Mac/Linux
 
-To run app
+   3. Install dependencies with `pip install -r requirements.txt`
 
-     1) activate your virtual enviroment 
-     2) go to root directory of project in a terminal
-     3) type in npm start
+## Onetime Setup for Frontend
+
+   - Navigate to the root directory of the project, and run `npm install`.
+
+## Running the App
+
+   1. Activate your python virtual environment with the appropriate method for your setup
+   2. Ensure you are in the root directory of the project in the terminal and run `npm start`
+
+## Gotchas / Common Issues
+
+   1. If some resources are failing to load, and the developer console gives an error along the lines of 
+
+   ```
+      Cross-Origin Request Blocked: The Same Origin Policy disallows
+   reading the remote resource at https://some-url-here. (Reason:
+   additional information here).
+   ```
+
+   Try restarting your computer and rerunning the project.
+   
