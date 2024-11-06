@@ -4,7 +4,6 @@ import { TextBox, TextBoxContainer } from "@/app/components/TextBox";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import LineChartCard from "@/app/components/LineChartComponent";
-import CircularProgress from "@mui/material/CircularProgress";
 import {
   NEXT_PUBLIC_CLOSE,
   NEXT_PUBLIC_DATE,
@@ -113,7 +112,11 @@ export default function Overview() {
                 ></div>
               </div>
 
-              {/* <SkeletonLineChart />
+              {/* 
+              
+              If we want a skeleton loader, here is a sample:
+              
+              <SkeletonLineChart />
               <div className="d-flex h-25">
                 <SkeletonTextBox />
                 <SkeletonTextBox />
