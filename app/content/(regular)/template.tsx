@@ -14,7 +14,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 
 import { motion } from "framer-motion";
-import { FUN_FACT, LAST_UPDATED } from "../constants/api_properties";
+import { FUN_FACT, LAST_UPDATED } from "@/app/constants/api_properties";
 
 export default function ContentLayout({
   children,

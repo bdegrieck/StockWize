@@ -100,6 +100,22 @@ export default function Compare() {
             </>
           ) : (
             <>
+              <form className="d-flex align-items-center">
+                <input
+                  className="form-control my-4 w-50 fs-5"
+                  type="text"
+                  placeholder="Company or Stock Symbol 1"
+                  aria-label="Search"
+                />
+                <p className="fs-5 m-4">vs.</p>
+                <input
+                  className="form-control my-4 w-50 fs-5"
+                  type="text"
+                  placeholder="Company or Stock Symbol 2"
+                  aria-label="Search"
+                />
+              </form>
+
               <LineChartCard
                 title="AAPL vs TSLA"
                 dataToDisplay={chartData}
