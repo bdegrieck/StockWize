@@ -118,7 +118,7 @@ export default function Compare() {
 
               <LineChartCard
                 title="AAPL vs TSLA"
-                dataToDisplay={chartData}
+                dataToDisplay={[...chartData].reverse()}
                 xKey="date"
                 yKey="close"
               />
