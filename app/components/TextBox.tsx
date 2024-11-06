@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 interface TextBoxProps {
   title: string;
@@ -30,7 +31,15 @@ const TextBox: React.FC<TextBoxProps> = ({
   }, []);
 
   return (
-    <div className="card flex-grow-1 w-100 gap-3 shadow-sm">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{
+        duration: 0.8,
+        ease: [0, 0.71, 0.2, 1.01],
+      }}
+      className="card flex-grow-1 w-100 gap-3 shadow-sm"
+    >
       <div className={`card-body ${textAlignClass}`}>
         {fontSize && (
           <>
@@ -39,7 +48,7 @@ const TextBox: React.FC<TextBoxProps> = ({
           </>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -17,6 +17,7 @@ import {
   NEXT_PUBLIC_INTEREST_RATES_DATE,
   NEXT_PUBLIC_UNEMPLOYMENT_RATE_DATE,
 } from "@/app/constants/api_properties";
+import LineChartCard from "@/app/components/LineChartComponent";
 
 export default function Overview() {
   const searchParams = useSearchParams();
@@ -37,12 +38,16 @@ export default function Overview() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://127.0.0.1:5000/api/micro?company=AAPL`);
+        const response = await fetch(
+          `http://127.0.0.1:5000/api/micro?company=AAPL`
+        );
         const responseData = await response.json();
 
         if (!response.ok) {
           setError(
-            `Error: ${responseData.error || "An unexpected error occurred"} for input "${input}"`
+            `Error: ${
+              responseData.error || "An unexpected error occurred"
+            } for input "${input}"`
           );
           setLoading(false);
           return;
@@ -50,18 +55,24 @@ export default function Overview() {
 
         // Extract dates and data arrays for each chart type
         const cpiDatesArray = responseData[NEXT_PUBLIC_CPI_DATE] || [];
-        const retailSalesDatesArray = responseData[NEXT_PUBLIC_RETAIL_SALES_DATE] || [];
-        const inflationDatesArray = responseData[NEXT_PUBLIC_INFLATION_DATE] || [];
+        const retailSalesDatesArray =
+          responseData[NEXT_PUBLIC_RETAIL_SALES_DATE] || [];
+        const inflationDatesArray =
+          responseData[NEXT_PUBLIC_INFLATION_DATE] || [];
         const realGdpDatesArray = responseData[NEXT_PUBLIC_REAL_GDP_DATE] || [];
-        const interestRatesDatesArray = responseData[NEXT_PUBLIC_INTEREST_RATES_DATE] || [];
-        const unemploymentRateDatesArray = responseData[NEXT_PUBLIC_UNEMPLOYMENT_RATE_DATE] || [];
+        const interestRatesDatesArray =
+          responseData[NEXT_PUBLIC_INTEREST_RATES_DATE] || [];
+        const unemploymentRateDatesArray =
+          responseData[NEXT_PUBLIC_UNEMPLOYMENT_RATE_DATE] || [];
 
         const cpiArray = responseData[NEXT_PUBLIC_CPI] || [];
         const retailSalesArray = responseData[NEXT_PUBLIC_RETAIL_SALES] || [];
         const inflationArray = responseData[NEXT_PUBLIC_INFLATION] || [];
         const realGdpArray = responseData[NEXT_PUBLIC_REAL_GDP] || [];
-        const interestRatesArray = responseData[NEXT_PUBLIC_INTEREST_RATES] || [];
-        const unemploymentRateArray = responseData[NEXT_PUBLIC_UNEMPLOYMENT_RATE] || [];
+        const interestRatesArray =
+          responseData[NEXT_PUBLIC_INTEREST_RATES] || [];
+        const unemploymentRateArray =
+          responseData[NEXT_PUBLIC_UNEMPLOYMENT_RATE] || [];
 
         // Create chart data for each metric
         setChartData({
@@ -125,84 +136,48 @@ export default function Overview() {
           ) : (
             <>
               {/* Render each chart */}
-              {chartData.cpi.length > 0 && (
-                <>
-                  <h4>CPI</h4>
-                  <LineChart
-                    width={1250}
-                    height={500}
-                    grid={{ vertical: true, horizontal: true }}
-                    dataset={chartData.cpi}
-                    xAxis={[{ scaleType: "point", dataKey: "date" }]}
-                    series={[{ dataKey: "cpi", color: "#FF0000", showMark: false }]}
-                  />
-                </>
-              )}
-              {chartData.retail_sales.length > 0 && (
-                <>
-                  <h4>Retail Sales</h4>
-                  <LineChart
-                    width={1250}
-                    height={500}
-                    grid={{ vertical: true, horizontal: true }}
-                    dataset={chartData.retail_sales}
-                    xAxis={[{ scaleType: "point", dataKey: "date" }]}
-                    series={[{ dataKey: "retail_sales", color: "#00FF00", showMark: false }]}
-                  />
-                </>
-              )}
-              {chartData.inflation.length > 0 && (
-                <>
-                  <h4>Inflation</h4>
-                  <LineChart
-                    width={1250}
-                    height={500}
-                    grid={{ vertical: true, horizontal: true }}
-                    dataset={chartData.inflation}
-                    xAxis={[{ scaleType: "point", dataKey: "date" }]}
-                    series={[{ dataKey: "inflation", color: "#0000FF", showMark: false }]}
-                  />
-                </>
-              )}
-              {chartData.real_gdp.length > 0 && (
-                <>
-                  <h4>Real GDP</h4>
-                  <LineChart
-                    width={1250}
-                    height={500}
-                    grid={{ vertical: true, horizontal: true }}
-                    dataset={chartData.real_gdp}
-                    xAxis={[{ scaleType: "point", dataKey: "date" }]}
-                    series={[{ dataKey: "real_gdp", color: "#FFA500", showMark: false }]}
-                  />
-                </>
-              )}
-              {chartData.interest_rates.length > 0 && (
-                <>
-                  <h4>Interest Rates</h4>
-                  <LineChart
-                    width={1250}
-                    height={500}
-                    grid={{ vertical: true, horizontal: true }}
-                    dataset={chartData.interest_rates}
-                    xAxis={[{ scaleType: "point", dataKey: "date" }]}
-                    series={[{ dataKey: "interest_rates", color: "#800080", showMark: false }]}
-                  />
-                </>
-              )}
-              {chartData.unemployment_rate.length > 0 && (
-                <>
-                  <h4>Unemployment Rate</h4>
-                  <LineChart
-                    width={1250}
-                    height={500}
-                    grid={{ vertical: true, horizontal: true }}
-                    dataset={chartData.unemployment_rate}
-                    xAxis={[{ scaleType: "point", dataKey: "date" }]}
-                    series={[{ dataKey: "unemployment_rate", color: "#008080", showMark: false }]}
-                  />
-                </>
-              )}
+
+              <LineChartCard
+                title="CPI"
+                dataToDisplay={chartData.cpi}
+                xKey="date"
+                yKey="cpi"
+              />
+
+              <LineChartCard
+                title="Retail Sales"
+                dataToDisplay={chartData.retail_sales}
+                xKey="date"
+                yKey="retail_sales"
+              />
+
+              <LineChartCard
+                title="Inflation"
+                dataToDisplay={chartData.inflation}
+                xKey="date"
+                yKey="inflation"
+              />
+
+              <LineChartCard
+                title="Real GDP"
+                dataToDisplay={chartData.real_gdp}
+                xKey="date"
+                yKey="real_gdp"
+              />
+
+              <LineChartCard
+                title="Interest Rates"
+                dataToDisplay={chartData.interest_rates}
+                xKey="date"
+                yKey="interest_rates"
+              />
+
+              <LineChartCard
+                title="Unemployment Rate"
+                dataToDisplay={chartData.unemployment_rate}
+                xKey="date"
+                yKey="unemployment_rate"
+              />
             </>
           )}
         </>

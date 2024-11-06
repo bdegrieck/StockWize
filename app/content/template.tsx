@@ -29,13 +29,15 @@ export default function ContentLayout({
     searchParams.get("company") === null ? "" : searchParams.get("company");
   const [query, setQuery] = useState(company);
   const [metadata, setMetadata] = useState({} as any);
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const content =
     company === "" ? (
       <div className="h-100 w-100 d-flex justify-content-center align-items-center">
-        <p>Search for a Company or Stock Symbol to Get Started</p>
+        <p className="fs-4">
+          Search for a Company or Stock Symbol to Get Started
+        </p>
       </div>
     ) : (
       <div className="h-100 d-flex flex-column">
@@ -53,32 +55,30 @@ export default function ContentLayout({
   useEffect(() => {
     async function fetchMetadata() {
       try {
-        setLoading(true)
-        const response = await fetch(
-          `http://127.0.0.1:5000/api/metadata`
-        );
+        setLoading(true);
+        const response = await fetch(`http://127.0.0.1:5000/api/metadata`);
         const data = await response.json();
-  
+
         if (!response.ok) {
           setError(true);
           return;
         }
-  
+
         setMetadata({
           fun_fact: data[FUN_FACT],
-          last_updated: data[LAST_UPDATED]
+          last_updated: data[LAST_UPDATED],
         });
-  
+
         setError(false);
         setLoading(false);
       } catch (error) {
         console.error("Error getting stock data:", error);
         setError(true);
       }
-    };
+    }
 
-    fetchMetadata()
-  }, metadata)
+    fetchMetadata();
+  }, metadata);
 
   return (
     <>
@@ -93,7 +93,9 @@ export default function ContentLayout({
           </div>
         </Link>
         <h1 className="mt-4 mx-3 col-10 fw-bold display-4">{company}</h1>
-        <p className="mx-3 col-10 text-muted">Last Updated {metadata[LAST_UPDATED]}</p>
+        <p className="mx-3 col-10 fs-5 text-muted">
+          Last Updated {metadata[LAST_UPDATED]}
+        </p>
         <div className="flex-grow-1 d-flex pt-2 flex-column col-11 rounded-end bg-light shadow">
           <NavBarItem
             route="/content/overview"
@@ -132,15 +134,23 @@ export default function ContentLayout({
             img={Scale}
             text="Compare"
           />
-          <div className="flex-fill d-flex justify-content-center align-items-center mx-3">
-            {loading ? <>
-              <div className="d-flex align-items-center justify-content-center w-100 h-100">
-                <div
-                  className="spinner-border text-primary"
-                  style={{ width: 100, height: 100 }}
-                ></div>
-              </div>
-            </> : (error ? <p>There was an error loading a fun fact</p> : <p><b>Fun Fact:</b> {metadata[FUN_FACT]}</p>)} 
+          <div className="flex-fill d-flex justify-content-center align-items-center mx-5">
+            {loading ? (
+              <>
+                <div className="d-flex align-items-center justify-content-center w-100 h-100">
+                  <div
+                    className="spinner-border text-primary"
+                    style={{ width: 50, height: 50 }}
+                  ></div>
+                </div>
+              </>
+            ) : error ? (
+              <p>There was an error loading a fun fact</p>
+            ) : (
+              <p className="fs-5">
+                <b>Fun Fact:</b> {metadata[FUN_FACT]}
+              </p>
+            )}
           </div>
         </div>
       </div>

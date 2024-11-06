@@ -5,8 +5,8 @@ import Skeleton from "@mui/material/Skeleton";
 
 export default function SkeletonTextBox() {
   return (
-    <div className="card flex-grow-1 w-100 m-2 shadow-sm">
-      <div className="card-body">
+    <div className="card flex-grow-1 w-100 m-2 shadow-sm ">
+      <div className="card-body d-flex flex-column justify-content-center">
         <>
           <Skeleton variant="text" />
           <Skeleton variant="text" />

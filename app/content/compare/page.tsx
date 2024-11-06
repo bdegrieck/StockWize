@@ -16,7 +16,7 @@ import {
   NEXT_PUBLIC_SYMBOL,
   NEXT_PUBLIC_YEAR_HIGH,
 } from "@/app/constants/api_properties";
-import SimpleLineChart from "@/app/components/LineChartComponent";
+import LineChartCard from "@/app/components/LineChartComponent";
 
 export default function Compare() {
   const searchParams = useSearchParams();
@@ -100,7 +100,12 @@ export default function Compare() {
             </>
           ) : (
             <>
-              <SimpleLineChart sentData={chartData} />
+              <LineChartCard
+                title="AAPL vs TSLA"
+                dataToDisplay={chartData}
+                xKey="date"
+                yKey="close"
+              />
               <div className="card fs-4 p-4 shadow-sm mt-4">
                 <table className="table table-hover">
                   <thead>

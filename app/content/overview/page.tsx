@@ -3,8 +3,8 @@
 import { TextBox, TextBoxContainer } from "@/app/components/TextBox";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import SimpleLineChart from "@/app/components/LineChartComponent";
-import Skeleton from "@mui/material/Skeleton";
+import LineChartCard from "@/app/components/LineChartComponent";
+import CircularProgress from "@mui/material/CircularProgress";
 import {
   NEXT_PUBLIC_CLOSE,
   NEXT_PUBLIC_DATE,
@@ -14,6 +14,7 @@ import {
   NEXT_PUBLIC_YEAR_LOW,
 } from "@/app/constants/api_properties";
 import SkeletonTextBox from "@/app/components/SkeletonTextBox";
+import SkeletonLineChart from "@/app/components/SkeletonLineChart";
 
 export default function Overview() {
   const searchParams = useSearchParams();
@@ -107,16 +108,12 @@ export default function Overview() {
             <>
               <div className="d-flex align-items-center justify-content-center w-100 h-100">
                 <div
-                  className="spinner-border text-primary"
+                  className="spinner-border text-primary m-3"
                   style={{ width: 100, height: 100 }}
                 ></div>
               </div>
 
-              {/* 
-              If we want to do a skeleton loader here is a sample:
-              
-              <SimpleLineChart sentData={chartData} />
-
+              {/* <SkeletonLineChart />
               <div className="d-flex h-25">
                 <SkeletonTextBox />
                 <SkeletonTextBox />
@@ -126,7 +123,12 @@ export default function Overview() {
             </>
           ) : (
             <>
-              <SimpleLineChart sentData={chartData} />
+              <LineChartCard
+                title="Stock Price"
+                dataToDisplay={[...chartData].reverse()}
+                xKey="date"
+                yKey="close"
+              />
               <TextBoxContainer>
                 <TextBox
                   title="52 Week High"
