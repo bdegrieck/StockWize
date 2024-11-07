@@ -47,6 +47,9 @@ class Finance:
     market_cap = "MarketCapitalization"
     forecast = "Forecast"
     PPE = "pricePerEarnings"
+    ticker_1_data = "ticker1"
+    ticker_2_data = "ticker2"
+    comparison = "comparison"
 
 class MicroEconomic:
     real_gdp = "Real GDP"

@@ -2,7 +2,7 @@
 
 import { TextBox, TextBoxContainer } from "@/app/components/TextBox";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { LineChart } from "@mui/x-charts/LineChart";
 import Skeleton from "@mui/material/Skeleton";
 import {
@@ -15,18 +15,47 @@ import {
   NEXT_PUBLIC_REPORTED_EPS,
   NEXT_PUBLIC_SYMBOL,
   NEXT_PUBLIC_YEAR_HIGH,
+  NEXT_PUBLIC_TOTAL_REVENUE,
+  NEXT_PUBLIC_PROFIT,
+  NEXT_PUBLIC_PPE,
+  COMPARISON
 } from "@/app/constants/api_properties";
 import CompareLineChartCard from "@/app/components/CompareLineChartComponent";
 
 export default function Compare() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [input, setInput] = useState<string | null>(
     searchParams.get("company")
   );
+  const [input2, setInput2] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const [input2, setInput2] = useState("");
+  const [data, setData] = useState({
+    symbol: "",
+    marketCap: null,
+    reportedEPS: null,
+    totalRevenue: null,
+    profit: null,
+    ppe: null,
+  });
+  const [data2, setData2] = useState({
+    symbol: "",
+    marketCap: null,
+    reportedEPS: null,
+    totalRevenue: null,
+    profit: null,
+    ppe: null,
+  });
+  const [comp, setComparisonData] = useState({
+    marketCap: null,
+    reportedEPS: null,
+    totalRevenue: null,
+    profit: null,
+    ppe: null,
+  });
+  const [chartData, setChartData] = useState([]);
+  const [chartData2, setChartData2] = useState([]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
@@ -34,30 +63,12 @@ export default function Compare() {
   const handleInputChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput2(event.target.value);
   };
-  const [data, setData] = useState({
-    symbol: "",
-    dividend: null,
-    marketCap: null,
-    reportedEPS: null,
-    description: "",
-  });
-
-  const [data2, setData2] = useState({
-    symbol: "",
-    dividend: null,
-    marketCap: null,
-    reportedEPS: null,
-    description: "",
-  });
-
-  const [chartData, setChartData] = useState([]);
-  const [chartData2, setChartData2] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/overview?company=${input}`
+          `http://127.0.0.1:5000/api/compare?ticker1=${input}&ticker2=${input2}`
         );
         const data = await response.json();
         setLoading(false);
@@ -66,74 +77,54 @@ export default function Compare() {
           setError(
             `Error: ${
               data.error || "An unexpected error occurred"
-            } for input "${input}"`
+            } for inputs "${input}" and "${input2}"`
           );
           return;
         }
 
         setData({
-          symbol: data[NEXT_PUBLIC_SYMBOL],
-          dividend: data[NEXT_PUBLIC_DIVIDEND],
-          marketCap: data[NEXT_PUBLIC_MARKET_CAP],
-          reportedEPS: data[NEXT_PUBLIC_REPORTED_EPS],
-          description: data[NEXT_PUBLIC_NAME],
+            reportedEPS: data.ticker1.NEXT_PUBLIC_REPORTED_EPS,
+            totalRevenue: data.ticker1.NEXT_PUBLIC_TOTAL_REVENUE,
+            profit: data.ticker1.NEXT_PUBLIC_PROFIT,
+            ppe: data.ticker1.NEXT_PUBLIC_PPE,
+            symbol: data.ticker1.NEXT_PUBLIC_SYMBOL,
+            marketCap: data.ticker1.NEXT_PUBLIC_MARKET_CAP,
         });
-
-        const dates = data[NEXT_PUBLIC_DATE];
-        const closes = data[NEXT_PUBLIC_CLOSE];
-        const formattedChartData = dates.map((date, index) => ({
-          date,
-          close: closes[index],
-        }));
-
-        setChartData(formattedChartData);
-        setError(null);
-      } catch (error) {
-        console.error("Error getting stock data:", error);
-        setError("Failed to fetch stock data");
-      }
-    };
-
-    if (input) {
-      fetchData();
-    }
-  }, [input]);
-
-  // Fetch data for input2
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `http://127.0.0.1:5000/api/overview?company=${input2}`
-        );
-        const data2 = await response.json();
-        setLoading(false);
-
-        if (!response.ok) {
-          setError(
-            `Error: ${
-              data.error || "An unexpected error occurred"
-            } for input "${input2}"`
-          );
-          return;
-        }
 
         setData2({
-          symbol: data2[NEXT_PUBLIC_SYMBOL],
-          dividend: data2[NEXT_PUBLIC_DIVIDEND],
-          marketCap: data2[NEXT_PUBLIC_MARKET_CAP],
-          reportedEPS: data2[NEXT_PUBLIC_REPORTED_EPS],
-          description: data2[NEXT_PUBLIC_NAME],
+            reportedEPS: data.ticker2.NEXT_PUBLIC_REPORTED_EPS,
+            totalRevenue: data.ticker2.NEXT_PUBLIC_TOTAL_REVENUE,
+            profit: data.ticker2.NEXT_PUBLIC_PROFIT,
+            ppe: data.ticker2.NEXT_PUBLIC_PPE,
+            symbol: data.ticker2.NEXT_PUBLIC_SYMBOL,
+            marketCap: data.ticker2.NEXT_PUBLIC_MARKET_CAP,
         });
 
-        const dates = data2[NEXT_PUBLIC_DATE];
-        const closes = data2[NEXT_PUBLIC_CLOSE];
-        const formattedChartData = dates.map((date, index) => ({
-          date,
-          close: closes[index],
-        }));
+        setComparisonData({
+            reportedEPS: data.COMPARISON.NEXT_PUBLIC_REPORTED_EPS,
+            totalRevenue: data.COMPARISON.NEXT_PUBLIC_TOTAL_REVENUE,
+            profit: data.COMPARISON.NEXT_PUBLIC_PROFIT,
+            ppe: data.COMPARISON.NEXT_PUBLIC_PPE,
+            symbol: data.COMPARISON.NEXT_PUBLIC_SYMBOL,
+            marketCap: data.COMPARISON.NEXT_PUBLIC_MARKET_CAP,
+        });
 
-        setChartData2(formattedChartData);
+        const dates1 = data.ticker1.NEXT_PUBLIC_DATE;
+        const closes1 = data.ticker1.NEXT_PUBLIC_CLOSE;
+        const formattedChartData1 = dates1.map((date, index) => ({
+          date,
+          close: closes1[index],
+        }));
+        setChartData(formattedChartData1);
+
+        const dates2 = data.ticker2.NEXT_PUBLIC_DATE;
+        const closes2 = data.ticker2.NEXT_PUBLIC_CLOSE;
+        const formattedChartData2 = dates2.map((date, index) => ({
+          date,
+          close: closes2[index],
+        }));
+        setChartData2(formattedChartData2);
+
         setError(null);
       } catch (error) {
         console.error("Error getting stock data:", error);
@@ -141,34 +132,26 @@ export default function Compare() {
       }
     };
 
-    if (input2) {
+    if (input && input2) {
       fetchData();
     }
-  }, [input2]);
-  // Test
-  // useEffect(() => {
-  //   console.log("chartData:", chartData);
-  //   console.log("chartData2:", chartData2);
-  // }, [chartData, chartData2]);
+  }, [input, input2]);
 
   return (
     <div className="container-fluid h-100 d-flex flex-column gap-3 pb-5">
       {error ? (
-        // Display error if it exists
         <div style={{ color: "red", textAlign: "center", fontWeight: "bold" }}>
           {error}
         </div>
       ) : (
         <>
           {loading ? (
-            <>
-              <div className="d-flex align-items-center justify-content-center w-100 h-100">
-                <div
-                  className="spinner-border text-primary"
-                  style={{ width: 100, height: 100 }}
-                ></div>
-              </div>
-            </>
+            <div className="d-flex align-items-center justify-content-center w-100 h-100">
+              <div
+                className="spinner-border text-primary"
+                style={{ width: 100, height: 100 }}
+              ></div>
+            </div>
           ) : (
             <>
               <form className="d-flex align-items-center">
@@ -191,7 +174,7 @@ export default function Compare() {
                 />
               </form>
               <CompareLineChartCard
-                title={`${input} vs. ${input2}`}
+                title={`${data.symbol} vs. ${data2.symbol}`}
                 dataToDisplay={[...chartData]}
                 dataToDisplay2={[...chartData2]}
                 xKey="date"
@@ -204,47 +187,41 @@ export default function Compare() {
                   <thead>
                     <tr>
                       <th scope="col"></th>
-                      <th scope="col">{input}</th>
-                      <th scope="col">{input2}</th>
+                      <th scope="col">{data.symbol}</th>
+                      <th scope="col">{data2.symbol}</th>
                       <th scope="col">Difference</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <th scope="row">Price</th>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                    </tr>
-                    <tr>
                       <th scope="row">Market Cap</th>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
+                      <td>{data.marketCap}</td>
+                      <td>{data2.marketCap}</td>
+                      <td>{comp.marketCap}</td>
                     </tr>
                     <tr>
                       <th scope="row">Reported EPS</th>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
+                      <td>{data.reportedEPS}</td>
+                      <td>{data2.reportedEPS}</td>
+                      <td>{comp.reportedEPS}</td>
                     </tr>
                     <tr>
                       <th scope="row">Revenue</th>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
+                      <td>{data.totalRevenue}</td>
+                      <td>{data2.totalRevenue}</td>
+                      <td>{comp.totalRevenue}</td>
                     </tr>
                     <tr>
                       <th scope="row">Profit</th>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
+                      <td>{data.profit}</td>
+                      <td>{data2.profit}</td>
+                      <td>{comp.profit}</td>
                     </tr>
                     <tr>
                       <th scope="row">PPE</th>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
+                      <td>{data.ppe}</td>
+                      <td>{data2.ppe}</td>
+                      <td>{comp.ppe}</td>
                     </tr>
                   </tbody>
                 </table>

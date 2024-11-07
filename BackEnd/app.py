@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 from flask_restful import Api, Resource
 
+from BackEnd.Comparison.ticker_comparison import TickerComparison
 from BackEnd.Data.data import CompanyData, MicroData
 from BackEnd.constants import Finance, MicroEconomic
 from BackEnd.validation import validate_ticker, TickerError
@@ -62,7 +63,6 @@ class EDA(Resource):
         except Exception as e:
             return jsonify({"error": "An unexpected error occurred"}), 500
 
-
 class Micro(Resource):
     def get(self):
         try:
@@ -94,7 +94,28 @@ class Metadata(Resource):
                 "last_updated" : metadata.get_last_weekday()
             }
 
-            print(data)
+            return jsonify(data)
+        except Exception as e:
+            return jsonify({"error": "An unexpected error occurred"}), 500
+
+class Comparison(Resource):
+    def get(self):
+        try:
+            input_1 = request.args.get('company1')
+            input_2 = request.args.get('company2')
+            ticker_1 = validate_ticker(symbol=input_1)
+            ticker_2 = validate_ticker(symbol=input_2)
+
+            comp_instance = TickerComparison(ticker1=ticker_1, ticker2=ticker_2)
+            comp = comp_instance.get_difference
+            ticker_1_data = comp_instance.get_ticker1_metadata
+            ticker_2_data = comp_instance.get_ticker2_metadata
+
+            data = {
+                Finance.ticker_1_data: ticker_1_data,
+                Finance.ticker_2_data: ticker_2_data,
+                Finance.comparison: comp
+            }
 
             return jsonify(data)
         except Exception as e:
@@ -110,6 +131,7 @@ api.add_resource(EDA, '/api/eda')
 api.add_resource(Test, '/api/test')
 api.add_resource(Micro, '/api/micro')
 api.add_resource(Metadata, '/api/metadata')
+api.add_resource(Comparison, "/api/comparison")
 
 if __name__ == "__main__":
     app.run(debug=True)
