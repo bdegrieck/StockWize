@@ -22,7 +22,7 @@ const CompareLineChartCard: React.FC<CompareLineChartCardProps> = ({
   input,
   input2,
 }) => {
-  const xValues = dataToDisplay.reverse().map((item) => item[xKey]);
+  const xValues = dataToDisplay.map((item) => item[xKey]);
 
   const series1 = dataToDisplay.map((item) => ({
     x: item[xKey],

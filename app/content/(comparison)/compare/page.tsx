@@ -192,11 +192,10 @@ export default function Compare() {
               </form>
               <CompareLineChartCard
                 title={`${input} vs. ${input2}`}
-                dataToDisplay={[...chartData].reverse()}
-                dataToDisplay2={[...chartData2].reverse()}
+                dataToDisplay={[...chartData]}
+                dataToDisplay2={[...chartData2]}
                 xKey="date"
                 yKey="close"
-                yKey2="close"
                 input={input || ""}
                 input2={input2 || ""}
               />
