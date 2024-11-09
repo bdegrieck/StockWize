@@ -32,18 +32,20 @@ export default function ContentLayout({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const content =
-    company === "" ? (
-      <div className="h-100 w-100 d-flex justify-content-center align-items-center">
-        <p className="fs-4">
-          Search for a Company or Stock Symbol to Get Started
-        </p>
+  const content = (
+    <div className="h-100 d-flex flex-column">
+      <div className="flex-grow-1 d-flex flex-column">
+        {company === "" && (
+          <div className="h-100 w-100 d-flex justify-content-center align-items-center">
+            <p className="fs-4">
+              Search for a Company or Stock Symbol to Get Started
+            </p>
+          </div>
+        )}
+        {children}
       </div>
-    ) : (
-      <div className="h-100 d-flex flex-column">
-        <div className="flex-grow-1 d-flex flex-column">{children}</div>
-      </div>
-    );
+    </div>
+  );
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     // This is a temporary solution. In reality, we will need to call backend for data
