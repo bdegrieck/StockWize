@@ -1,4 +1,3 @@
-import pandas as pd
 from pydantic.v1 import BaseModel
 
 from BackEnd.constants import Finance
@@ -21,74 +20,76 @@ class MetaDataComp(BaseModel):
 
 
 class TickerComparison:
-    
+
     def __init__(self, ticker1: str, ticker2: str):
         self.ticker1 = ticker1
         self.ticker2 = ticker2
+        self._ticker1_data = None
+        self._ticker2_data = None
 
-    def fetch_company_data(self, ticker: str) -> pd.DataFrame:
+    def _set_company_data(self):
         """
-        Fetch and return the required data for comparison for a given ticker as a DataFrame.
+        Sets the two ticker data into a MetaDataComp obj and saves to constructor
         """
-        endpoints = CompanyEndpoints(ticker)
-        overview_data = get_raw_data(endpoints.overview, {})
-        time_series_data = get_raw_data(endpoints.time_series, {})
-        income_statement_data = get_raw_data(endpoints.income_statement, {})
+        ticker_one_instance = CompanyData(ticker=self.ticker1)
+        ticker_two_instance = CompanyData(ticker=self.ticker2)
 
-        # Extract relevant metrics
-        market_cap = float(overview_data.get("MarketCapitalization", "0").replace(",", ""))
-        eps = float(overview_data.get("EPS", 0))
-        latest_date = max(time_series_data[Finance.time_series_dict].keys())
-        stock_price = float(time_series_data[Finance.time_series_dict][latest_date][Finance.close])
-        
-        # Extract financial data
-        annual_reports = income_statement_data.get(Finance.quarterly_reports_dict, [])
-        
-        if annual_reports:
-            latest_report = annual_reports[0]  # Assume sorted by fiscal year
-            revenue = float(latest_report.get(Finance.total_revenue, 0).replace(",", ""))
-            profit = float(latest_report.get(Finance.profit, 0).replace(",", ""))
-        else:
-            revenue = 0
-            profit = 0
+        self._ticker_one_data = MetaDataComp(
+            symbol=self.ticker1,
+            market_cap=ticker_one_instance.overview[Finance.market_cap][0],
+            eps=ticker_one_instance.earnings[Finance.reported_eps][0],
+            total_revenue=ticker_one_instance.income_statement[Finance.total_revenue][0],
+            profit=ticker_one_instance.income_statement[Finance.profit][0],
+            ppe=ticker_one_instance.time_series[Finance.close][0] / ticker_one_instance.earnings[Finance.reported_eps][
+                0]
+        )
 
-        # Calculate price per earnings (PPE)
-        ppe = stock_price / eps if eps else 0
+        self._ticker_two_data = MetaDataComp(
+            symbol=self.ticker2,
+            market_cap=ticker_two_instance.overview[Finance.market_cap][0],
+            eps=ticker_two_instance.earnings[Finance.reported_eps][0],
+            total_revenue=ticker_two_instance.income_statement[Finance.total_revenue][0],
+            profit=ticker_two_instance.income_statement[Finance.profit][0],
+            ppe=ticker_two_instance.time_series[Finance.close][0] / ticker_two_instance.earnings[Finance.reported_eps][
+                0]
+        )
 
-        # Convert to DataFrame
-        data = {
-            Finance.market_cap: [market_cap],
-            Finance.close: [stock_price],
-            Finance.reported_eps: [eps],
-            Finance.total_revenue: [revenue],
-            Finance.profit: [profit],
-            "ppe": [ppe]
-        }
-
-        return pd.DataFrame(data)
-
-    def compare_tickers(self) -> pd.DataFrame:
+    @property
+    def get_ticker1_metadata(self) -> MetaDataComp:
         """
-        Fetch data for both tickers and provide a comparison using DataFrames.
+        Returns:
+            self._ticker1_data(MetaDataComp): Meta data comp of ticker 1
         """
-        data_ticker1 = self.fetch_company_data(self.ticker1)
-        data_ticker2 = self.fetch_company_data(self.ticker2)
+        if self._ticker1_data is None:
+            self._set_company_data()
+        return self._ticker1_data
 
-        # Calculate differences and round the values for consistency
+    @property
+    def get_ticker2_metadata(self) -> MetaDataComp:
+        """
+        Returns:
+            self._ticker2_data(MetaDataComp): Meta data comp of ticker 2
+        """
+        if self._ticker2_data is None:
+            self._set_company_data()
+        return self._ticker2_data
+
+    @property
+    def get_difference(self) -> dict[str, float]:
+        """
+        Calculates the difference of two ticker information against each other
+
+        Returns:
+            difference (dict[str, float[): dictionary of the company differences
+        """
+        if self._ticker1_data is None or self._ticker2_data is None:
+            self._set_company_data()
+
         difference = {
-            Finance.market_cap: round(data_ticker1[Finance.market_cap].iloc[0] - data_ticker2[Finance.market_cap].iloc[0], 2),
-            Finance.close: round(data_ticker1[Finance.close].iloc[0] - data_ticker2[Finance.close].iloc[0], 2),
-            Finance.reported_eps: round(data_ticker1[Finance.reported_eps].iloc[0] - data_ticker2[Finance.reported_eps].iloc[0], 2),
-            Finance.total_revenue: round(data_ticker1[Finance.total_revenue].iloc[0] - data_ticker2[Finance.total_revenue].iloc[0], 2),
-            Finance.profit: round(data_ticker1[Finance.profit].iloc[0] - data_ticker2[Finance.profit].iloc[0], 2),
-            "ppe": round(data_ticker1["ppe"].iloc[0] - data_ticker2["ppe"].iloc[0], 2)
+            Finance.market_cap: abs(round(self._ticker1_data.market_cap - self._ticker2_data.market_cap, 2)),
+            Finance.reported_eps: abs(round(self._ticker1_data.eps - self._ticker2_data.eps, 2)),
+            Finance.total_revenue: abs(round(self._ticker1_data.total_revenue - self._ticker2_data.total_revenue, 2)),
+            Finance.profit: abs(round(self._ticker1_data.profit - self._ticker2_data.profit, 2)),
+            Finance.PPE: abs(round(self._ticker1_data.ppe - self._ticker2_data.ppe, 2))
         }
-
-        # Combine into a DataFrame
-        comparison_df = pd.DataFrame({
-            "Ticker1": data_ticker1.iloc[0],
-            "Ticker2": data_ticker2.iloc[0],
-            "Difference": difference
-        })
-
-        return comparison_df
+        return difference
