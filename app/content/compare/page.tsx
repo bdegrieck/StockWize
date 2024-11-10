@@ -25,15 +25,16 @@ export default function Compare() {
 
   const [input, setInput] = useState("");
   const [input2, setInput2] = useState("");
+  const [tempInput, setTempInput] = useState("");
+  const [tempInput2, setTempInput2] = useState("");
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(event.target.value);
-    setLoading(true);
+  const handleTempInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTempInput(event.target.value);
   };
-  const handleInputChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInput2(event.target.value);
-    setLoading(true);
+  const handleTempInputChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTempInput2(event.target.value);
   };
+
   const [data, setData] = useState({
     symbol: "",
     dividend: null,
@@ -53,100 +54,55 @@ export default function Compare() {
   const [chartData, setChartData] = useState([]);
   const [chartData2, setChartData2] = useState([]);
 
-  useEffect(() => {
-    if (input) {
-      const fetchData = async () => {
-        try {
-          setLoading(true);
-          const response = await fetch(
-            `http://127.0.0.1:5000/api/overview?company=${input}`
-          );
-          const data = await response.json();
-          setLoading(false);
+  const fetchData = async (input, setData, setChartData) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `http://127.0.0.1:5000/api/overview?company=${input}`
+      );
+      const data = await response.json();
+      setLoading(false);
 
-          if (!response.ok) {
-            setError(
-              `Error: ${
-                data.error || "An unexpected error occurred"
-              } for input "${input}"`
-            );
-            return;
-          }
+      if (!response.ok) {
+        setError(
+          `Error: ${data.error || "An unexpected error occurred"} for input "${input}"`
+        );
+        return;
+      }
 
-          setData({
-            symbol: data[NEXT_PUBLIC_SYMBOL],
-            dividend: data[NEXT_PUBLIC_DIVIDEND],
-            marketCap: data[NEXT_PUBLIC_MARKET_CAP],
-            reportedEPS: data[NEXT_PUBLIC_REPORTED_EPS],
-            description: data[NEXT_PUBLIC_NAME],
-          });
+      setData({
+        symbol: data[NEXT_PUBLIC_SYMBOL],
+        dividend: data[NEXT_PUBLIC_DIVIDEND],
+        marketCap: data[NEXT_PUBLIC_MARKET_CAP],
+        reportedEPS: data[NEXT_PUBLIC_REPORTED_EPS],
+        description: data[NEXT_PUBLIC_NAME],
+      });
 
-          const dates = data[NEXT_PUBLIC_DATE];
-          const closes = data[NEXT_PUBLIC_CLOSE];
-          const formattedChartData = dates.map((date, index) => ({
-            date,
-            close: closes[index],
-          }));
+      const dates = data[NEXT_PUBLIC_DATE] || [];
+      const closes = data[NEXT_PUBLIC_CLOSE] || [];
+      const formattedChartData = dates.map((date, index) => ({
+        date,
+        close: closes[index] || 0,
+      }));
 
-          setChartData(formattedChartData);
-          setError(null);
-        } catch (error) {
-          console.error("Error getting stock data:", error);
-          setError("Failed to fetch stock data");
-        }
-      };
-
-      fetchData();
+      setChartData(formattedChartData);
+      setError(null);
+    } catch (error) {
+      console.error("Error getting stock data:", error);
+      setError("Failed to fetch stock data");
     }
-  }, [input]);
+  };
 
-  // Fetch data for input2
-  useEffect(() => {
-    if (input2) {
-      const fetchData = async () => {
-        try {
-          setLoading(true);
-          const response = await fetch(
-            `http://127.0.0.1:5000/api/overview?company=${input2}`
-          );
-          const data2 = await response.json();
-          setLoading(false);
-
-          if (!response.ok) {
-            setError(
-              `Error: ${
-                data2.error || "An unexpected error occurred"
-              } for input "${input2}"`
-            );
-            return;
-          }
-
-          setData2({
-            symbol: data2[NEXT_PUBLIC_SYMBOL],
-            dividend: data2[NEXT_PUBLIC_DIVIDEND],
-            marketCap: data2[NEXT_PUBLIC_MARKET_CAP],
-            reportedEPS: data2[NEXT_PUBLIC_REPORTED_EPS],
-            description: data2[NEXT_PUBLIC_NAME],
-          });
-
-          const dates = data2[NEXT_PUBLIC_DATE];
-          const closes = data2[NEXT_PUBLIC_CLOSE];
-          const formattedChartData = dates.map((date, index) => ({
-            date,
-            close: closes[index],
-          }));
-
-          setChartData2(formattedChartData);
-          setError(null);
-        } catch (error) {
-          console.error("Error getting stock data:", error);
-          setError("Failed to fetch stock data");
-        }
-      };
-
-      fetchData();
+  const handleCompare = () => {
+    setInput(tempInput);
+    setInput2(tempInput2);
+    if (tempInput) {
+      fetchData(tempInput, setData, setChartData);
     }
-  }, [input2]);
+    if (tempInput2) {
+      fetchData(tempInput2, setData2, setChartData2);
+    }
+  };
 
   return (
     <div className="container-fluid h-100 d-flex flex-column gap-3 pb-5">
@@ -173,8 +129,8 @@ export default function Compare() {
               type="text"
               placeholder="Enter Company Name or Symbol"
               aria-label="Search"
-              value={input || ""}
-              onChange={handleInputChange}
+              value={tempInput || ""}
+              onChange={handleTempInputChange}
             />
             <p className="fs-5 m-4">vs.</p>
             <input
@@ -182,21 +138,21 @@ export default function Compare() {
               type="text"
               placeholder="Enter Company Name or Symbol"
               aria-label="Search"
-              value={input2 || ""}
-              onChange={handleInputChange2}
+              value={tempInput2 || ""}
+              onChange={handleTempInputChange2}
             />
             <button
               type="button"
               className="btn btn-warning text-black ms-4 fs-5"
-              onClick={() => setLoading(true)}
+              onClick={handleCompare}
             >
               Compare
             </button>
           </form>
           <CompareLineChartCard
             title={`${input} vs. ${input2}`}
-            dataToDisplay={[...chartData]}
-            dataToDisplay2={[...chartData2]}
+            dataToDisplay={chartData.length > 0 ? [...chartData] : []}
+            dataToDisplay2={chartData2.length > 0 ? [...chartData2] : []}
             xKey="date"
             yKey="close"
             input={input || ""}
@@ -257,5 +213,6 @@ export default function Compare() {
     </div>
   );
 }
+
 
 

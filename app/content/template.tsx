@@ -25,8 +25,7 @@ export default function ContentLayout({
   const pathName = usePathname();
   const router = useRouter();
   const pageName = pathName.split("/content/")[1] || ""; //Hacky way to get the page name, then it is capitalized in the display
-  const company =
-    searchParams.get("company") === null ? "" : searchParams.get("company");
+  const company = searchParams.get("company") || "";
   const [query, setQuery] = useState(company);
   const [metadata, setMetadata] = useState({} as any);
   const [loading, setLoading] = useState(true);
@@ -48,10 +47,13 @@ export default function ContentLayout({
   );
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
-    // This is a temporary solution. In reality, we will need to call backend for data
-    // If the company doesn't exist, we need to reroute to a 404 page.
     e.preventDefault();
     router.push(`${pathName}?company=${query}`);
+  }
+
+  function compSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    router.push(`${pathName}?ticker1=${query}ticker2=${queru}`);
   }
 
   useEffect(() => {
@@ -101,38 +103,32 @@ export default function ContentLayout({
         <div className="flex-grow-1 d-flex pt-2 flex-column col-11 rounded-end bg-light shadow">
           <NavBarItem
             route="/content/overview"
-            company={company}
             img={Binoculars}
             text="Overview"
           />
 
           <NavBarItem
             route="/content/forecasted"
-            company={company}
             img={Ball}
             text="Forecasted"
           />
           <NavBarItem
             route="/content/stocknews"
-            company={company}
             img={News}
             text="Stock News"
           />
           <NavBarItem
             route="/content/explanatory"
-            company={company}
             img={Eye}
             text="Explanatory"
           />
           <NavBarItem
             route="/content/microeconomics"
-            company={company}
             img={Money}
             text="Microeconomics"
           />
           <NavBarItem
             route="/content/compare"
-            company={company}
             img={Scale}
             text="Compare"
           />
@@ -170,6 +166,16 @@ export default function ContentLayout({
             onChange={(e) => setQuery(e.target.value)}
           />
         </form>
+        <form compSubmit={compSubmit} className="">
+          <input
+            className="form-control my-4 w-75 fs-5"
+            type="text"
+            placeholder="Company or Stock Symbol"
+            aria-label="Search"
+            value={query ? query : ""}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </form>
         <motion.div
           initial={{ opacity: 0, scale: 1 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -185,16 +191,14 @@ export default function ContentLayout({
 
 function NavBarItem({
   route,
-  company,
   img,
   text,
 }: {
   route: string;
-  company: string | null;
   img: StaticImageData;
   text: string;
 }) {
-  const href = company === null ? route : `${route}?company=${company}`;
+  const href = route;
   const pathName = usePathname();
 
   // Can't seem to bootstrap this style, since it must explicitly be declared as background color.
@@ -210,3 +214,4 @@ function NavBarItem({
     </Link>
   );
 }
+
