@@ -1,7 +1,24 @@
-from typing import Dict
 import pandas as pd
-from Data.endpoints import CompanyEndpoints, get_raw_data
+from pydantic.v1 import BaseModel
+
 from BackEnd.constants import Finance
+
+class MetaDataComp(BaseModel):
+    """
+    symbol (str): ticker of the company
+    market_cap (float): market cap of the company
+    reported_eps (float): latest earnings per share value
+    total_revenue (float): latest total revenue of the company
+    profit (float): latest total profit of the company
+    ppe (float): price per earnings ehich is price of the stock / eps
+    """
+    symbol: str
+    market_cap: float
+    reported_eps: float
+    total_revenue: float
+    profit: float
+    ppe: float
+
 
 class TickerComparison:
     
