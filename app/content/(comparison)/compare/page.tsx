@@ -15,141 +15,193 @@ import {
   NEXT_PUBLIC_REPORTED_EPS,
   NEXT_PUBLIC_SYMBOL,
   NEXT_PUBLIC_YEAR_HIGH,
+  NEXT_PUBLIC_PPE,
+  TICKER_1_DATA,
+  TICKER_2_DATA,
+  COMPARISON,
+  NEXT_PUBLIC_TOTAL_REVENUE,
+  NEXT_PUBLIC_PROFIT
 } from "@/app/constants/api_properties";
 import CompareLineChartCard from "@/app/components/CompareLineChartComponent";
 
 export default function Compare() {
   const searchParams = useSearchParams();
-  const [input, setInput] = useState<string | null>(
-    searchParams.get("company")
-  );
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  const [input2, setInput2] = useState("");
+  const [ticker1, setTicker1] = useState(searchParams.get("ticker1") || "");
+  const [ticker2, setTicker2] = useState(searchParams.get("ticker2") || "");
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(event.target.value);
+  const handleTempInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTicker1(event.target.value);
   };
-  const handleInputChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInput2(event.target.value);
+  const handleTempInputChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTicker2(event.target.value);
   };
+
   const [data, setData] = useState({
     symbol: "",
-    dividend: null,
     marketCap: null,
     reportedEPS: null,
-    description: "",
+    revenue: null,
+    profit: null,
+    ppe: null,
+    dates: null,
+    close_prices: null
   });
 
   const [data2, setData2] = useState({
     symbol: "",
-    dividend: null,
     marketCap: null,
     reportedEPS: null,
-    description: "",
+    revenue: null,
+    profit: null,
+    ppe: null,
+    dates: null,
+    close_prices: null
+  });
+
+  const [compData, setCompData] = useState({
+    marketCap: null,
+    reportedEPS: null,
+    revenue: null,
+    profit: null,
+    ppe: null,
+    dates: null,
+    close_prices: null
   });
 
   const [chartData, setChartData] = useState([]);
   const [chartData2, setChartData2] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `http://127.0.0.1:5000/api/overview?company=${input}`
+  const fetchData = async (setData, setChartData) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `http://127.0.0.1:5000/api/comparison?ticker1=${ticker1}&ticker2=${ticker2}`
+      );
+      const resp = await response.json();
+      setLoading(false);
+
+      if (!response.ok) {
+        setError(
+          `Error: ${resp.error || "An unexpected error occurred"} for inputs: "${ticker1}" and "${ticker2}"`
         );
-        const data = await response.json();
-        setLoading(false);
-
-        if (!response.ok) {
-          setError(
-            `Error: ${
-              data.error || "An unexpected error occurred"
-            } for input "${input}"`
-          );
-          return;
-        }
-
-        setData({
-          symbol: data[NEXT_PUBLIC_SYMBOL],
-          dividend: data[NEXT_PUBLIC_DIVIDEND],
-          marketCap: data[NEXT_PUBLIC_MARKET_CAP],
-          reportedEPS: data[NEXT_PUBLIC_REPORTED_EPS],
-          description: data[NEXT_PUBLIC_NAME],
-        });
-
-        const dates = data[NEXT_PUBLIC_DATE];
-        const closes = data[NEXT_PUBLIC_CLOSE];
-        const formattedChartData = dates.map((date, index) => ({
-          date,
-          close: closes[index],
-        }));
-
-        setChartData(formattedChartData);
-        setError(null);
-      } catch (error) {
-        console.error("Error getting stock data:", error);
-        setError("Failed to fetch stock data");
+        return;
       }
-    };
 
-    if (input) {
-      fetchData();
+      setData({
+        symbol: resp[TICKER_1_DATA][NEXT_PUBLIC_SYMBOL],
+        marketCap: resp[TICKER_1_DATA][NEXT_PUBLIC_MARKET_CAP].toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+            }
+        ),
+        reportedEPS: resp[TICKER_1_DATA][NEXT_PUBLIC_REPORTED_EPS],
+        revenue: resp[TICKER_1_DATA][NEXT_PUBLIC_TOTAL_REVENUE].toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+            }
+        ),
+        profit: resp[TICKER_1_DATA][NEXT_PUBLIC_PROFIT].toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+            }
+        ),
+        ppe: resp[TICKER_1_DATA][NEXT_PUBLIC_PPE].toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+            }
+        ),
+        dates: resp[TICKER_1_DATA][NEXT_PUBLIC_DATE],
+        close_prices: resp[TICKER_1_DATA][NEXT_PUBLIC_CLOSE]
+      });
+
+      setData2({
+        symbol: resp[TICKER_2_DATA][NEXT_PUBLIC_SYMBOL],
+        marketCap: resp[TICKER_2_DATA][NEXT_PUBLIC_MARKET_CAP].toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+            }
+        ),
+        reportedEPS: resp[TICKER_2_DATA][NEXT_PUBLIC_REPORTED_EPS],
+        revenue: resp[TICKER_2_DATA][NEXT_PUBLIC_TOTAL_REVENUE].toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+            }
+        ),
+        profit: resp[TICKER_2_DATA][NEXT_PUBLIC_PROFIT].toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+            }
+        ),
+        ppe: resp[TICKER_2_DATA][NEXT_PUBLIC_PPE].toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+            }
+        ),
+        dates: resp[TICKER_2_DATA][NEXT_PUBLIC_DATE],
+        close_prices: resp[TICKER_2_DATA][NEXT_PUBLIC_CLOSE]
+      });
+
+      setCompData({
+        marketCap: resp[COMPARISON][NEXT_PUBLIC_MARKET_CAP].toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+            }
+        ),
+        reportedEPS: resp[COMPARISON][NEXT_PUBLIC_REPORTED_EPS],
+        revenue: resp[COMPARISON][NEXT_PUBLIC_TOTAL_REVENUE].toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+            }
+        ),
+        profit: resp[COMPARISON][NEXT_PUBLIC_PROFIT].toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+            }
+        ),
+        ppe: resp[COMPARISON][NEXT_PUBLIC_PPE].toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+            }
+        ),
+      })
+
+      const dates = resp[TICKER_1_DATA][NEXT_PUBLIC_DATE];
+      const closes = resp[TICKER_1_DATA][NEXT_PUBLIC_CLOSE];
+      const formattedChartData = dates.map((date, index) => ({
+        date,
+        close: closes[index] || 0,
+      }));
+      setChartData(formattedChartData);
+
+      const dates2 = resp[TICKER_2_DATA][NEXT_PUBLIC_DATE];
+      const closes2 = resp[TICKER_2_DATA][NEXT_PUBLIC_CLOSE];
+      const formattedChartData2 = dates2.map((date, index) => ({
+        date,
+        close: closes2[index] || 0,
+      }));
+
+      setChartData2(formattedChartData2);
+
+      setError(null);
+    } catch (error) {
+      console.error("Error getting stock data:", error);
+      setError("Failed to fetch stock data");
     }
-  }, [input]);
+  };
 
-  // Fetch data for input2
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `http://127.0.0.1:5000/api/overview?company=${input2}`
-        );
-        const data2 = await response.json();
-        setLoading(false);
-
-        if (!response.ok) {
-          setError(
-            `Error: ${
-              data.error || "An unexpected error occurred"
-            } for input "${input2}"`
-          );
-          return;
-        }
-
-        setData2({
-          symbol: data2[NEXT_PUBLIC_SYMBOL],
-          dividend: data2[NEXT_PUBLIC_DIVIDEND],
-          marketCap: data2[NEXT_PUBLIC_MARKET_CAP],
-          reportedEPS: data2[NEXT_PUBLIC_REPORTED_EPS],
-          description: data2[NEXT_PUBLIC_NAME],
-        });
-
-        const dates = data2[NEXT_PUBLIC_DATE];
-        const closes = data2[NEXT_PUBLIC_CLOSE];
-        const formattedChartData = dates.map((date, index) => ({
-          date,
-          close: closes[index],
-        }));
-
-        setChartData2(formattedChartData);
-        setError(null);
-      } catch (error) {
-        console.error("Error getting stock data:", error);
-        setError("Failed to fetch stock data");
-      }
-    };
-
-    if (input2) {
-      fetchData();
+  const handleCompare = () => {
+    setTicker1(ticker1);
+    setTicker2(ticker2);
+    if (ticker1) {
+      fetchData(setData, setChartData);
     }
-  }, [input2]);
-  // Test
-  // useEffect(() => {
-  //   console.log("chartData:", chartData);
-  //   console.log("chartData2:", chartData2);
-  // }, [chartData, chartData2]);
+    if (ticker2) {
+      fetchData(setData2, setChartData2);
+    }
+  };
 
   return (
     <div className="container-fluid h-100 d-flex flex-column gap-3 pb-5">
@@ -169,88 +221,86 @@ export default function Compare() {
                 ></div>
               </div>
             </>
-          ) : (
-            <>
-              <form className="d-flex align-items-center">
-                <input
-                  className="form-control my-4 w-50 fs-5"
-                  type="text"
-                  placeholder={`${input}`}
-                  aria-label="Search"
-                  value={input || ""}
-                  onChange={handleInputChange}
-                />
-                <p className="fs-5 m-4">vs.</p>
-                <input
-                  className="form-control my-4 w-50 fs-5"
-                  type="text"
-                  placeholder="Company or Stock Symbol 2"
-                  aria-label="Search"
-                  value={input2 || ""}
-                  onChange={handleInputChange2}
-                />
-              </form>
-              <CompareLineChartCard
-                title={`${input} vs. ${input2}`}
-                dataToDisplay={[...chartData]}
-                dataToDisplay2={[...chartData2]}
-                xKey="date"
-                yKey="close"
-                input={input || ""}
-                input2={input2 || ""}
-              />
-              <div className="card fs-4 p-4 shadow-sm mt-4">
-                <table className="table table-hover">
-                  <thead>
-                    <tr>
-                      <th scope="col"></th>
-                      <th scope="col">{input}</th>
-                      <th scope="col">{input2}</th>
-                      <th scope="col">Difference</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">Price</th>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Market Cap</th>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Reported EPS</th>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Revenue</th>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Profit</th>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">PPE</th>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                      <td>$100.00</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </>
-          )}
+          ) : null}
+          <form className="d-flex align-items-center">
+            <input
+              className="form-control my-4 w-50 fs-5"
+              type="text"
+              placeholder="Enter Company Name or Symbol"
+              aria-label="Search"
+              value={ticker1 || ""}
+              onChange={handleTempInputChange}
+            />
+            <p className="fs-5 m-4">vs.</p>
+            <input
+              className="form-control my-4 w-50 fs-5"
+              type="text"
+              placeholder="Enter Company Name or Symbol"
+              aria-label="Search"
+              value={ticker2 || ""}
+              onChange={handleTempInputChange2}
+            />
+            <button
+              type="button"
+              className="btn btn-warning text-black ms-4 fs-5"
+              onClick={handleCompare}
+            >
+              Compare
+            </button>
+          </form>
+          <CompareLineChartCard
+            title={`${data.symbol} vs. ${data2.symbol}`}
+            dataToDisplay={...chartData}
+            dataToDisplay2={...chartData2}
+            xKey="date"
+            yKey="close"
+            input={data.symbol}
+            input2={data2.symbol}
+          />
+          <div className="card fs-4 p-4 shadow-sm mt-4">
+            <table className="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">{ticker1}</th>
+                  <th scope="col">{ticker2}</th>
+                  <th scope="col">Difference</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Market Cap</th>
+                  <td>{data.marketCap}0</td>
+                  <td>{data2.marketCap}</td>
+                  <td>{compData.marketCap}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Reported EPS</th>
+                  <td>{data.reportedEPS}0</td>
+                  <td>{data2.reportedEPS}</td>
+                  <td>{compData.reportedEPS}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Revenue</th>
+                  <td>{data.revenue}0</td>
+                  <td>{data2.revenue}</td>
+                  <td>{compData.revenue}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Profit</th>
+                  <td>{data.profit}</td>
+                  <td>{data2.profit}</td>
+                  <td>{data2.profit}</td>
+                </tr>
+                <tr>
+                  <th scope="row">PPE</th>
+                  <td>{data.ppe}</td>
+                  <td>{data2.ppe}</td>
+                  <td>{data2.ppe}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </div>

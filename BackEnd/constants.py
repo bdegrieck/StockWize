@@ -47,8 +47,8 @@ class Finance:
     market_cap = "MarketCapitalization"
     forecast = "Forecast"
     PPE = "pricePerEarnings"
-    ticker_1_data = "ticker1"
-    ticker_2_data = "ticker2"
+    ticker_1_data = "ticker_1_data"
+    ticker_2_data = "ticker_2_data"
     comparison = "comparison"
 
 class MicroEconomic:

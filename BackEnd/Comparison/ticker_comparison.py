@@ -1,5 +1,7 @@
+import pandas as pd
 from pydantic.v1 import BaseModel
 
+from BackEnd.Data.data import CompanyData
 from BackEnd.constants import Finance
 
 class MetaDataComp(BaseModel):
@@ -9,7 +11,8 @@ class MetaDataComp(BaseModel):
     reported_eps (float): latest earnings per share value
     total_revenue (float): latest total revenue of the company
     profit (float): latest total profit of the company
-    ppe (float): price per earnings ehich is price of the stock / eps
+    ppe (float): price per earnings which is price of the stock / eps
+    times_series (pd.DataFrame): data frame of time series
     """
     symbol: str
     market_cap: float
@@ -17,6 +20,10 @@ class MetaDataComp(BaseModel):
     total_revenue: float
     profit: float
     ppe: float
+    time_series: pd.DataFrame
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class TickerComparison:
@@ -31,27 +38,27 @@ class TickerComparison:
         """
         Sets the two ticker data into a MetaDataComp obj and saves to constructor
         """
-        ticker_one_instance = CompanyData(ticker=self.ticker1)
-        ticker_two_instance = CompanyData(ticker=self.ticker2)
+        ticker_1_instance = CompanyData(ticker=self.ticker1)
+        ticker_2_instance = CompanyData(ticker=self.ticker2)
 
-        self._ticker_one_data = MetaDataComp(
+        self._ticker1_data = MetaDataComp(
             symbol=self.ticker1,
-            market_cap=ticker_one_instance.overview[Finance.market_cap][0],
-            eps=ticker_one_instance.earnings[Finance.reported_eps][0],
-            total_revenue=ticker_one_instance.income_statement[Finance.total_revenue][0],
-            profit=ticker_one_instance.income_statement[Finance.profit][0],
-            ppe=ticker_one_instance.time_series[Finance.close][0] / ticker_one_instance.earnings[Finance.reported_eps][
-                0]
+            market_cap=ticker_1_instance.overview[Finance.market_cap][0],
+            reported_eps=ticker_1_instance.earnings[Finance.reported_eps][0],
+            total_revenue=ticker_1_instance.income_statement[Finance.total_revenue][0],
+            profit=ticker_1_instance.income_statement[Finance.profit][0],
+            ppe=ticker_1_instance.time_series[Finance.close][0] / ticker_1_instance.earnings[Finance.reported_eps][0],
+            time_series=ticker_1_instance.time_series
         )
 
-        self._ticker_two_data = MetaDataComp(
+        self._ticker2_data = MetaDataComp(
             symbol=self.ticker2,
-            market_cap=ticker_two_instance.overview[Finance.market_cap][0],
-            eps=ticker_two_instance.earnings[Finance.reported_eps][0],
-            total_revenue=ticker_two_instance.income_statement[Finance.total_revenue][0],
-            profit=ticker_two_instance.income_statement[Finance.profit][0],
-            ppe=ticker_two_instance.time_series[Finance.close][0] / ticker_two_instance.earnings[Finance.reported_eps][
-                0]
+            market_cap=ticker_2_instance.overview[Finance.market_cap][0],
+            reported_eps=ticker_2_instance.earnings[Finance.reported_eps][0],
+            total_revenue=ticker_2_instance.income_statement[Finance.total_revenue][0],
+            profit=ticker_2_instance.income_statement[Finance.profit][0],
+            ppe=ticker_2_instance.time_series[Finance.close][0] / ticker_2_instance.earnings[Finance.reported_eps][0],
+            time_series=ticker_2_instance.time_series
         )
 
     @property
@@ -86,10 +93,10 @@ class TickerComparison:
             self._set_company_data()
 
         difference = {
-            Finance.market_cap: abs(round(self._ticker1_data.market_cap - self._ticker2_data.market_cap, 2)),
-            Finance.reported_eps: abs(round(self._ticker1_data.eps - self._ticker2_data.eps, 2)),
-            Finance.total_revenue: abs(round(self._ticker1_data.total_revenue - self._ticker2_data.total_revenue, 2)),
-            Finance.profit: abs(round(self._ticker1_data.profit - self._ticker2_data.profit, 2)),
-            Finance.PPE: abs(round(self._ticker1_data.ppe - self._ticker2_data.ppe, 2))
+            Finance.market_cap: abs(self._ticker1_data.market_cap - self._ticker2_data.market_cap),
+            Finance.reported_eps: abs(self._ticker1_data.reported_eps - self._ticker2_data.reported_eps),
+            Finance.total_revenue: abs(self._ticker1_data.total_revenue - self._ticker2_data.total_revenue),
+            Finance.profit: abs(self._ticker1_data.profit - self._ticker2_data.profit),
+            Finance.PPE: abs(self._ticker1_data.ppe - self._ticker2_data.ppe)
         }
         return difference
