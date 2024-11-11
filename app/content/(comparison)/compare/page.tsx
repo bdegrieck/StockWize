@@ -281,8 +281,8 @@ export default function Compare() {
           ) : (
             <CompareLineChartCard
               title={`${data.symbol} vs. ${data2.symbol}`}
-              dataToDisplay={chartData}
-              dataToDisplay2={chartData2}
+              dataToDisplay={[...chartData].reverse()}
+              dataToDisplay2={[...chartData2].reverse()}
               xKey="date"
               yKey="close"
               input={data.symbol}
