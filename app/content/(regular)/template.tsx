@@ -26,7 +26,7 @@ export default function ContentLayout({
   const router = useRouter();
   const pageName = pathName.split("/content/")[1] || ""; //Hacky way to get the page name, then it is capitalized in the display
   const company =
-    searchParams.get("company") === null ? "" : searchParams.get("company");
+    searchParams.get("company") === null ? "" : searchParams.get("company")?.toUpperCase();
   const [query, setQuery] = useState(company);
   const [metadata, setMetadata] = useState({} as any);
   const [loading, setLoading] = useState(true);
@@ -188,7 +188,7 @@ function NavBarItem({
   text,
 }: {
   route: string;
-  company: string | null;
+  company: string | undefined;
   img: StaticImageData;
   text: string;
 }) {
