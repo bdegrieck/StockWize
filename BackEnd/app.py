@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 from flask_restful import Api, Resource
 
+from BackEnd.Comparison.ticker_comparison import TickerComparison
 from BackEnd.Data.data import CompanyData, MicroData
 from BackEnd.constants import Finance, MicroEconomic
 from BackEnd.validation import validate_ticker, TickerError
@@ -20,10 +21,10 @@ class Overview(Resource):
             ticker = validate_ticker(symbol=symbol)
             instance = CompanyData(ticker=ticker)
             overview = instance.overview
-            time_series = instance.time_series.sort_values(by=Finance.date, ascending=True)
+            time_series = instance.time_series
 
             if len(time_series) > 700:
-                time_series = time_series.iloc[-700:]
+                time_series = time_series.iloc[0: 700]
 
             data = {
                 Finance.year_high: overview[Finance.year_high][0],
@@ -100,6 +101,66 @@ class Metadata(Resource):
         except Exception as e:
             return jsonify({"error": "An unexpected error occurred"}), 500
 
+
+class Comparison(Resource):
+    def get(self):
+        try:
+            input_1 = request.args.get('ticker1')
+            input_2 = request.args.get('ticker2')
+            ticker_1 = validate_ticker(symbol=input_1)
+            ticker_2 = validate_ticker(symbol=input_2)
+
+            # comparison info
+            comp_instance = TickerComparison(ticker1=ticker_1, ticker2=ticker_2)
+            comp = comp_instance.get_difference
+            ticker_1_raw_data = comp_instance.get_ticker1_metadata
+            ticker_2_raw_data = comp_instance.get_ticker2_metadata
+
+            # handle unequal lengths
+            ticker_1_len = len(ticker_1_raw_data.time_series)
+            ticker_2_len = len(ticker_2_raw_data.time_series)
+            if ticker_1_len > 700 and ticker_2_len > 700:
+                ticker_1_raw_data.time_series = ticker_1_raw_data.time_series.iloc[0: 700]
+                ticker_2_raw_data.time_series = ticker_2_raw_data.time_series.iloc[0: 700]
+            else:
+                if ticker_1_len > ticker_2_len:
+                    ticker_1_raw_data.time_series = ticker_1_raw_data.time_series.iloc[:ticker_2_len]
+                elif ticker_2_len > ticker_1_len:
+                    ticker_2_raw_data.time_series = ticker_2_raw_data.time_series.iloc[:ticker_1_len]
+
+
+            ticker_1_data = {
+                Finance.symbol: ticker_1_raw_data.symbol,
+                Finance.market_cap: ticker_1_raw_data.market_cap,
+                Finance.reported_eps: ticker_1_raw_data.reported_eps,
+                Finance.total_revenue: ticker_1_raw_data.total_revenue,
+                Finance.profit: ticker_1_raw_data.profit,
+                Finance.PPE: ticker_1_raw_data.ppe,
+                Finance.date: ticker_1_raw_data.time_series[Finance.date].to_list(),
+                Finance.close: ticker_1_raw_data.time_series[Finance.close].to_list()
+            }
+
+            ticker_2_data = {
+                Finance.symbol: ticker_2_raw_data.symbol,
+                Finance.market_cap: ticker_2_raw_data.market_cap,
+                Finance.reported_eps: ticker_2_raw_data.reported_eps,
+                Finance.total_revenue: ticker_2_raw_data.total_revenue,
+                Finance.profit: ticker_2_raw_data.profit,
+                Finance.PPE: ticker_2_raw_data.ppe,
+                Finance.date: ticker_2_raw_data.time_series[Finance.date].to_list(),
+                Finance.close: ticker_2_raw_data.time_series[Finance.close].to_list()
+            }
+
+            data = {
+                Finance.ticker_1_data: ticker_1_data,
+                Finance.ticker_2_data: ticker_2_data,
+                Finance.comparison: comp
+            }
+
+            return jsonify(data)
+        except Exception as e:
+            return jsonify({"error": "An unexpected error occurred"}), 500
+
 class Test(Resource):
     def get(self):
         return jsonify({"Test": "Test Success"})
@@ -110,6 +171,7 @@ api.add_resource(EDA, '/api/eda')
 api.add_resource(Test, '/api/test')
 api.add_resource(Micro, '/api/micro')
 api.add_resource(Metadata, '/api/metadata')
+api.add_resource(Comparison, '/api/comparison')
 
 if __name__ == "__main__":
     app.run(debug=True)

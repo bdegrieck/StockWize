@@ -3,18 +3,47 @@ import { LineChart } from "@mui/x-charts/LineChart";
 import { axisClasses } from "@mui/x-charts";
 import { motion } from "framer-motion";
 
-//import { dataset } from "./basicDataset";
+interface CompareLineChartCardProps {
+  title: string;
+  dataToDisplay: { [key: string]: any }[];
+  dataToDisplay2: { [key: string]: any }[];
+  xKey: string;
+  yKey: string;
+  input: string;
+  input2: string;
+  color1: string;
+  color2: string;
+}
 
-//const reversedDataset = [...dataset].reverse();
+const CompareLineChartCard: React.FC<CompareLineChartCardProps> = ({
+  title,
+  dataToDisplay,
+  dataToDisplay2,
+  xKey,
+  yKey,
+  input,
+  input2,
+  color1,
+  color2,
+}) => {
+  const xValues = dataToDisplay.map((item) => item[xKey]);
 
-export default function LineChartCard({ title, dataToDisplay, xKey, yKey }) {
+  const series1 = dataToDisplay.map((item) => ({
+    x: item[xKey],
+    y: item[yKey],
+  }));
+
+  const series2 = dataToDisplay2.map((item) => ({
+    x: item[xKey],
+    y: item[yKey],
+  }));
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{
         duration: 0.8,
-
         ease: [0, 0.71, 0.2, 1.01],
       }}
       className="card shadow-sm align-items-center w-100"
@@ -25,17 +54,14 @@ export default function LineChartCard({ title, dataToDisplay, xKey, yKey }) {
         margin={{ left: 80 }}
         sx={{
           [`.${axisClasses.left} .${axisClasses.label}`]: {
-            // Move the y-axis label with CSS
             transform: "translateX(-15px)",
           },
         }}
         grid={{ vertical: true, horizontal: true }}
-        dataset={[...dataToDisplay]}
         xAxis={[
           {
             scaleType: "point",
-            reversed: false,
-            dataKey: xKey,
+            data: xValues,
             tickInterval(value, index) {
               return index % 25 === 0;
             },
@@ -44,12 +70,21 @@ export default function LineChartCard({ title, dataToDisplay, xKey, yKey }) {
         yAxis={[{ label: "Dollar Amount" }]}
         series={[
           {
-            dataKey: yKey,
-            color: "#EFBF04",
+            data: series1.map((item) => item.y),
+            color: color1,
             showMark: false,
+            label: `${input}`,
+          },
+          {
+            data: series2.map((item) => item.y),
+            color: color2,
+            showMark: false,
+            label: `${input2}`,
           },
         ]}
       />
     </motion.div>
   );
-}
+};
+
+export default CompareLineChartCard;

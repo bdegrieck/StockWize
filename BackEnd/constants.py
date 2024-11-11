@@ -46,6 +46,10 @@ class Finance:
     date = "Date"
     market_cap = "MarketCapitalization"
     forecast = "Forecast"
+    PPE = "pricePerEarnings"
+    ticker_1_data = "ticker_1_data"
+    ticker_2_data = "ticker_2_data"
+    comparison = "comparison"
 
 class MicroEconomic:
     real_gdp = "Real GDP"

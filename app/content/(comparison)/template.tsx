@@ -25,21 +25,14 @@ export default function ContentLayout({
   const pathName = usePathname();
   const router = useRouter();
   const pageName = pathName.split("/content/")[1] || ""; //Hacky way to get the page name, then it is capitalized in the display
-  const company =
-    searchParams.get("company") === null ? "" : searchParams.get("company");
-  const [query, setQuery] = useState(company);
+  const company = searchParams.get("ticker1") === null ? "" : searchParams.get("ticker1");
+
+  const [query, setQuery] = useState("");
   const [metadata, setMetadata] = useState({} as any);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  const content =
-    company === "" ? (
-      <div className="h-100 w-100 d-flex justify-content-center align-items-center">
-        <p className="fs-4">
-          Search for a Company or Stock Symbol to Get Started
-        </p>
-      </div>
-    ) : (
+  const content = (
       <div className="h-100 d-flex flex-column">
         <div className="flex-grow-1 d-flex flex-column">{children}</div>
       </div>
@@ -78,7 +71,7 @@ export default function ContentLayout({
     }
 
     fetchMetadata();
-  }, metadata);
+  }, []);
 
   return (
     <>
@@ -92,63 +85,61 @@ export default function ContentLayout({
             <span className="p-2 fs-5 fw-bold companyName">StockWize</span>
           </div>
         </Link>
-        <h1 className="mt-4 mx-3 col-10 fw-bold display-4">{company}</h1>
-        <p className="mx-3 col-10 fs-5 text-muted">
-          Last Updated {metadata[LAST_UPDATED]}
-        </p>
+
+
         <div className="flex-grow-1 d-flex pt-2 flex-column col-11 rounded-end bg-light shadow">
           <NavBarItem
             route="/content/overview"
-            company={company}
             img={Binoculars}
+            company={company}
             text="Overview"
           />
 
           <NavBarItem
             route="/content/forecasted"
-            company={company}
             img={Ball}
+            company={company}
             text="Forecasted"
           />
           <NavBarItem
             route="/content/stocknews"
-            company={company}
             img={News}
+            company={company}
             text="Stock News"
           />
           <NavBarItem
             route="/content/explanatory"
-            company={company}
             img={Eye}
+            company={company}
             text="Explanatory"
           />
           <NavBarItem
             route="/content/microeconomics"
-            company={company}
             img={Money}
+            company={company}
             text="Microeconomics"
           />
           <NavBarItem
             route="/content/compare"
-            company={company}
             img={Scale}
+            company={company}
             text="Compare"
           />
           <div className="flex-fill d-flex justify-content-center align-items-center mx-5">
             {loading ? (
               <>
-                <div className="d-flex align-items-center justify-content-center w-100 h-100">
-                  <div
-                    className="spinner-border text-primary"
-                    style={{ width: 50, height: 50 }}
-                  ></div>
-                </div>
+          <div className="d-flex align-items-center justify-content-center w-100 h-100">
+            <div
+              className="spinner-border text-primary"
+              style={{ width: 50, height: 50 }}
+            ></div>
+          </div>
               </>
             ) : error ? (
               <p>There was an error loading a fun fact</p>
             ) : (
               <p className="fs-5">
-                <b>Fun Fact:</b> {metadata[FUN_FACT]}
+          <b>Fun Fact:</b> {metadata[FUN_FACT]}
               </p>
             )}
           </div>
@@ -173,16 +164,16 @@ export default function ContentLayout({
 
 function NavBarItem({
   route,
-  company,
   img,
+  company,
   text,
 }: {
   route: string;
-  company: string | null;
   img: StaticImageData;
+  company: string | null;
   text: string;
 }) {
-  const href = company === null ? route : `${route}?company=${company}`;
+  const href = route === "/content/compare" ? `${route}?ticker1=${company}&ticker2=` : `${route}?company=${company}`;
   const pathName = usePathname();
 
   // Can't seem to bootstrap this style, since it must explicitly be declared as background color.
