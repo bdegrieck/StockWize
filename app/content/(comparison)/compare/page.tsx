@@ -23,11 +23,13 @@ import {
   NEXT_PUBLIC_PROFIT
 } from "@/app/constants/api_properties";
 import CompareLineChartCard from "@/app/components/CompareLineChartComponent";
+import { useRouter } from "next/navigation";
 
 export default function Compare() {
   const searchParams = useSearchParams();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const [ticker1, setTicker1] = useState(searchParams.get("ticker1") || "");
   const [ticker2, setTicker2] = useState(searchParams.get("ticker2") || "");
@@ -193,8 +195,7 @@ export default function Compare() {
   };
 
   const handleCompare = () => {
-    setTicker1(ticker1);
-    setTicker2(ticker2);
+    router.replace(`/content/compare?ticker1=${ticker1}&ticker2=${ticker2}`)
     if (ticker1) {
       fetchData(setData, setChartData);
     }

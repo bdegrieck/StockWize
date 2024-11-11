@@ -192,7 +192,7 @@ function NavBarItem({
   img: StaticImageData;
   text: string;
 }) {
-  const href = route === "/content/compare" ? `${route}?ticker1=&ticker2=` : route;
+  const href = route === "/content/compare" ? `${route}?ticker1=${company}&ticker2=` : `${route}?company=${company}`;
   const pathName = usePathname();
 
   // Can't seem to bootstrap this style, since it must explicitly be declared as background color.

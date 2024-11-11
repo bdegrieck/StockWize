@@ -25,6 +25,7 @@ export default function ContentLayout({
   const pathName = usePathname();
   const router = useRouter();
   const pageName = pathName.split("/content/")[1] || ""; //Hacky way to get the page name, then it is capitalized in the display
+  const company = searchParams.get("ticker1") === null ? "" : searchParams.get("ticker1");
 
   const [query, setQuery] = useState("");
   const [metadata, setMetadata] = useState({} as any);
@@ -90,49 +91,55 @@ export default function ContentLayout({
           <NavBarItem
             route="/content/overview"
             img={Binoculars}
+            company={company}
             text="Overview"
           />
 
           <NavBarItem
             route="/content/forecasted"
             img={Ball}
+            company={company}
             text="Forecasted"
           />
           <NavBarItem
             route="/content/stocknews"
             img={News}
+            company={company}
             text="Stock News"
           />
           <NavBarItem
             route="/content/explanatory"
             img={Eye}
+            company={company}
             text="Explanatory"
           />
           <NavBarItem
             route="/content/microeconomics"
             img={Money}
+            company={company}
             text="Microeconomics"
           />
           <NavBarItem
             route="/content/compare"
             img={Scale}
+            company={company}
             text="Compare"
           />
           <div className="flex-fill d-flex justify-content-center align-items-center mx-5">
             {loading ? (
               <>
-                <div className="d-flex align-items-center justify-content-center w-100 h-100">
-                  <div
-                    className="spinner-border text-primary"
-                    style={{ width: 50, height: 50 }}
-                  ></div>
-                </div>
+          <div className="d-flex align-items-center justify-content-center w-100 h-100">
+            <div
+              className="spinner-border text-primary"
+              style={{ width: 50, height: 50 }}
+            ></div>
+          </div>
               </>
             ) : error ? (
               <p>There was an error loading a fun fact</p>
             ) : (
               <p className="fs-5">
-                <b>Fun Fact:</b> {metadata[FUN_FACT]}
+          <b>Fun Fact:</b> {metadata[FUN_FACT]}
               </p>
             )}
           </div>
@@ -158,13 +165,15 @@ export default function ContentLayout({
 function NavBarItem({
   route,
   img,
+  company,
   text,
 }: {
   route: string;
   img: StaticImageData;
+  company: string | null;
   text: string;
 }) {
-  const href = route === "/content/compare" ? `${route}?ticker1=&ticker2=` : route;
+  const href = route === "/content/compare" ? `${route}?ticker1=${company}&ticker2=` : `${route}?company=${company}`;
   const pathName = usePathname();
 
   // Can't seem to bootstrap this style, since it must explicitly be declared as background color.
