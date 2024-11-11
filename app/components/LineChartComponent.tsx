@@ -30,10 +30,11 @@ export default function LineChartCard({ title, dataToDisplay, xKey, yKey }) {
           },
         }}
         grid={{ vertical: true, horizontal: true }}
-        dataset={[...dataToDisplay].reverse()}
+        dataset={[...dataToDisplay]}
         xAxis={[
           {
             scaleType: "point",
+            reversed: false,
             dataKey: xKey,
             tickInterval(value, index) {
               return index % 25 === 0;

@@ -21,10 +21,10 @@ class Overview(Resource):
             ticker = validate_ticker(symbol=symbol)
             instance = CompanyData(ticker=ticker)
             overview = instance.overview
-            time_series = instance.time_series.sort_values(by=Finance.date, ascending=True)
+            time_series = instance.time_series
 
             if len(time_series) > 700:
-                time_series = time_series.iloc[-700:]
+                time_series = time_series.iloc[0: 700]
 
             data = {
                 Finance.year_high: overview[Finance.year_high][0],
@@ -120,13 +120,13 @@ class Comparison(Resource):
             ticker_1_len = len(ticker_1_raw_data.time_series)
             ticker_2_len = len(ticker_2_raw_data.time_series)
             if ticker_1_len > 700 and ticker_2_len > 700:
-                ticker_1_raw_data.time_series = ticker_1_raw_data.time_series.iloc[-700:]
-                ticker_2_raw_data.time_series = ticker_2_raw_data.time_series.iloc[-700:]
+                ticker_1_raw_data.time_series = ticker_1_raw_data.time_series.iloc[0: 700]
+                ticker_2_raw_data.time_series = ticker_2_raw_data.time_series.iloc[0: 700]
             else:
                 if ticker_1_len > ticker_2_len:
-                    ticker_1_raw_data.time_series = ticker_1_raw_data.time_series.iloc[ticker_2_len:]
+                    ticker_1_raw_data.time_series = ticker_1_raw_data.time_series.iloc[:ticker_2_len]
                 elif ticker_2_len > ticker_1_len:
-                    ticker_2_raw_data.time_series = ticker_2_raw_data.time_series.iloc[ticker_1_len:]
+                    ticker_2_raw_data.time_series = ticker_2_raw_data.time_series.iloc[:ticker_1_len]
 
 
             ticker_1_data = {
