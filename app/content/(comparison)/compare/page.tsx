@@ -97,7 +97,7 @@ export default function Compare() {
         currency: "USD",
             }
         ),
-        reportedEPS: resp[TICKER_1_DATA][NEXT_PUBLIC_REPORTED_EPS],
+        reportedEPS: resp[TICKER_1_DATA][NEXT_PUBLIC_REPORTED_EPS].toFixed(2),
         revenue: resp[TICKER_1_DATA][NEXT_PUBLIC_TOTAL_REVENUE].toLocaleString("en-US", {
         style: "currency",
         currency: "USD",
@@ -124,7 +124,7 @@ export default function Compare() {
                 currency: "USD",
             }
         ),
-        reportedEPS: resp[TICKER_2_DATA][NEXT_PUBLIC_REPORTED_EPS],
+        reportedEPS: resp[TICKER_2_DATA][NEXT_PUBLIC_REPORTED_EPS].toFixed(2),
         revenue: resp[TICKER_2_DATA][NEXT_PUBLIC_TOTAL_REVENUE].toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
@@ -150,7 +150,7 @@ export default function Compare() {
                 currency: "USD",
             }
         ),
-        reportedEPS: resp[COMPARISON][NEXT_PUBLIC_REPORTED_EPS],
+        reportedEPS: resp[COMPARISON][NEXT_PUBLIC_REPORTED_EPS].toFixed(2),
         revenue: resp[COMPARISON][NEXT_PUBLIC_TOTAL_REVENUE].toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
@@ -262,27 +262,27 @@ export default function Compare() {
               <thead>
                 <tr>
                   <th scope="col"></th>
-                  <th scope="col">{ticker1}</th>
-                  <th scope="col">{ticker2}</th>
+                  <th scope="col">{data.symbol}</th>
+                  <th scope="col">{data2.symbol}</th>
                   <th scope="col">Difference</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <th scope="row">Market Cap</th>
-                  <td>{data.marketCap}0</td>
+                  <td>{data.marketCap}</td>
                   <td>{data2.marketCap}</td>
                   <td>{compData.marketCap}</td>
                 </tr>
                 <tr>
                   <th scope="row">Reported EPS</th>
-                  <td>{data.reportedEPS}0</td>
+                  <td>{data.reportedEPS}</td>
                   <td>{data2.reportedEPS}</td>
                   <td>{compData.reportedEPS}</td>
                 </tr>
                 <tr>
                   <th scope="row">Revenue</th>
-                  <td>{data.revenue}0</td>
+                  <td>{data.revenue}</td>
                   <td>{data2.revenue}</td>
                   <td>{compData.revenue}</td>
                 </tr>
@@ -290,13 +290,13 @@ export default function Compare() {
                   <th scope="row">Profit</th>
                   <td>{data.profit}</td>
                   <td>{data2.profit}</td>
-                  <td>{data2.profit}</td>
+                  <td>{compData.profit}</td>
                 </tr>
                 <tr>
                   <th scope="row">PPE</th>
                   <td>{data.ppe}</td>
                   <td>{data2.ppe}</td>
-                  <td>{data2.ppe}</td>
+                  <td>{compData.ppe}</td>
                 </tr>
               </tbody>
             </table>
