@@ -128,7 +128,7 @@ export default function Overview() {
             <>
               <LineChartCard
                 title="Stock Price"
-                dataToDisplay={chartData.reverse()}
+                dataToDisplay={[...chartData].reverse()}
                 xKey="date"
                 yKey="close"
               />
