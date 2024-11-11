@@ -20,10 +20,11 @@ import {
   TICKER_2_DATA,
   COMPARISON,
   NEXT_PUBLIC_TOTAL_REVENUE,
-  NEXT_PUBLIC_PROFIT
+  NEXT_PUBLIC_PROFIT,
 } from "@/app/constants/api_properties";
 import CompareLineChartCard from "@/app/components/CompareLineChartComponent";
 import { useRouter } from "next/navigation";
+import ColorPicker from "@/app/components/ColorPicker";
 
 export default function Compare() {
   const searchParams = useSearchParams();
@@ -34,10 +35,14 @@ export default function Compare() {
   const [ticker1, setTicker1] = useState(searchParams.get("ticker1") || "");
   const [ticker2, setTicker2] = useState(searchParams.get("ticker2") || "");
 
-  const handleTempInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTempInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setTicker1(event.target.value);
   };
-  const handleTempInputChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTempInputChange2 = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setTicker2(event.target.value);
   };
 
@@ -49,7 +54,7 @@ export default function Compare() {
     profit: null,
     ppe: null,
     dates: null,
-    close_prices: null
+    close_prices: null,
   });
 
   const [data2, setData2] = useState({
@@ -60,7 +65,7 @@ export default function Compare() {
     profit: null,
     ppe: null,
     dates: null,
-    close_prices: null
+    close_prices: null,
   });
 
   const [compData, setCompData] = useState({
@@ -70,11 +75,14 @@ export default function Compare() {
     profit: null,
     ppe: null,
     dates: null,
-    close_prices: null
+    close_prices: null,
   });
 
   const [chartData, setChartData] = useState([]);
   const [chartData2, setChartData2] = useState([]);
+
+  const [selectedColor1, setSelectedColor1] = useState("#EFBF04");
+  const [selectedColor2, setSelectedColor2] = useState("#EF9504");
 
   const fetchData = async (setData, setChartData) => {
     try {
@@ -87,88 +95,102 @@ export default function Compare() {
 
       if (!response.ok) {
         setError(
-          `Error: ${resp.error || "An unexpected error occurred"} for inputs: "${ticker1}" and "${ticker2}"`
+          `Error: ${
+            resp.error || "An unexpected error occurred"
+          } for inputs: "${ticker1}" and "${ticker2}"`
         );
         return;
       }
 
       setData({
         symbol: resp[TICKER_1_DATA][NEXT_PUBLIC_SYMBOL],
-        marketCap: resp[TICKER_1_DATA][NEXT_PUBLIC_MARKET_CAP].toLocaleString("en-US", {
-        style: "currency",
-        currency: "USD",
-            }
+        marketCap: resp[TICKER_1_DATA][NEXT_PUBLIC_MARKET_CAP].toLocaleString(
+          "en-US",
+          {
+            style: "currency",
+            currency: "USD",
+          }
         ),
         reportedEPS: resp[TICKER_1_DATA][NEXT_PUBLIC_REPORTED_EPS].toFixed(2),
-        revenue: resp[TICKER_1_DATA][NEXT_PUBLIC_TOTAL_REVENUE].toLocaleString("en-US", {
-        style: "currency",
-        currency: "USD",
-            }
+        revenue: resp[TICKER_1_DATA][NEXT_PUBLIC_TOTAL_REVENUE].toLocaleString(
+          "en-US",
+          {
+            style: "currency",
+            currency: "USD",
+          }
         ),
-        profit: resp[TICKER_1_DATA][NEXT_PUBLIC_PROFIT].toLocaleString("en-US", {
-        style: "currency",
-        currency: "USD",
-            }
+        profit: resp[TICKER_1_DATA][NEXT_PUBLIC_PROFIT].toLocaleString(
+          "en-US",
+          {
+            style: "currency",
+            currency: "USD",
+          }
         ),
         ppe: resp[TICKER_1_DATA][NEXT_PUBLIC_PPE].toLocaleString("en-US", {
-        style: "currency",
-        currency: "USD",
-            }
-        ),
+          style: "currency",
+          currency: "USD",
+        }),
         dates: resp[TICKER_1_DATA][NEXT_PUBLIC_DATE],
-        close_prices: resp[TICKER_1_DATA][NEXT_PUBLIC_CLOSE]
+        close_prices: resp[TICKER_1_DATA][NEXT_PUBLIC_CLOSE],
       });
 
       setData2({
         symbol: resp[TICKER_2_DATA][NEXT_PUBLIC_SYMBOL],
-        marketCap: resp[TICKER_2_DATA][NEXT_PUBLIC_MARKET_CAP].toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-            }
+        marketCap: resp[TICKER_2_DATA][NEXT_PUBLIC_MARKET_CAP].toLocaleString(
+          "en-US",
+          {
+            style: "currency",
+            currency: "USD",
+          }
         ),
         reportedEPS: resp[TICKER_2_DATA][NEXT_PUBLIC_REPORTED_EPS].toFixed(2),
-        revenue: resp[TICKER_2_DATA][NEXT_PUBLIC_TOTAL_REVENUE].toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-            }
+        revenue: resp[TICKER_2_DATA][NEXT_PUBLIC_TOTAL_REVENUE].toLocaleString(
+          "en-US",
+          {
+            style: "currency",
+            currency: "USD",
+          }
         ),
-        profit: resp[TICKER_2_DATA][NEXT_PUBLIC_PROFIT].toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-            }
+        profit: resp[TICKER_2_DATA][NEXT_PUBLIC_PROFIT].toLocaleString(
+          "en-US",
+          {
+            style: "currency",
+            currency: "USD",
+          }
         ),
         ppe: resp[TICKER_2_DATA][NEXT_PUBLIC_PPE].toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-            }
-        ),
+          style: "currency",
+          currency: "USD",
+        }),
         dates: resp[TICKER_2_DATA][NEXT_PUBLIC_DATE],
-        close_prices: resp[TICKER_2_DATA][NEXT_PUBLIC_CLOSE]
+        close_prices: resp[TICKER_2_DATA][NEXT_PUBLIC_CLOSE],
       });
 
       setCompData({
-        marketCap: resp[COMPARISON][NEXT_PUBLIC_MARKET_CAP].toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-            }
+        marketCap: resp[COMPARISON][NEXT_PUBLIC_MARKET_CAP].toLocaleString(
+          "en-US",
+          {
+            style: "currency",
+            currency: "USD",
+          }
         ),
         reportedEPS: resp[COMPARISON][NEXT_PUBLIC_REPORTED_EPS].toFixed(2),
-        revenue: resp[COMPARISON][NEXT_PUBLIC_TOTAL_REVENUE].toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-            }
+        revenue: resp[COMPARISON][NEXT_PUBLIC_TOTAL_REVENUE].toLocaleString(
+          "en-US",
+          {
+            style: "currency",
+            currency: "USD",
+          }
         ),
         profit: resp[COMPARISON][NEXT_PUBLIC_PROFIT].toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-            }
-        ),
+          style: "currency",
+          currency: "USD",
+        }),
         ppe: resp[COMPARISON][NEXT_PUBLIC_PPE].toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-            }
-        ),
-      })
+          style: "currency",
+          currency: "USD",
+        }),
+      });
 
       const dates = resp[TICKER_1_DATA][NEXT_PUBLIC_DATE];
       const closes = resp[TICKER_1_DATA][NEXT_PUBLIC_CLOSE];
@@ -195,7 +217,7 @@ export default function Compare() {
   };
 
   const handleCompare = () => {
-    router.replace(`/content/compare?ticker1=${ticker1}&ticker2=${ticker2}`)
+    router.replace(`/content/compare?ticker1=${ticker1}&ticker2=${ticker2}`);
     if (ticker1) {
       fetchData(setData, setChartData);
     }
@@ -213,24 +235,18 @@ export default function Compare() {
         </div>
       ) : (
         <>
-          {loading ? (
-            <>
-              <div className="d-flex align-items-center justify-content-center w-100 h-100">
-                <div
-                  className="spinner-border text-primary"
-                  style={{ width: 100, height: 100 }}
-                ></div>
-              </div>
-            </>
-          ) : null}
           <form className="d-flex align-items-center">
             <input
               className="form-control my-4 w-50 fs-5"
               type="text"
               placeholder="Enter Company Name or Symbol"
               aria-label="Search"
-              value={ticker1 || ""}
+              value={ticker1}
               onChange={handleTempInputChange}
+            />
+            <ColorPicker
+              defaultColor={selectedColor1}
+              onChange={(color) => setSelectedColor1(color)}
             />
             <p className="fs-5 m-4">vs.</p>
             <input
@@ -238,8 +254,12 @@ export default function Compare() {
               type="text"
               placeholder="Enter Company Name or Symbol"
               aria-label="Search"
-              value={ticker2 || ""}
+              value={ticker2}
               onChange={handleTempInputChange2}
+            />
+            <ColorPicker
+              defaultColor={selectedColor2}
+              onChange={(color) => setSelectedColor2(color)}
             />
             <button
               type="button"
@@ -249,15 +269,28 @@ export default function Compare() {
               Compare
             </button>
           </form>
-          <CompareLineChartCard
-            title={`${data.symbol} vs. ${data2.symbol}`}
-            dataToDisplay={...chartData}
-            dataToDisplay2={...chartData2}
-            xKey="date"
-            yKey="close"
-            input={data.symbol}
-            input2={data2.symbol}
-          />
+          {loading ? (
+            <>
+              <div className="d-flex align-items-center justify-content-center w-100 h-100">
+                <div
+                  className="spinner-border text-primary"
+                  style={{ width: 100, height: 100 }}
+                ></div>
+              </div>
+            </>
+          ) : (
+            <CompareLineChartCard
+              title={`${data.symbol} vs. ${data2.symbol}`}
+              dataToDisplay={chartData}
+              dataToDisplay2={chartData2}
+              xKey="date"
+              yKey="close"
+              input={data.symbol}
+              input2={data2.symbol}
+              color1={selectedColor1}
+              color2={selectedColor2}
+            />
+          )}
           <div className="card fs-4 p-4 shadow-sm mt-4">
             <table className="table table-hover">
               <thead>

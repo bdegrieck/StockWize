@@ -11,6 +11,8 @@ interface CompareLineChartCardProps {
   yKey: string;
   input: string;
   input2: string;
+  color1: string;
+  color2: string;
 }
 
 const CompareLineChartCard: React.FC<CompareLineChartCardProps> = ({
@@ -21,6 +23,8 @@ const CompareLineChartCard: React.FC<CompareLineChartCardProps> = ({
   yKey,
   input,
   input2,
+  color1,
+  color2,
 }) => {
   const xValues = dataToDisplay.map((item) => item[xKey]);
 
@@ -67,13 +71,13 @@ const CompareLineChartCard: React.FC<CompareLineChartCardProps> = ({
         series={[
           {
             data: series1.map((item) => item.y),
-            color: "#EFBF04",
+            color: color1,
             showMark: false,
             label: `${input}`,
           },
           {
             data: series2.map((item) => item.y),
-            color: "#00FF00",
+            color: color2,
             showMark: false,
             label: `${input2}`,
           },
