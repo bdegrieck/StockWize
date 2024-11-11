@@ -28,7 +28,7 @@ export default function ContentLayout({
   const company =
     searchParams.get("company") === null ? "" : searchParams.get("company");
   const [query, setQuery] = useState(company);
-  const [metadata, setMetadata] = useState(undefined as any);
+  const [metadata, setMetadata] = useState({} as any);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -52,32 +52,34 @@ export default function ContentLayout({
     router.push(`${pathName}?company=${query}`);
   }
 
-  async function fetchMetadata() {
+  useEffect(() => {
+    async function fetchMetadata() {
+      try {
+        setLoading(true);
+        const response = await fetch(`http://127.0.0.1:5000/api/metadata`);
+        const data = await response.json();
 
-    try {
-      setLoading(true);
-      const response = await fetch(`http://127.0.0.1:5000/api/metadata`);
-      const data = await response.json();
+        if (!response.ok) {
+          setError(true);
+          return;
+        }
 
-      if (!response.ok) {
+        setMetadata({
+          fun_fact: data[FUN_FACT],
+          last_updated: data[LAST_UPDATED],
+        });
+
+        setError(false);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error getting stock data:", error);
         setError(true);
-        return;
       }
-
-      setMetadata({
-        fun_fact: data[FUN_FACT],
-        last_updated: data[LAST_UPDATED],
-      });
-
-      setError(false);
-      setLoading(false);
-    } catch (error) {
-      setError(true);
     }
-  }
 
-  fetchMetadata();
-  
+    fetchMetadata();
+  }, metadata);
+
   return (
     <>
       <div

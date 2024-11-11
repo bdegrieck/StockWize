@@ -27,14 +27,19 @@ The following assumes you have an up to date version of python installed, as wel
 ### Option 2. Miniconda/VSCode
 
    1. Install the VSCode Python Extension
-   2. `Ctrl + Shift + P` on Windows or `Cmd + Shift + P` on Mac, type `Select Interpreter` and press Enter   
-   3. Select your virtual enviroment you made     
+     
+   2. `Ctrl + Shift + P` on Windows or `Cmd + Shift + P` on Mac, type `Select Interpreter` and press Enter
+   
+   3. Select your virtual enviroment you made
+     
    4. Open a terminal and run `conda activate yourenviromentname` and `pip install -r requirements.txt`
 
 ### Option 3. Terminal Only
 
    1. Create a virtual environment with `py -m venv yourenvironmentname`
+
    2. Activate the environment with `.\yourenvironmentname\Scripts\activate` on Windows or `source yourenvname/bin/activate` on Mac/Linux
+
    3. Install dependencies with `pip install -r requirements.txt`
 
 ## Onetime Setup for Frontend
