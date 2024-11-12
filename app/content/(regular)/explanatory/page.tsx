@@ -144,25 +144,25 @@ export default function Overview() {
             <>
               <LineChartCard
                 title="Trend Chart"
-                dataToDisplay={chartTrend}
+                dataToDisplay={[...chartTrend].reverse()}
                 xKey="date"
                 yKey="trend"
               />
               <LineChartCard
                 title="Seasonal 7-Day Chart"
-                dataToDisplay={chartSeasonal7}
+                dataToDisplay={[...chartSeasonal7].reverse()}
                 xKey="date"
                 yKey="seasonal_7"
               />
               <LineChartCard
                 title="Seasonal 30-Day Chart"
-                dataToDisplay={chartSeasonal30}
+                dataToDisplay={[...chartSeasonal30].reverse()}
                 xKey="date"
                 yKey="seasonal_30"
               />
               <LineChartCard
                 title="Seasonal 365-Day Chart"
-                dataToDisplay={chartSeasonal365}
+                dataToDisplay={[...chartSeasonal365].reverse()}
                 xKey="date"
                 yKey="seasonal_365"
               />

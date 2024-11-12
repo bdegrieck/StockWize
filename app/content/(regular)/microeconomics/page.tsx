@@ -139,42 +139,42 @@ export default function Overview() {
 
               <LineChartCard
                 title="CPI"
-                dataToDisplay={chartData.cpi}
+                dataToDisplay={[...chartData.cpi].reverse()}
                 xKey="date"
                 yKey="cpi"
               />
 
               <LineChartCard
                 title="Retail Sales"
-                dataToDisplay={chartData.retail_sales}
+                dataToDisplay={[...chartData.retail_sales].reverse()}
                 xKey="date"
                 yKey="retail_sales"
               />
 
               <LineChartCard
                 title="Inflation"
-                dataToDisplay={chartData.inflation}
+                dataToDisplay={[...chartData.inflation].reverse()}
                 xKey="date"
                 yKey="inflation"
               />
 
               <LineChartCard
                 title="Real GDP"
-                dataToDisplay={chartData.real_gdp}
+                dataToDisplay={[...chartData.real_gdp].reverse()}
                 xKey="date"
                 yKey="real_gdp"
               />
 
               <LineChartCard
                 title="Interest Rates"
-                dataToDisplay={chartData.interest_rates}
+                dataToDisplay={[...chartData.interest_rates].reverse()}
                 xKey="date"
                 yKey="interest_rates"
               />
 
               <LineChartCard
                 title="Unemployment Rate"
-                dataToDisplay={chartData.unemployment_rate}
+                dataToDisplay={[...chartData.unemployment_rate].reverse()}
                 xKey="date"
                 yKey="unemployment_rate"
               />
