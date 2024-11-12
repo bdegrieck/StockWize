@@ -26,7 +26,7 @@ const CompareLineChartCard: React.FC<CompareLineChartCardProps> = ({
   color1,
   color2,
 }) => {
-  const xValues = dataToDisplay.map((item) => item[xKey]);
+  const xValues = dataToDisplay2.map((item) => item[xKey]);
 
   const series1 = dataToDisplay.map((item) => ({
     x: item[xKey],
