@@ -1,4 +1,5 @@
 import pandas as pd
+from typing import Any
 
 from BackEnd.Data.endpoints import CompanyEndpoints, MicroEndpoints, TechIndEndpoints, CalenderEndpoints
 from BackEnd.Data.helpers import get_data_df, get_raw_api_csv_df, format_df
@@ -87,7 +88,7 @@ class CompanyData(CompanyEndpoints):
         return df
 
     @property
-    def news(self) -> str:
+    def news(self) -> list[dict[str, Any]]:
         news_endpoint = super().news
         news_instance = News(ticker=self.ticker, endpoint=news_endpoint)
         return news_instance.get_news

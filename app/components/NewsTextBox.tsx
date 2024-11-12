@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-export default function NewsTextBox({ title, link }) {
+export default function NewsTextBox({ title, link, date_published }) {
   return (
     <motion.div
       initial={{ x: 80, opacity: 0, scale: 1 }}
@@ -24,6 +24,7 @@ export default function NewsTextBox({ title, link }) {
           role="button"
           target="_blank"
         >
+        {date_published}
           Read More
         </a>
       </div>

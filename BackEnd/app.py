@@ -128,7 +128,6 @@ class Comparison(Resource):
                 elif ticker_2_len > ticker_1_len:
                     ticker_2_raw_data.time_series = ticker_2_raw_data.time_series.iloc[:ticker_1_len]
 
-
             ticker_1_data = {
                 Finance.symbol: ticker_1_raw_data.symbol,
                 Finance.market_cap: ticker_1_raw_data.market_cap,
@@ -161,6 +160,18 @@ class Comparison(Resource):
         except Exception as e:
             return jsonify({"error": "An unexpected error occurred"}), 500
 
+class News(Resource):
+    def get(self):
+        try:
+            symbol = request.args.get('company')
+            ticker = validate_ticker(symbol=symbol)
+            company_instance = CompanyData(ticker=ticker)
+            news = company_instance.news
+            return jsonify(news)
+        except Exception as e:
+            return jsonify({"error": "An unexpected error occurred"}), 500
+
+
 class Test(Resource):
     def get(self):
         return jsonify({"Test": "Test Success"})
@@ -172,6 +183,7 @@ api.add_resource(Test, '/api/test')
 api.add_resource(Micro, '/api/micro')
 api.add_resource(Metadata, '/api/metadata')
 api.add_resource(Comparison, '/api/comparison')
+api.add_resource(News, '/api/news')
 
 if __name__ == "__main__":
     app.run(debug=True)
