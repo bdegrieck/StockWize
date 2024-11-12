@@ -34,8 +34,7 @@ class News:
             if ticker in article.get(ArticleKeys.title) and len(most_relevant_articles) <= 10:
                 article_meta_data = {
                     "title": article.get(ArticleKeys.title),
-                    "url": article.get(ArticleKeys.url),
-                    "publish_date": datetime.strptime(article.get(ArticleKeys.publish_date), '%Y%m%dT%H%M%S')
+                    "url": article.get(ArticleKeys.url)
                 }
                 most_relevant_articles.append(article_meta_data)
 
@@ -45,7 +44,6 @@ class News:
                 article_meta_data = {
                     "title": article.get(ArticleKeys.title),
                     "url": article.get(ArticleKeys.url),
-                    "publish_date": datetime.strptime(article.get(ArticleKeys.publish_date), '%Y%m%dT%H%M%S')
                 }
                 if article_meta_data not in most_relevant_articles:
                     most_relevant_articles.append(article_meta_data)

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import NewsTextBox from "@/app/components/NewsTextBox";
 import { useSearchParams } from "next/navigation";
@@ -5,31 +7,37 @@ import { useSearchParams } from "next/navigation";
 export default function StockNews() {
 
   const searchParams = useSearchParams();
-  const company = searchParams.get("company") === null ? "" : searchParams.get("company");
+  const company = searchParams.get("company") || "";
   const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchArticles = async () => {
+      if (!company) return;
+      setLoading(true);
       try {
-        const response = await fetch("http://localhost:5000/api/news");  // Replace with your API URL
+        const response = await fetch(
+          `http://127.0.0.1:5000/api/news?company=${company}`
+        );
         const data = await response.json();
-
-        // Format dates in the article data
-        const formattedArticles = data.map(article => ({
-          ...article,
-          publish_date: new Date(article.publish_date).toLocaleDateString("en-US", {
-            year: 'numeric', month: 'long', day: 'numeric'
-          })
-        }));
-
-        setArticles(formattedArticles);
+        setArticles(data);
       } catch (error) {
         console.error("Error fetching articles:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchArticles();
-  }, []);
+  }, [company]);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (articles.length === 0) {
+    return <p>No articles available.</p>;
+  }
 
   return (
     <>
@@ -38,7 +46,6 @@ export default function StockNews() {
           key={index}
           title={article.title || "No Title Available"}
           link={article.url || "#"}
-          date_published={article.publish_date || "No Date Published"}
         />
       ))}
     </>
