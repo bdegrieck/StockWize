@@ -15,7 +15,7 @@ class Trend(StringEnum):
     constant_trend = "ct"
     no_trend = "n"
 
-class Forecast(BaseModel):
+class ForecastField(BaseModel):
     days: int = Field(gt=0, le=30)
 
 class ArimaConfig(BaseModel):
@@ -96,7 +96,7 @@ class Arima:
         )
         self.model = self.model.fit()
 
-    def predict(self, steps: Forecast) -> pd.DataFrame:
+    def predict(self, steps: ForecastField) -> pd.DataFrame:
         """
         Forecasts a series of data
 
