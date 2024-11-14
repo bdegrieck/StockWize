@@ -1,9 +1,10 @@
-from flask import Flask, jsonify, request, Response
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_restful import Api, Resource
 
 from BackEnd.Comparison.ticker_comparison import TickerComparison
 from BackEnd.Data.data import CompanyData, MicroData
+from BackEnd.Models.arima import Arima
 from BackEnd.constants import Finance, MicroEconomic
 from BackEnd.validation import validate_ticker, TickerError
 from BackEnd.Eda.eda import Eda
@@ -171,6 +172,27 @@ class News(Resource):
         except Exception as e:
             return jsonify({"error": "An unexpected error occurred"}), 500
 
+class Forecast(Resource):
+    symbol = None
+    days = None
+    def get(self):
+        try:
+            ticker = validate_ticker(symbol=self.symbol)
+            time_series = CompanyData(ticker=ticker).time_series
+            instance_arima = Arima(time_series=time_series, date_column=Finance.date, value_column=Finance.close)
+            instance_arima.fit()
+            forecast = instance_arima.predict(steps=self.days)
+
+            data_json = {
+                Finance.date: forecast[Finance.date].to_list(),
+                Finance.forecast: forecast[Finance.forecast].to_list(),
+                Finance.symbol: self.symbol,
+                Finance.forecast_days: self.days
+            }
+            return jsonify(data_json)
+        except Exception as e:
+            return jsonify({"error": "An unexpected error occurred"}), 500
+
 
 class Test(Resource):
     def get(self):
@@ -184,6 +206,7 @@ api.add_resource(Micro, '/api/micro')
 api.add_resource(Metadata, '/api/metadata')
 api.add_resource(Comparison, '/api/comparison')
 api.add_resource(News, '/api/news')
+api.add_resource(Forecast, '/api/forecast')
 
 if __name__ == "__main__":
     app.run(debug=True)
