@@ -51,6 +51,7 @@ class Finance:
     ticker_2_data = "ticker_2_data"
     comparison = "comparison"
     forecast_days = "Forecast Days"
+    forecast_dates = "Forecast Dates"
 
 class MicroEconomic:
     real_gdp = "Real GDP"

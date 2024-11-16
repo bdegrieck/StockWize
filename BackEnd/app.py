@@ -4,7 +4,7 @@ from flask_restful import Api, Resource
 
 from BackEnd.Comparison.ticker_comparison import TickerComparison
 from BackEnd.Data.data import CompanyData, MicroData
-from BackEnd.Models.arima import Arima
+from BackEnd.Models.arima import Arima, ForecastField
 from BackEnd.constants import Finance, MicroEconomic
 from BackEnd.validation import validate_ticker, TickerError
 from BackEnd.Eda.eda import Eda
@@ -173,21 +173,23 @@ class News(Resource):
             return jsonify({"error": "An unexpected error occurred"}), 500
 
 class Forecast(Resource):
-    symbol = None
-    days = None
     def get(self):
         try:
-            ticker = validate_ticker(symbol=self.symbol)
+            symbol = request.args.get('company')
+            days = ForecastField(days=int(request.args.get('days')))
+            ticker = validate_ticker(symbol=symbol)
             time_series = CompanyData(ticker=ticker).time_series
             instance_arima = Arima(time_series=time_series, date_column=Finance.date, value_column=Finance.close)
             instance_arima.fit()
-            forecast = instance_arima.predict(steps=self.days)
+            forecast = instance_arima.predict(steps=days)
 
             data_json = {
-                Finance.date: forecast[Finance.date].to_list(),
+                Finance.close: time_series[Finance.close].to_list(),
+                Finance.date: time_series[Finance.date].to_list(),
                 Finance.forecast: forecast[Finance.forecast].to_list(),
-                Finance.symbol: self.symbol,
-                Finance.forecast_days: self.days
+                Finance.forecast_dates: forecast[Finance.date].to_list(),
+                Finance.symbol: ticker,
+                Finance.forecast_days: days
             }
             return jsonify(data_json)
         except Exception as e:
