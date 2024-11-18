@@ -98,6 +98,7 @@ export default function Forecasted() {
                     className="form-select mb-3 me-3"
                     aria-label="Default select example"
                     value={days}
+                    onChange={(e) => setDays(e.target.value)}
                 >
                     {options}
                 </select>
