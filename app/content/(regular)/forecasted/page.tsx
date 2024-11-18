@@ -20,14 +20,7 @@ export default function Forecasted() {
     const [company, setCompany] = useState(searchParams.get("company") || "");
     const [days, setDays] = useState(searchParams.get("days") || "");
 
-    const [data, setData] = useState({
-        NEXT_PUBLIC_CLOSE: null,
-        FORECAST_DATES: null,
-        NEXT_PUBLIC_DATE: null,
-        FORECAST: null,
-        FORECAST_DAYS: null,
-        NEXT_PUBLIC_SYMBOL: null
-    });
+    const [data, setData] = useState({});
 
     const [chartData, setChartData] = useState([]);
 
@@ -109,9 +102,11 @@ export default function Forecasted() {
                     Submit
                 </button>
             </div>
-            {/* Add a break here */}
             <div style={{ marginTop: "20px" }}>
-                <LineWithPrediction />
+                <LineWithPrediction
+                    xElements={data[NEXT_PUBLIC_DATE]}
+                    yElements={data[NEXT_PUBLIC_CLOSE]}
+                />
             </div>
         </>
     );
