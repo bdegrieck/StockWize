@@ -40,13 +40,10 @@ export default function Forecasted() {
             }
 
             setData({
-                "Symbol": resp[NEXT_PUBLIC_SYMBOL],
-                "Close": resp[NEXT_PUBLIC_CLOSE].toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                }),
-                "Date": resp[NEXT_PUBLIC_DATE],
-                "Limit": resp[LIMIT],
+                Symbol: resp[NEXT_PUBLIC_SYMBOL],
+                Close: resp[NEXT_PUBLIC_CLOSE],
+                Date: resp[NEXT_PUBLIC_DATE],
+                Limit: resp[LIMIT],
             });
 
             const dates = resp[NEXT_PUBLIC_DATE];

@@ -1,3 +1,5 @@
+import pandas as pd
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_restful import Api, Resource
@@ -194,16 +196,22 @@ class Forecast(Resource):
         if len(time_series) > 7:
             time_series = time_series.iloc[0: 7]
 
-        data_json = {
-            Finance.close: time_series[Finance.close].to_list(),
-            Finance.date: time_series[Finance.date].to_list(),
-            Finance.forecast: forecast[Finance.forecast].to_list(),
-            Finance.forecast_dates: forecast[Finance.date].to_list(),
-            Finance.symbol: ticker,
-            Finance.forecast_days: days_instance.days
-        }
-        return jsonify(data_json)
+        df = pd.concat(
+            [time_series[[Finance.date, Finance.close]],
+             forecast[[Finance.date, Finance.close]]]
+        )
 
+        df.sort_values(by=Finance.date, inplace=True, ascending=False)
+        limit = time_series.iloc[0][Finance.date]
+
+        data_json = {
+            Finance.close: df[Finance.close].to_list(),
+            Finance.date: df[Finance.date].to_list(),
+            Finance.symbol: ticker,
+            Finance.limit: limit
+        }
+
+        return jsonify(data_json)
 
 
 class Test(Resource):
