@@ -176,12 +176,12 @@ class Forecast(Resource):
     def get(self):
         try:
             symbol = request.args.get('company')
-            days = ForecastField(days=int(request.args.get('days')))
+            days_instance = ForecastField(days=int(request.args.get('days')))
             ticker = validate_ticker(symbol=symbol)
             time_series = CompanyData(ticker=ticker).time_series
             instance_arima = Arima(time_series=time_series, date_column=Finance.date, value_column=Finance.close)
             instance_arima.fit()
-            forecast = instance_arima.predict(steps=days)
+            forecast = instance_arima.predict(steps=days_instance)
 
             data_json = {
                 Finance.close: time_series[Finance.close].to_list(),
@@ -189,7 +189,7 @@ class Forecast(Resource):
                 Finance.forecast: forecast[Finance.forecast].to_list(),
                 Finance.forecast_dates: forecast[Finance.date].to_list(),
                 Finance.symbol: ticker,
-                Finance.forecast_days: days
+                Finance.forecast_days: days_instance.days
             }
             return jsonify(data_json)
         except Exception as e:
