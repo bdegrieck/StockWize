@@ -183,6 +183,9 @@ class Forecast(Resource):
             instance_arima.fit()
             forecast = instance_arima.predict(steps=days_instance)
 
+            if len(time_series) > 7:
+                time_series = time_series.iloc[0: 7]
+
             data_json = {
                 Finance.close: time_series[Finance.close].to_list(),
                 Finance.date: time_series[Finance.date].to_list(),

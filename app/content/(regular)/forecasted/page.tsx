@@ -25,6 +25,7 @@ export default function Forecasted() {
     const [chartData, setChartData] = useState([]);
 
     const fetchData = async () => {
+        console.log('fetchData() is running...');
         try {
             const response = await fetch(
                 `http://127.0.0.1:5000/api/forecast?company=${company}&days=${days}`
@@ -41,15 +42,15 @@ export default function Forecasted() {
             }
 
             setData({
-                NEXT_PUBLIC_SYMBOL: resp[NEXT_PUBLIC_SYMBOL],
-                FORECAST: resp[FORECAST].toLocaleString("en-US", {
+                "Symbol": resp[NEXT_PUBLIC_SYMBOL],
+                "Forecast": resp[FORECAST].toLocaleString("en-US", {
                     style: "currency",
                     currency: "USD",
                 }),
-                FORECAST_DAYS: resp[FORECAST_DAYS],
-                NEXT_PUBLIC_DATE: resp[NEXT_PUBLIC_DATE],
-                NEXT_PUBLIC_CLOSE: resp[NEXT_PUBLIC_CLOSE],
-                FORECAST_DATES: resp[FORECAST_DATES]
+                "Forecast Days": resp[FORECAST_DAYS],
+                "Date": resp[NEXT_PUBLIC_DATE],
+                "Close": resp[NEXT_PUBLIC_CLOSE],
+                "Forecast Dates": resp[FORECAST_DATES]
             });
 
             const dates = resp[NEXT_PUBLIC_DATE];
@@ -59,6 +60,9 @@ export default function Forecasted() {
                 close: closes[index] || 0,
             }));
             setChartData(formattedChartData);
+            console.log('NEXT_PUBLIC_DATE:', resp[NEXT_PUBLIC_DATE]);
+            console.log('NEXT_PUBLIC_CLOSE:', resp[NEXT_PUBLIC_CLOSE]);
+
         } catch (error) {
             console.error("Error getting stock data:", error);
         }
@@ -80,34 +84,41 @@ export default function Forecasted() {
         </option>
     ));
 
-        return (
-        <>
-            <p>
-                How many days into the future would you like to predict? Note -
-                The further out, the less accurate the prediction will become!
+    return (
+      <>
+        <p>
+          How many days into the future would you like to predict? Note -
+          The further out, the less accurate the prediction will become!
+        </p>
+        <div className="d-flex flex-row align-items-center">
+          <select
+            className="form-select mb-3 me-3"
+            aria-label="Default select example"
+            value={days}
+            onChange={(e) => setDays(e.target.value)}
+          >
+            {options}
+          </select>
+          <button
+            className="btn btn-lg btn-primary mb-3"
+            onClick={handleForecast}
+          >
+            Submit
+          </button>
+        </div>
+        <div style={{ marginTop: "20px" }}>
+
+          {data[NEXT_PUBLIC_DATE] && data[NEXT_PUBLIC_CLOSE] && data[NEXT_PUBLIC_DATE].length > 0 && data[NEXT_PUBLIC_CLOSE].length > 0 ? (
+            <LineWithPrediction
+              xElements={[...data[NEXT_PUBLIC_DATE]].reverse()}
+              yElements={[...data[NEXT_PUBLIC_CLOSE]].reverse()}
+            />
+          ) : (
+            <p style={{ color: "red", textAlign: "center", fontWeight: "bold" }}>
+              No data available to generate predictions.
             </p>
-            <div className="d-flex flex-row align-items-center">
-                <select
-                    className="form-select mb-3 me-3"
-                    aria-label="Default select example"
-                    value={days}
-                    onChange={(e) => setDays(e.target.value)}
-                >
-                    {options}
-                </select>
-                <button
-                    className="btn btn-lg btn-primary mb-3"
-                    onClick={handleForecast}
-                >
-                    Submit
-                </button>
-            </div>
-            <div style={{ marginTop: "20px" }}>
-                <LineWithPrediction
-                    xElements={data[NEXT_PUBLIC_DATE]}
-                    yElements={data[NEXT_PUBLIC_CLOSE]}
-                />
-            </div>
-        </>
+          )}
+        </div>
+      </>
     );
 }
