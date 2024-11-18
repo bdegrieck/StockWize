@@ -5,10 +5,8 @@ import { useEffect, useState } from "react";
 import {
   NEXT_PUBLIC_CLOSE,
   NEXT_PUBLIC_DATE,
-  FORECAST_DAYS,
-  FORECAST,
   NEXT_PUBLIC_SYMBOL,
-  FORECAST_DATES
+  LIMIT
 } from "@/app/constants/api_properties";
 import LineWithPrediction from "@/app/components/ForecastedGraph";
 
@@ -43,14 +41,12 @@ export default function Forecasted() {
 
             setData({
                 "Symbol": resp[NEXT_PUBLIC_SYMBOL],
-                "Forecast": resp[FORECAST].toLocaleString("en-US", {
+                "Close": resp[NEXT_PUBLIC_CLOSE].toLocaleString("en-US", {
                     style: "currency",
                     currency: "USD",
                 }),
-                "Forecast Days": resp[FORECAST_DAYS],
                 "Date": resp[NEXT_PUBLIC_DATE],
-                "Close": resp[NEXT_PUBLIC_CLOSE],
-                "Forecast Dates": resp[FORECAST_DATES]
+                "Limit": resp[LIMIT],
             });
 
             const dates = resp[NEXT_PUBLIC_DATE];
