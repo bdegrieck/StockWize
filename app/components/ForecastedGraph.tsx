@@ -62,7 +62,9 @@ function CustomAnimatedLine(props: CustomAnimatedLineProps) {
   );
 }
 
-export default function LineWithPrediction({ xElements, yElements }) {
+export default function LineWithPrediction({ xElements, yElements, limit_date }) {
+  console.log(limit_date);
+  console.log(xElements)
   return (
     <LineChart
       width={1250}
@@ -83,7 +85,7 @@ export default function LineWithPrediction({ xElements, yElements }) {
       slots={{ line: CustomAnimatedLine }}
       slotProps={{
         line: {
-          limit: "2024-10-15",
+          limit: limit_date,
           sxAfter: { strokeDasharray: "10 10" },
         } as any,
       }}

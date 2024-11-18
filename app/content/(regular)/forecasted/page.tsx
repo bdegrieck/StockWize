@@ -53,8 +53,6 @@ export default function Forecasted() {
                 close: closes[index] || 0,
             }));
             setChartData(formattedChartData);
-            console.log('NEXT_PUBLIC_DATE:', resp[NEXT_PUBLIC_DATE]);
-            console.log('NEXT_PUBLIC_CLOSE:', resp[NEXT_PUBLIC_CLOSE]);
 
         } catch (error) {
             console.error("Error getting stock data:", error);
@@ -76,6 +74,8 @@ export default function Forecasted() {
             {i + 1}
         </option>
     ));
+
+    console.log("Limit:", data[LIMIT]);
 
     return (
       <>
@@ -105,6 +105,7 @@ export default function Forecasted() {
             <LineWithPrediction
               xElements={[...data[NEXT_PUBLIC_DATE]].reverse()}
               yElements={[...data[NEXT_PUBLIC_CLOSE]].reverse()}
+              limit_date={data[LIMIT]}
             />
           ) : (
             <p style={{ color: "red", textAlign: "center", fontWeight: "bold" }}>
