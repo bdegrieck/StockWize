@@ -9,10 +9,13 @@ from BackEnd.constants import Finance, MicroEconomic
 from BackEnd.validation import validate_ticker, TickerError
 from BackEnd.Eda.eda import Eda
 from BackEnd.Metadata.metadata import StockWizeMetadata
+from BackEnd.Cache.cache import CacheDependency
 
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
+
+forecast_cache = CacheDependency()
 
 # TODO handle AAOL
 class Overview(Resource):
@@ -177,26 +180,30 @@ class Forecast(Resource):
         try:
             symbol = request.args.get('company')
             days_instance = ForecastField(days=int(request.args.get('days')))
-            ticker = validate_ticker(symbol=symbol)
-            time_series = CompanyData(ticker=ticker).time_series
-            instance_arima = Arima(time_series=time_series, date_column=Finance.date, value_column=Finance.close)
-            instance_arima.fit()
-            forecast = instance_arima.predict(steps=days_instance)
-
-            if len(time_series) > 7:
-                time_series = time_series.iloc[0: 7]
-
-            data_json = {
-                Finance.close: time_series[Finance.close].to_list(),
-                Finance.date: time_series[Finance.date].to_list(),
-                Finance.forecast: forecast[Finance.forecast].to_list(),
-                Finance.forecast_dates: forecast[Finance.date].to_list(),
-                Finance.symbol: ticker,
-                Finance.forecast_days: days_instance.days
-            }
-            return jsonify(data_json)
+            return forecast_cache.call(lambda: self.get_forecast(symbol, days_instance), f"{symbol}|{days_instance}")
         except Exception as e:
             return jsonify({"error": "An unexpected error occurred"}), 500
+        
+    def get_forecast(self, symbol, days_instance):
+        ticker = validate_ticker(symbol=symbol)
+        time_series = CompanyData(ticker=ticker).time_series
+        instance_arima = Arima(time_series=time_series, date_column=Finance.date, value_column=Finance.close)
+        instance_arima.fit()
+        forecast = instance_arima.predict(steps=days_instance)
+
+        if len(time_series) > 7:
+            time_series = time_series.iloc[0: 7]
+
+        data_json = {
+            Finance.close: time_series[Finance.close].to_list(),
+            Finance.date: time_series[Finance.date].to_list(),
+            Finance.forecast: forecast[Finance.forecast].to_list(),
+            Finance.forecast_dates: forecast[Finance.date].to_list(),
+            Finance.symbol: ticker,
+            Finance.forecast_days: days_instance.days
+        }
+        return jsonify(data_json)
+
 
 
 class Test(Resource):

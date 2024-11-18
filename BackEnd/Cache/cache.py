@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-import time
 
 class CacheDependency:
     """
