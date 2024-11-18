@@ -15,7 +15,7 @@ class Trend(StringEnum):
     constant_trend = "ct"
     no_trend = "n"
 
-class Forecast(BaseModel):
+class ForecastField(BaseModel):
     days: int = Field(gt=0, le=30)
 
 class ArimaConfig(BaseModel):
@@ -96,7 +96,7 @@ class Arima:
         )
         self.model = self.model.fit()
 
-    def predict(self, steps: Forecast) -> pd.DataFrame:
+    def predict(self, steps: ForecastField) -> pd.DataFrame:
         """
         Forecasts a series of data
 
@@ -107,8 +107,8 @@ class Arima:
             forecast (pd.DataFrame): DataFrame of the forecasted series with forecast values and forecasted dates
         """
         forecast_df = pd.DataFrame()
-        forecast_df[Finance.date] = pd.date_range(start=self.max_date, periods=steps.days, freq="B").strftime(date_format='%Y-%m-%d')
-        forecast_df[Finance.forecast] = self.model.forecast(steps=steps.days).values
+        forecast_df[Finance.date] = pd.date_range(start=(self.max_date + pd.Timedelta(days=1)), periods=steps.days, freq="B")
+        forecast_df[Finance.close] = self.model.forecast(steps=steps.days).values
         forecast_df.reset_index(inplace=True, drop=True)
         return forecast_df
 

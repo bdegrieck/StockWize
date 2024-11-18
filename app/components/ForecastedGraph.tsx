@@ -6,33 +6,7 @@ import {
 } from "@mui/x-charts/LineChart";
 import { useChartId, useDrawingArea, useXScale } from "@mui/x-charts/hooks";
 import { SxProps, Theme } from "@mui/system";
-// import { dataset } from "./TestAAPLData";
-// import { dataset } from "./basicDataset";
 
-// const reversedDataset = [...dataset].reverse();
-// const xElements = [
-//   10.24, 10.23, 10.22, 10.21, 10.18, 10.17, 10.15, 10.14, 10.11, 10.1, 10.09,
-//   10.08, 10.07,
-// ].reverse();
-const xElements = [
-  "2024-10-24",
-  "2024-10-23",
-  "2024-10-22",
-  "2024-10-21",
-  "2024-10-18",
-  "2024-10-17",
-  "2024-10-15",
-  "2024-10-14",
-  "2024-10-11",
-  "2024-10-10",
-  "2024-10-09",
-  "2024-10-08",
-  "2024-10-07",
-].reverse();
-const yElements = [
-  231.51, 231.08, 230.9, 233.86, 232.72, 232.43, 233.61, 228.7, 229.3, 227.78,
-  225.23, 224.3, 224.5,
-].reverse();
 
 interface CustomAnimatedLineProps extends AnimatedLineProps {
   limit?: number;
@@ -88,7 +62,9 @@ function CustomAnimatedLine(props: CustomAnimatedLineProps) {
   );
 }
 
-export default function LineWithPrediction() {
+export default function LineWithPrediction({ xElements, yElements, limit_date }) {
+  console.log(limit_date);
+  console.log(xElements)
   return (
     <LineChart
       width={1250}
@@ -109,7 +85,7 @@ export default function LineWithPrediction() {
       slots={{ line: CustomAnimatedLine }}
       slotProps={{
         line: {
-          limit: "2024-10-15",
+          limit: limit_date,
           sxAfter: { strokeDasharray: "10 10" },
         } as any,
       }}

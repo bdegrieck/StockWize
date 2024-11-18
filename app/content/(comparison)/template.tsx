@@ -173,7 +173,16 @@ function NavBarItem({
   company: string | null;
   text: string;
 }) {
-  const href = route === "/content/compare" ? `${route}?ticker1=${company}&ticker2=` : `${route}?company=${company}`;
+  const href = `${route}?company=${company}`;
+
+  if (route === "/content/compare") {
+      const href = `${route}?ticker1=${company}&ticker2=`;
+  } else if (route === "/content/forecasted") {
+      const href = `${route}?company=${company}&days=`;
+  } else {
+      const href = `${route}?company=${company}`;
+  }
+
   const pathName = usePathname();
 
   // Can't seem to bootstrap this style, since it must explicitly be declared as background color.

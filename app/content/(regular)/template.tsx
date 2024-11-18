@@ -25,8 +25,7 @@ export default function ContentLayout({
   const pathName = usePathname();
   const router = useRouter();
   const pageName = pathName.split("/content/")[1] || ""; //Hacky way to get the page name, then it is capitalized in the display
-  const company =
-    searchParams.get("company") === null ? "" : searchParams.get("company")?.toUpperCase();
+  const company = searchParams.get("company") === null ? "" : searchParams.get("company")?.toUpperCase();
   const [query, setQuery] = useState(company);
   const [metadata, setMetadata] = useState({} as any);
   const [loading, setLoading] = useState(true);
@@ -192,7 +191,17 @@ function NavBarItem({
   img: StaticImageData;
   text: string;
 }) {
-  const href = route === "/content/compare" ? `${route}?ticker1=${company}&ticker2=` : `${route}?company=${company}`;
+
+  const href = `${route}?company=${company}`;
+
+  if (route === "/content/compare") {
+      const href = `${route}?ticker1=${company}&ticker2=`;
+  } else if (route === "/content/forecasted") {
+      const href = `${route}?company=${company}&days=`;
+  } else {
+      const href = `${route}?company=${company}`;
+  }
+
   const pathName = usePathname();
 
   // Can't seem to bootstrap this style, since it must explicitly be declared as background color.
@@ -208,4 +217,3 @@ function NavBarItem({
     </Link>
   );
 }
-

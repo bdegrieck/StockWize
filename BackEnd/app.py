@@ -1,17 +1,23 @@
-from flask import Flask, jsonify, request, Response
+import pandas as pd
+
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_restful import Api, Resource
 
 from BackEnd.Comparison.ticker_comparison import TickerComparison
 from BackEnd.Data.data import CompanyData, MicroData
+from BackEnd.Models.arima import Arima, ForecastField
 from BackEnd.constants import Finance, MicroEconomic
 from BackEnd.validation import validate_ticker, TickerError
 from BackEnd.Eda.eda import Eda
 from BackEnd.Metadata.metadata import StockWizeMetadata
+from BackEnd.Cache.cache import CacheDependency
 
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
+
+forecast_cache = CacheDependency()
 
 # TODO handle AAOL
 class Overview(Resource):
@@ -171,6 +177,42 @@ class News(Resource):
         except Exception as e:
             return jsonify({"error": "An unexpected error occurred"}), 500
 
+class Forecast(Resource):
+    def get(self):
+        try:
+            symbol = request.args.get('company')
+            days_instance = ForecastField(days=int(request.args.get('days')))
+            return forecast_cache.call(lambda: self.get_forecast(symbol, days_instance), f"{symbol}|{days_instance}")
+        except Exception as e:
+            return jsonify({"error": "An unexpected error occurred"}), 500
+        
+    def get_forecast(self, symbol, days_instance):
+        ticker = validate_ticker(symbol=symbol)
+        time_series = CompanyData(ticker=ticker).time_series
+        instance_arima = Arima(time_series=time_series, date_column=Finance.date, value_column=Finance.close)
+        instance_arima.fit()
+        forecast = instance_arima.predict(steps=days_instance)
+
+        if len(time_series) > 7:
+            time_series = time_series.iloc[0: 7]
+
+        df = pd.concat(
+            [time_series[[Finance.date, Finance.close]],
+             forecast[[Finance.date, Finance.close]]]
+        )
+
+        df.sort_values(by=Finance.date, inplace=True, ascending=False)
+        limit = time_series.iloc[0][Finance.date]
+
+        data_json = {
+            Finance.close: df[Finance.close].to_list(),
+            Finance.date: df[Finance.date].to_list(),
+            Finance.symbol: ticker,
+            Finance.limit: limit
+        }
+
+        return jsonify(data_json)
+
 
 class Test(Resource):
     def get(self):
@@ -184,6 +226,7 @@ api.add_resource(Micro, '/api/micro')
 api.add_resource(Metadata, '/api/metadata')
 api.add_resource(Comparison, '/api/comparison')
 api.add_resource(News, '/api/news')
+api.add_resource(Forecast, '/api/forecast')
 
 if __name__ == "__main__":
     app.run(debug=True)
