@@ -52,6 +52,7 @@ class Finance:
     comparison = "comparison"
     forecast_days = "Forecast Days"
     forecast_dates = "Forecast Dates"
+    limit = "Limit"
 
 class MicroEconomic:
     real_gdp = "Real GDP"

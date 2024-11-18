@@ -107,8 +107,8 @@ class Arima:
             forecast (pd.DataFrame): DataFrame of the forecasted series with forecast values and forecasted dates
         """
         forecast_df = pd.DataFrame()
-        forecast_df[Finance.date] = pd.date_range(start=self.max_date, periods=steps.days, freq="B").strftime(date_format='%Y-%m-%d')
-        forecast_df[Finance.forecast] = self.model.forecast(steps=steps.days).values
+        forecast_df[Finance.date] = pd.date_range(start=self.max_date, periods=steps.days, freq="B")
+        forecast_df[Finance.close] = self.model.forecast(steps=steps.days).values
         forecast_df.reset_index(inplace=True, drop=True)
         return forecast_df
 
