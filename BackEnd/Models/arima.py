@@ -39,25 +39,22 @@ class Arima:
 
     def __init__(
             self,
-            time_series: pd.DataFrame,
             value_column: str,
             date_column: str,
             diff=1
     ):
-        self.df = time_series
         self.diff = diff
         self.value_column = value_column
         self.date_column = date_column
         self.max_date = None
 
-    def fit(self) -> None:
+    def fit(self, df: pd.DataFrame) -> None:
         """
         Fit the Arima model
 
         Returns:
             None
         """
-        df = self.df
         df[self.date_column] = pd.to_datetime(df[self.date_column])
         self.max_date = df[Finance.date].max()
         df = df.sort_values(by=self.date_column, ascending=True)
@@ -108,7 +105,7 @@ class Arima:
         """
         forecast_df = pd.DataFrame()
         forecast_df[Finance.date] = pd.date_range(start=(self.max_date + pd.Timedelta(days=1)), periods=steps.days, freq="B")
-        forecast_df[Finance.close] = self.model.forecast(steps=steps.days).values
+        forecast_df[Finance.close] = self.model.forecast(steps=steps.days).values.round(2)
         forecast_df.reset_index(inplace=True, drop=True)
         return forecast_df
 

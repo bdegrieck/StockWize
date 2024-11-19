@@ -189,9 +189,11 @@ class Forecast(Resource):
     def get_forecast(self, symbol, days_instance):
         ticker = validate_ticker(symbol=symbol)
         time_series = CompanyData(ticker=ticker).time_series
-        instance_arima = Arima(time_series=time_series, date_column=Finance.date, value_column=Finance.close)
-        instance_arima.fit()
+        instance_arima = Arima(date_column=Finance.date, value_column=Finance.close)
+        instance_arima.fit(df=time_series)
         forecast = instance_arima.predict(steps=days_instance)
+
+        # time_series[]
 
         if len(time_series) > 7:
             time_series = time_series.iloc[0: 7]
@@ -202,7 +204,8 @@ class Forecast(Resource):
         )
 
         df.sort_values(by=Finance.date, inplace=True, ascending=False)
-        limit = time_series.iloc[0][Finance.date]
+        df[Finance.date] = df[Finance.date].dt.strftime('%m-%d-%Y')
+        limit = time_series.iloc[0][Finance.date].strftime('%m-%d-%Y')
 
         data_json = {
             Finance.close: df[Finance.close].to_list(),
