@@ -88,9 +88,9 @@ export default function Forecasted() {
         How many days into the future would you like to predict? Note - The
         further out, the less accurate the prediction will become!
       </p>
-      <div className="d-flex flex-row align-items-center">
+      <div className="d-flex flex-row align-items-center col-3">
         <select
-          className="form-select mb-3 me-3"
+          className="form-select form-select-lg mb-3 me-3"
           aria-label="Default select example"
           value={days}
           onChange={(e) => setDays(e.target.value)}
