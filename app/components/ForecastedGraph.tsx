@@ -80,8 +80,6 @@ export default function LineWithPrediction({ xElements, yElements, limit_date })
     >
       <h2 className="pt-4">ARIMA</h2>
       <LineChart
-        width={1250}
-        height={500}
         grid={{ vertical: true, horizontal: true }}
         //   dataset={reversedDataset}
         series={[
