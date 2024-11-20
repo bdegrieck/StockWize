@@ -66,6 +66,7 @@ export default function StockNews() {
           />
         ))}
       </div>
+      <div className="pb-10"></div>
     </div>
   );
 }

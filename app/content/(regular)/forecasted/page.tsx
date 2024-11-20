@@ -22,6 +22,7 @@ export default function Forecasted() {
 
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
     console.log("fetchData() is running...");
@@ -34,7 +35,7 @@ export default function Forecasted() {
       setLoading(false);
 
       if (!response.ok) {
-        console.error(
+        setError(
           `Error: ${
             resp.error || "An unexpected error occurred"
           } for inputs: "${company}" and "${days}"`
@@ -56,8 +57,10 @@ export default function Forecasted() {
         close: closes[index] || 0,
       }));
       setChartData(formattedChartData);
+      setError(null);
     } catch (error) {
       console.error("Error getting stock data:", error);
+      setError("Failed to fetch stock data");
     }
   };
 
@@ -104,12 +107,20 @@ export default function Forecasted() {
       </div>
       <div style={{ marginTop: "20px" }}>
         {loading ? (
-          <div className="d-flex align-items-center justify-content-center w-100 h-100">
+          error ? (
             <div
-              className="spinner-border text-primary"
-              style={{ width: 100, height: 100 }}
-            ></div>
-          </div>
+              style={{ color: "red", textAlign: "center", fontWeight: "bold" }}
+            >
+              {error}
+            </div>
+          ) : (
+            <div className="d-flex align-items-center justify-content-center w-100 h-100">
+              <div
+                className="spinner-border text-primary"
+                style={{ width: 100, height: 100 }}
+              ></div>
+            </div>
+          )
         ) : data[NEXT_PUBLIC_DATE] &&
           data[NEXT_PUBLIC_CLOSE] &&
           data[NEXT_PUBLIC_DATE].length > 0 &&

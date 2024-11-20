@@ -7,6 +7,7 @@ import {
 import { motion } from "framer-motion";
 import { useChartId, useDrawingArea, useXScale } from "@mui/x-charts/hooks";
 import { SxProps, Theme } from "@mui/system";
+import { axisClasses } from "@mui/x-charts";
 
 interface CustomAnimatedLineProps extends AnimatedLineProps {
   limit?: number;
@@ -83,6 +84,13 @@ export default function LineWithPrediction({
     >
       <h2 className="pt-4">ARIMA</h2>
       <LineChart
+        margin={{ left: 80 }}
+        sx={{
+          [`.${axisClasses.left} .${axisClasses.label}`]: {
+            // Move the y-axis label with CSS
+            transform: "translateX(-25px)",
+          },
+        }}
         grid={{ vertical: true, horizontal: true }}
         //   dataset={reversedDataset}
         series={[
@@ -95,7 +103,27 @@ export default function LineWithPrediction({
               `${v}${i.dataIndex > 6 ? " (estimated)" : ""}`,
           },
         ]}
-        xAxis={[{ data: xElements, scaleType: "point" }]}
+        yAxis={[
+          {
+            label: "Dollar Amount",
+          },
+        ]}
+        xAxis={[
+          {
+            data: xElements,
+            scaleType: "point",
+
+            tickLabelInterval: (value: number, index: number): boolean => {
+              if (xElements.length >= 32 && xElements.length <= 37) {
+                return index % 4 === 0;
+              } else if (xElements.length >= 8 && xElements.length <= 12) {
+                return index % 1 === 0;
+              } else {
+                return index % 2 === 0;
+              }
+            },
+          },
+        ]}
         slots={{ line: CustomAnimatedLine }}
         slotProps={{
           line: {

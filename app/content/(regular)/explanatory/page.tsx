@@ -166,6 +166,7 @@ export default function Overview() {
                 xKey="date"
                 yKey="seasonal_365"
               />
+              <div className="pb-10"></div>
             </>
           )}
         </>
