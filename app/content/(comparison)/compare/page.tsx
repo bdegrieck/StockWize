@@ -28,7 +28,7 @@ import ColorPicker from "@/app/components/ColorPicker";
 
 export default function Compare() {
   const searchParams = useSearchParams();
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -212,7 +212,18 @@ export default function Compare() {
       setError(null);
     } catch (error) {
       console.error("Error getting stock data:", error);
-      setError("Failed to fetch stock data");
+      if (ticker1 != "" && ticker2 != "") {
+        setError(`There was an error fetching data for ${ticker1} and ${ticker2}. Please ensure these are valid stock ticker.`);
+      }
+      else if (ticker1 != "" && ticker2 == "") {
+        setError(
+          `There was an error fetching data for ${ticker1}. Please ensure this is a valid stock ticker.`
+        );
+      } else if (ticker1 == "" && ticker2 != "") {
+        setError(
+          `There was an error fetching data for ${ticker2}. Please ensure this is a valid stock ticker.`
+        );
+      } else setError("Failed to fetch stock data");
     }
   };
 
@@ -228,6 +239,40 @@ export default function Compare() {
 
   return (
     <div className="container-fluid h-100 d-flex flex-column gap-3 pb-5">
+      <form className="d-flex align-items-center">
+        <input
+          className="form-control my-4 w-50 fs-5"
+          type="text"
+          placeholder="Enter Company Name or Symbol"
+          aria-label="Search"
+          value={ticker1}
+          onChange={handleTempInputChange}
+        />
+        <ColorPicker
+          defaultColor={selectedColor1}
+          onChange={(color) => setSelectedColor1(color)}
+        />
+        <p className="fs-5 m-4">vs.</p>
+        <input
+          className="form-control my-4 w-50 fs-5"
+          type="text"
+          placeholder="Enter Company Name or Symbol"
+          aria-label="Search"
+          value={ticker2}
+          onChange={handleTempInputChange2}
+        />
+        <ColorPicker
+          defaultColor={selectedColor2}
+          onChange={(color) => setSelectedColor2(color)}
+        />
+        <button
+          type="button"
+          className="btn btn-warning text-black ms-4 fs-5"
+          onClick={handleCompare}
+        >
+          Compare
+        </button>
+      </form>
       {error ? (
         // Display error if it exists
         <div style={{ color: "red", textAlign: "center", fontWeight: "bold" }}>
@@ -235,40 +280,6 @@ export default function Compare() {
         </div>
       ) : (
         <>
-          <form className="d-flex align-items-center">
-            <input
-              className="form-control my-4 w-50 fs-5"
-              type="text"
-              placeholder="Enter Company Name or Symbol"
-              aria-label="Search"
-              value={ticker1}
-              onChange={handleTempInputChange}
-            />
-            <ColorPicker
-              defaultColor={selectedColor1}
-              onChange={(color) => setSelectedColor1(color)}
-            />
-            <p className="fs-5 m-4">vs.</p>
-            <input
-              className="form-control my-4 w-50 fs-5"
-              type="text"
-              placeholder="Enter Company Name or Symbol"
-              aria-label="Search"
-              value={ticker2}
-              onChange={handleTempInputChange2}
-            />
-            <ColorPicker
-              defaultColor={selectedColor2}
-              onChange={(color) => setSelectedColor2(color)}
-            />
-            <button
-              type="button"
-              className="btn btn-warning text-black ms-4 fs-5"
-              onClick={handleCompare}
-            >
-              Compare
-            </button>
-          </form>
           {loading ? (
             <>
               <div className="d-flex align-items-center justify-content-center w-100 h-100">

@@ -4,6 +4,7 @@ import {
   AnimatedLine,
   AnimatedLineProps,
 } from "@mui/x-charts/LineChart";
+import { motion } from "framer-motion";
 import { useChartId, useDrawingArea, useXScale } from "@mui/x-charts/hooks";
 import { SxProps, Theme } from "@mui/system";
 
@@ -66,29 +67,42 @@ export default function LineWithPrediction({ xElements, yElements, limit_date })
   console.log(limit_date);
   console.log(xElements)
   return (
-    <LineChart
-      width={1250}
-      height={500}
-      grid={{ vertical: true, horizontal: true }}
-      //   dataset={reversedDataset}
-      series={[
-        {
-          type: "line",
-          //   dataKey: "y",
-          color: "#6fd649",
-          data: yElements,
-          valueFormatter: (v, i) =>
-            `${v}${i.dataIndex > 6 ? " (estimated)" : ""}`,
-        },
-      ]}
-      xAxis={[{ data: xElements, scaleType: "point" }]}
-      slots={{ line: CustomAnimatedLine }}
-      slotProps={{
-        line: {
-          limit: limit_date,
-          sxAfter: { strokeDasharray: "10 10" },
-        } as any,
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{
+        duration: 0.8,
+
+        ease: [0, 0.71, 0.2, 1.01],
       }}
-    />
+      className="card shadow-sm align-items-center w-100"
+      style={{ height: 600 }}
+    >
+      <h2 className="pt-4">ARIMA</h2>
+      <LineChart
+        width={1250}
+        height={500}
+        grid={{ vertical: true, horizontal: true }}
+        //   dataset={reversedDataset}
+        series={[
+          {
+            type: "line",
+            //   dataKey: "y",
+            color: "#6fd649",
+            data: yElements,
+            valueFormatter: (v, i) =>
+              `${v}${i.dataIndex > 6 ? " (estimated)" : ""}`,
+          },
+        ]}
+        xAxis={[{ data: xElements, scaleType: "point" }]}
+        slots={{ line: CustomAnimatedLine }}
+        slotProps={{
+          line: {
+            limit: limit_date,
+            sxAfter: { strokeDasharray: "10 10" },
+          } as any,
+        }}
+      />
+    </motion.div>
   );
 }

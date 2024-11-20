@@ -32,7 +32,14 @@ export default function StockNews() {
   }, [company]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="d-flex align-items-center justify-content-center w-100 h-100">
+        <div
+          className="spinner-border text-primary m-3"
+          style={{ width: 100, height: 100 }}
+        ></div>
+      </div>
+    );
   }
 
   if (articles.length === 0) {
