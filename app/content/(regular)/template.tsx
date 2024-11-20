@@ -25,7 +25,10 @@ export default function ContentLayout({
   const pathName = usePathname();
   const router = useRouter();
   const pageName = pathName.split("/content/")[1] || ""; //Hacky way to get the page name, then it is capitalized in the display
-  const company = searchParams.get("company") === null ? "" : searchParams.get("company")?.toUpperCase();
+  const company =
+    searchParams.get("company") === null
+      ? ""
+      : searchParams.get("company")?.toUpperCase();
   const [query, setQuery] = useState(company);
   const [metadata, setMetadata] = useState({} as any);
   const [loading, setLoading] = useState(true);
@@ -91,7 +94,12 @@ export default function ContentLayout({
             <span className="p-2 fs-5 fw-bold companyName">StockWize</span>
           </div>
         </Link>
-        <h1 className="mt-4 mx-3 col-10 fw-bold display-4">{company}</h1>
+        {company ? (
+          <h1 className="mt-4 mx-3 col-10 fw-bold display-4">{company}</h1>
+        ) : (
+          <h1 className="mt-4 mx-3 col-10 fw-bold display-4">----</h1>
+        )}
+
         <p className="mx-3 col-10 fs-5 text-muted">
           Last Updated {metadata[LAST_UPDATED]}
         </p>
@@ -191,15 +199,14 @@ function NavBarItem({
   img: StaticImageData;
   text: string;
 }) {
-
   const href = `${route}?company=${company}`;
 
   if (route === "/content/compare") {
-      const href = `${route}?ticker1=${company}&ticker2=`;
+    const href = `${route}?ticker1=${company}&ticker2=`;
   } else if (route === "/content/forecasted") {
-      const href = `${route}?company=${company}&days=`;
+    const href = `${route}?company=${company}&days=`;
   } else {
-      const href = `${route}?company=${company}`;
+    const href = `${route}?company=${company}`;
   }
 
   const pathName = usePathname();

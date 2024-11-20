@@ -8,7 +8,6 @@ import { motion } from "framer-motion";
 import { useChartId, useDrawingArea, useXScale } from "@mui/x-charts/hooks";
 import { SxProps, Theme } from "@mui/system";
 
-
 interface CustomAnimatedLineProps extends AnimatedLineProps {
   limit?: number;
   sxBefore?: SxProps<Theme>;
@@ -63,9 +62,13 @@ function CustomAnimatedLine(props: CustomAnimatedLineProps) {
   );
 }
 
-export default function LineWithPrediction({ xElements, yElements, limit_date }) {
+export default function LineWithPrediction({
+  xElements,
+  yElements,
+  limit_date,
+}) {
   console.log(limit_date);
-  console.log(xElements)
+  console.log(xElements);
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
@@ -80,8 +83,6 @@ export default function LineWithPrediction({ xElements, yElements, limit_date })
     >
       <h2 className="pt-4">ARIMA</h2>
       <LineChart
-        width={1250}
-        height={500}
         grid={{ vertical: true, horizontal: true }}
         //   dataset={reversedDataset}
         series={[

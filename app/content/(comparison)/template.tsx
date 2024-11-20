@@ -25,7 +25,8 @@ export default function ContentLayout({
   const pathName = usePathname();
   const router = useRouter();
   const pageName = pathName.split("/content/")[1] || ""; //Hacky way to get the page name, then it is capitalized in the display
-  const company = searchParams.get("ticker1") === null ? "" : searchParams.get("ticker1");
+  const company =
+    searchParams.get("ticker1") === null ? "" : searchParams.get("ticker1");
 
   const [query, setQuery] = useState("");
   const [metadata, setMetadata] = useState({} as any);
@@ -33,10 +34,10 @@ export default function ContentLayout({
   const [error, setError] = useState(false);
 
   const content = (
-      <div className="h-100 d-flex flex-column">
-        <div className="flex-grow-1 d-flex flex-column">{children}</div>
-      </div>
-    );
+    <div className="h-100 d-flex flex-column">
+      <div className="flex-grow-1 d-flex flex-column">{children}</div>
+    </div>
+  );
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     // This is a temporary solution. In reality, we will need to call backend for data
@@ -85,7 +86,10 @@ export default function ContentLayout({
             <span className="p-2 fs-5 fw-bold companyName">StockWize</span>
           </div>
         </Link>
-
+        <h1 className="mt-4 mx-3 col-10 fw-bold display-4">Compare</h1>
+        <p className="mx-3 col-10 fs-5 text-muted">
+          Last Updated {metadata[LAST_UPDATED]}
+        </p>
 
         <div className="flex-grow-1 d-flex pt-2 flex-column col-11 rounded-end bg-light shadow">
           <NavBarItem
@@ -128,18 +132,18 @@ export default function ContentLayout({
           <div className="flex-fill d-flex justify-content-center align-items-center mx-5">
             {loading ? (
               <>
-          <div className="d-flex align-items-center justify-content-center w-100 h-100">
-            <div
-              className="spinner-border text-primary"
-              style={{ width: 50, height: 50 }}
-            ></div>
-          </div>
+                <div className="d-flex align-items-center justify-content-center w-100 h-100">
+                  <div
+                    className="spinner-border text-primary"
+                    style={{ width: 50, height: 50 }}
+                  ></div>
+                </div>
               </>
             ) : error ? (
               <p>There was an error loading a fun fact</p>
             ) : (
               <p className="fs-5">
-          <b>Fun Fact:</b> {metadata[FUN_FACT]}
+                <b>Fun Fact:</b> {metadata[FUN_FACT]}
               </p>
             )}
           </div>
@@ -176,11 +180,11 @@ function NavBarItem({
   const href = `${route}?company=${company}`;
 
   if (route === "/content/compare") {
-      const href = `${route}?ticker1=${company}&ticker2=`;
+    const href = `${route}?ticker1=${company}&ticker2=`;
   } else if (route === "/content/forecasted") {
-      const href = `${route}?company=${company}&days=`;
+    const href = `${route}?company=${company}&days=`;
   } else {
-      const href = `${route}?company=${company}`;
+    const href = `${route}?company=${company}`;
   }
 
   const pathName = usePathname();

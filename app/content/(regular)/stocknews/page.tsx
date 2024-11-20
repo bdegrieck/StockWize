@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import NewsTextBox from "@/app/components/NewsTextBox";
 import { useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
 
 export default function StockNews() {
-
   const searchParams = useSearchParams();
   const company = searchParams.get("company") || "";
   const [articles, setArticles] = useState([]);
@@ -47,14 +47,25 @@ export default function StockNews() {
   }
 
   return (
-    <>
-      {articles.slice(0, 10).map((article, index) => (
-        <NewsTextBox
-          key={index}
-          title={article.title || "No Title Available"}
-          link={article.url || "#"}
-        />
-      ))}
-    </>
+    <div className="row">
+      <motion.div className="col">
+        {articles.slice(0, 5).map((article, index) => (
+          <NewsTextBox
+            key={index}
+            title={article.title || "No Title Available"}
+            link={article.url || "#"}
+          />
+        ))}
+      </motion.div>
+      <div className="col">
+        {articles.slice(5, 10).map((article, index) => (
+          <NewsTextBox
+            key={index}
+            title={article.title || "No Title Available"}
+            link={article.url || "#"}
+          />
+        ))}
+      </div>
+    </div>
   );
 }
