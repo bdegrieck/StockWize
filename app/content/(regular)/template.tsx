@@ -14,7 +14,11 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 
 import { motion } from "framer-motion";
-import { FUN_FACT, LAST_UPDATED } from "@/app/constants/api_properties";
+import {
+  FUN_FACT,
+  LAST_UPDATED,
+  NEXT_PUBLIC_SYMBOL,
+} from "@/app/constants/api_properties";
 
 export default function ContentLayout({
   children,
@@ -33,6 +37,7 @@ export default function ContentLayout({
   const [metadata, setMetadata] = useState({} as any);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [symbol, setSymbol] = useState({});
 
   const content =
     company === "" ? (
@@ -53,6 +58,25 @@ export default function ContentLayout({
     e.preventDefault();
     router.push(`${pathName}?company=${query}`);
   }
+
+  useEffect(() => {
+    async function fetchData() {
+      console.log("FetchData running on template");
+      console.log("Company Search", searchParams.get("company"));
+      const response = await fetch(
+        `http://127.0.0.1:5000/api/symbol?company=${company}`
+      );
+      console.log("Response", response);
+      const data = await response.json();
+      setSymbol({
+        Symbol: data[NEXT_PUBLIC_SYMBOL],
+      });
+      console.log("data", response[NEXT_PUBLIC_SYMBOL]);
+    }
+    if (company) {
+      fetchData();
+    }
+  }, [company]);
 
   useEffect(() => {
     async function fetchMetadata() {
@@ -94,12 +118,9 @@ export default function ContentLayout({
             <span className="p-2 fs-5 fw-bold companyName">StockWize</span>
           </div>
         </Link>
-        {company ? (
-          <h1 className="mt-4 mx-3 col-10 fw-bold display-4">{company}</h1>
-        ) : (
-          <h1 className="mt-4 mx-3 col-10 fw-bold display-4">----</h1>
-        )}
-
+        <h1 className="mt-4 mx-3 col-10 fw-bold display-4">
+          {symbol[NEXT_PUBLIC_SYMBOL]}
+        </h1>
         <p className="mx-3 col-10 fs-5 text-muted">
           Last Updated {metadata[LAST_UPDATED]}
         </p>
