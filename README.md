@@ -17,10 +17,10 @@ The following assumes you have an up to date version of python installed, as wel
 
 - Configure python interpreter 
 
-  1. If on pycharm community edition, go to `Settings> Python Interpreter> Add interpreter> Add Local Interpreter> Conda Enviroment > Use Existing Enviroment`. Your conda.exe file should be something like `/Users/bende/miniconda3/condabin/conda`
+  1. If on pycharm community edition, go to `Settings> Python Interpreter> Add interpreter> Add Local Interpreter> Conda Enviroment > Use Existing Enviroment`. Your conda.exe file should be something like `/Users/username/miniconda3/condabin/conda`
 
   2. `Use existing enviroment` - name of your virutal enviroment and then click `Ok`
-  3. You should see your enviroment name in the lower right hand corner
+  3. You should see your environment name in the lower right hand corner
   4. Open terminal in pycharm
   5. `conda activate yourenviromentname` and `pip install -r requirements.txt`
     
@@ -30,7 +30,7 @@ The following assumes you have an up to date version of python installed, as wel
      
    2. `Ctrl + Shift + P` on Windows or `Cmd + Shift + P` on Mac, type `Select Interpreter` and press Enter
    
-   3. Select your virtual enviroment you made
+   3. Select your virtual environment you made
      
    4. Open a terminal and run `conda activate yourenviromentname` and `pip install -r requirements.txt`
 

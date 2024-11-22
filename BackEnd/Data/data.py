@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from typing import Any
 
@@ -217,6 +218,27 @@ class TechIndData(TechIndEndpoints):
         df = format_df(df=df)
         columns_renamed = {"ADX": TechnicalIndicators.adx}
         df = df.rename(columns=columns_renamed)
+        return df
+
+
+class ForecastData:
+    def __init__(self, ticker: str):
+        self.ticker = ticker
+
+    @property
+    def lstm(self):
+        time_series = CompanyData(ticker=self.ticker).time_series
+        indicator_instance = TechIndData(ticker=self.ticker)
+        df = (
+            pd.merge(left=indicator_instance.bbands, right=indicator_instance.ema, on=Finance.date
+            ).merge(right=indicator_instance.rsi, on=Finance.date
+            ).merge(right=indicator_instance.sma, on=Finance.date
+            ).merge(right=indicator_instance.adx, how="outer"
+            ).merge(right=time_series[[Finance.date, Finance.close]], on=Finance.date)
+        )
+        df = df.drop(labels=Finance.date, axis=1)
+        df = df.fillna(method='ffill').dropna().reset_index(drop=True)
+        df["ID"] = "1"
         return df
 
 
