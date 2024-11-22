@@ -53,6 +53,7 @@ class Finance:
     forecast_days = "Forecast Days"
     forecast_dates = "Forecast Dates"
     limit = "Limit"
+    lstm_vals = "lstm_vals"
 
 class MicroEconomic:
     real_gdp = "Real GDP"

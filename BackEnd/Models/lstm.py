@@ -1,8 +1,11 @@
 from typing import Dict
 
+import pandas as pd
 import torch
 from pytorch_forecasting import AutoRegressiveBaseModel, LSTM, TimeSeriesDataSet
 from torch import nn
+
+from BackEnd.Models.arima import ForecastField
 
 
 class LSTMModel(AutoRegressiveBaseModel):
@@ -103,8 +106,33 @@ class LSTMModel(AutoRegressiveBaseModel):
             # predictions are already rescaled
             return output
 
-    def forward(self, x: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
+
+    def forward(self, dataset: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
+        data_loader = dataset.to_dataloader()
+        x, y = next(iter(data_loader))
         hidden_state = self.encode(x)  # encode to hidden state
         output = self.decode(x, hidden_state)  # decode leveraging hidden state
 
         return self.to_network_output(prediction=output)
+
+def convert_df(
+        df: pd.DataFrame,
+        time_idx: str,
+        target: str,
+        grouped_dim: list[str],
+        steps: ForecastField,
+        known_cat_vars: list[str],
+        unknown_cont_vars: list[str]
+):
+    data = TimeSeriesDataSet(
+        data=df,
+        time_idx=time_idx,
+        target=target,
+        group_ids=grouped_dim,
+        # max_encoder_length=None,
+        max_prediction_length=steps.days,
+        static_categoricals=known_cat_vars,
+        time_varying_unknown_reals=unknown_cont_vars,
+        predict_mode=True,
+    )
+    return data

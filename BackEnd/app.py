@@ -3,15 +3,19 @@ import pandas as pd
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_restful import Api, Resource
+from keras.src.legacy.saving.saving_utils import model_metadata
+from pytorch_forecasting import TimeSeriesDataSet
 
 from BackEnd.Comparison.ticker_comparison import TickerComparison
-from BackEnd.Data.data import CompanyData, MicroData
+from BackEnd.Data.data import CompanyData, MicroData, ForecastData
 from BackEnd.Models.arima import Arima, ForecastField
-from BackEnd.constants import Finance, MicroEconomic
+from BackEnd.Models.lstm import LSTMModel
+from BackEnd.constants import Finance, MicroEconomic, TechnicalIndicators
 from BackEnd.validation import validate_ticker, TickerError
 from BackEnd.Eda.eda import Eda
 from BackEnd.Metadata.metadata import StockWizeMetadata
 from BackEnd.Cache.cache import CacheDependency
+from BackEnd.Models.lstm import convert_df
 
 app = Flask(__name__)
 CORS(app)
@@ -189,11 +193,40 @@ class Forecast(Resource):
     def get_forecast(self, symbol, days_instance):
         ticker = validate_ticker(symbol=symbol)
         time_series = CompanyData(ticker=ticker).time_series
+
+        # Arima modeling
         instance_arima = Arima(date_column=Finance.date, value_column=Finance.close)
         instance_arima.fit(df=time_series)
         forecast = instance_arima.predict(steps=days_instance)
 
-        # time_series[]
+        # LSTM modeling
+        instance_lstm = ForecastData(ticker=ticker)
+        lstm_df = instance_lstm.lstm(time_series=time_series)
+        features = [
+            TechnicalIndicators.bbands_upper,
+            TechnicalIndicators.bbands_middle,
+            TechnicalIndicators.bbands_lower,
+            TechnicalIndicators.ema,
+            TechnicalIndicators.rsi,
+            TechnicalIndicators.sma,
+            TechnicalIndicators.adx
+        ]
+
+        data = convert_df(
+            df=lstm_df,
+            time_idx="Count",
+            target=Finance.close,
+            grouped_dim=["ID"],
+            # max_encoder_length=None,
+            steps=ForecastField(days=7),
+            known_cat_vars=["ID"],
+            unknown_cont_vars=features,
+        )
+
+        lstm_model = LSTMModel.from_dataset(data, n_layers=2, hidden_size=10)
+        data_loader = data.to_dataloader()
+        x, y = next(iter(data_loader))
+        lstm_forecast = lstm_model.forward(x=x)
 
         if len(time_series) > 7:
             time_series = time_series.iloc[0: 7]
@@ -208,6 +241,7 @@ class Forecast(Resource):
         limit = time_series.iloc[0][Finance.date].strftime('%m-%d-%Y')
 
         data_json = {
+            Finance.lstm_vals: [value[0] for value in lstm_forecast.prediction.tolist()[0]],
             Finance.close: df[Finance.close].to_list(),
             Finance.date: df[Finance.date].to_list(),
             Finance.symbol: ticker,

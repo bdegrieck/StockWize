@@ -225,9 +225,7 @@ class ForecastData:
     def __init__(self, ticker: str):
         self.ticker = ticker
 
-    @property
-    def lstm(self):
-        time_series = CompanyData(ticker=self.ticker).time_series
+    def lstm(self, time_series: pd.DataFrame) -> pd.DataFrame:
         indicator_instance = TechIndData(ticker=self.ticker)
         df = (
             pd.merge(left=indicator_instance.bbands, right=indicator_instance.ema, on=Finance.date
@@ -238,6 +236,7 @@ class ForecastData:
         )
         df = df.drop(labels=Finance.date, axis=1)
         df = df.fillna(method='ffill').dropna().reset_index(drop=True)
+        df = df.reset_index(drop=False, names="Count")
         df["ID"] = "1"
         return df
 
