@@ -15,7 +15,7 @@ export default function Forecasted() {
   const router = useRouter();
 
   // Properly destructure state
-  const [company, setCompany] = useState(searchParams.get("company") || "");
+  const [company, setCompany] = useState("");
   const [days, setDays] = useState(searchParams.get("days") || "");
 
   const [data, setData] = useState({});
@@ -24,10 +24,18 @@ export default function Forecasted() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    const companyParam = searchParams.get("company");
+    if (companyParam) {
+      setCompany(companyParam);
+    }
+  }, [searchParams]);
+
   const fetchData = async () => {
     console.log("fetchData() is running...");
     try {
       setLoading(true);
+      console.log("Company Fetch: ", company);
       const response = await fetch(
         `http://127.0.0.1:5000/api/forecast?company=${company}&days=${days}`
       );
@@ -70,6 +78,10 @@ export default function Forecasted() {
       return;
     }
     // Use state values directly
+    setData({});
+    setChartData([]);
+    setError(null);
+    console.log("Company Router: ", company);
     router.replace(`/content/forecasted?company=${company}&days=${days}`);
     fetchData();
   };
@@ -79,8 +91,6 @@ export default function Forecasted() {
       {i + 1}
     </option>
   ));
-
-  console.log("Limit:", data[LIMIT]);
 
   return (
     <>
