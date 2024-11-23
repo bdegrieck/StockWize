@@ -15,26 +15,20 @@ class LSTMModel(AutoRegressiveBaseModel):
         target_lags: Dict[str, Dict[str, int]],
         n_layers: int,
         hidden_size: int,
-        input_size: int,
         dropout: float = 0.1,
         **kwargs,
     ):
-        """
-        Args:
-            target: Target column
-            target_lags: Lags for each target
-            input_size: number of features
-            n_layers: Number of layers in the model
-            hidden_size: Output size of each neuron cell. Higher value the more complexity
-            dropout: Percent of units being dropped during training
-            **kwargs:
-        """
+        # arguments target and target_lags are required for autoregressive models
+        # even though target_lags cannot be used without covariates
+        # saves arguments in signature to `.hparams` attribute, mandatory call - do not skip this
         self.save_hyperparameters()
+        # pass additional arguments to BaseModel.__init__, mandatory call - do not skip this
         super().__init__(**kwargs)
 
+        # use version of LSTM that can handle zero-length sequences
         self.lstm = LSTM(
             hidden_size=self.hparams.hidden_size,
-            input_size=self.hparams.input_size,
+            input_size=8,
             num_layers=self.hparams.n_layers,
             dropout=self.hparams.dropout,
             batch_first=True,
@@ -108,10 +102,8 @@ class LSTMModel(AutoRegressiveBaseModel):
 
 
     def forward(self, dataset: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
-        data_loader = dataset.to_dataloader()
-        x, y = next(iter(data_loader))
-        hidden_state = self.encode(x)  # encode to hidden state
-        output = self.decode(x, hidden_state)  # decode leveraging hidden state
+        hidden_state = self.encode(dataset)  # encode to hidden state
+        output = self.decode(dataset, hidden_state)  # decode leveraging hidden state
 
         return self.to_network_output(prediction=output)
 

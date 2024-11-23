@@ -192,17 +192,20 @@ class Forecast(Resource):
         
     def get_forecast(self, symbol, days_instance):
         ticker = validate_ticker(symbol=symbol)
+        steps = ForecastField(days=7)
         time_series = CompanyData(ticker=ticker).time_series
+        lstm_copy = time_series.copy()
 
-        # Arima modeling
+        # # Arima modeling
         instance_arima = Arima(date_column=Finance.date, value_column=Finance.close)
         instance_arima.fit(df=time_series)
-        forecast = instance_arima.predict(steps=days_instance)
+        forecast = instance_arima.predict(steps=steps)
 
         # LSTM modeling
         instance_lstm = ForecastData(ticker=ticker)
-        lstm_df = instance_lstm.lstm(time_series=time_series)
+        lstm_df = instance_lstm.lstm(time_series=lstm_copy)
         features = [
+            Finance.close,
             TechnicalIndicators.bbands_upper,
             TechnicalIndicators.bbands_middle,
             TechnicalIndicators.bbands_lower,
@@ -218,7 +221,7 @@ class Forecast(Resource):
             target=Finance.close,
             grouped_dim=["ID"],
             # max_encoder_length=None,
-            steps=ForecastField(days=7),
+            steps=steps,
             known_cat_vars=["ID"],
             unknown_cont_vars=features,
         )
@@ -226,7 +229,7 @@ class Forecast(Resource):
         lstm_model = LSTMModel.from_dataset(data, n_layers=2, hidden_size=10)
         data_loader = data.to_dataloader()
         x, y = next(iter(data_loader))
-        lstm_forecast = lstm_model.forward(x=x)
+        lstm_forecast = lstm_model.forward(dataset=x)
 
         if len(time_series) > 7:
             time_series = time_series.iloc[0: 7]
