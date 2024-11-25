@@ -6,7 +6,8 @@ import {
   NEXT_PUBLIC_CLOSE,
   NEXT_PUBLIC_DATE,
   NEXT_PUBLIC_SYMBOL,
-  LIMIT
+  LIMIT,
+  LSTM_VALS
 } from "@/app/constants/api_properties";
 import LineWithPrediction from "@/app/components/ForecastedGraph";
 
@@ -44,6 +45,7 @@ export default function Forecasted() {
                 Close: resp[NEXT_PUBLIC_CLOSE],
                 Date: resp[NEXT_PUBLIC_DATE],
                 Limit: resp[LIMIT],
+                lstm_vals: resp[LSTM_VALS]
             });
 
             const dates = resp[NEXT_PUBLIC_DATE];
@@ -80,8 +82,7 @@ export default function Forecasted() {
     return (
       <>
         <p>
-          How many days into the future would you like to predict? Note -
-          The further out, the less accurate the prediction will become!
+            **Disclaimer** Our forecasting models may not be a guaranteed accurate prediction. Please invest responsibly
         </p>
         <div className="d-flex flex-row align-items-center">
           <select
@@ -106,6 +107,7 @@ export default function Forecasted() {
               xElements={[...data[NEXT_PUBLIC_DATE]].reverse()}
               yElements={[...data[NEXT_PUBLIC_CLOSE]].reverse()}
               limit_date={data[LIMIT]}
+              lstm_vals={[...data[LSTM_VALS]].reverse()}
             />
           ) : (
             <p style={{ color: "red", textAlign: "center", fontWeight: "bold" }}>

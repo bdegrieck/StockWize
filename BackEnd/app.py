@@ -183,27 +183,21 @@ class News(Resource):
 
 class Forecast(Resource):
     def get(self):
-        try:
-            symbol = request.args.get('company')
-            days_instance = ForecastField(days=int(request.args.get('days')))
-            return forecast_cache.call(lambda: self.get_forecast(symbol, days_instance), f"{symbol}|{days_instance}")
-        except Exception as e:
-            return jsonify({"error": "An unexpected error occurred"}), 500
-        
-    def get_forecast(self, symbol, days_instance):
+        symbol = request.args.get('company')
+        steps = ForecastField(days=int(request.args.get('days')))
         ticker = validate_ticker(symbol=symbol)
-        steps = ForecastField(days=7)
-        time_series = CompanyData(ticker=ticker).time_series
-        lstm_copy = time_series.copy()
+        arima_time_series = CompanyData(ticker=ticker).time_series
+        lstm_time_series = arima_time_series.copy()
 
         # # Arima modeling
         instance_arima = Arima(date_column=Finance.date, value_column=Finance.close)
-        instance_arima.fit(df=time_series)
-        forecast = instance_arima.predict(steps=steps)
+        instance_arima.fit(df=arima_time_series)
+        arima_forecast = instance_arima.predict(steps=steps)
+        arima_forecast[Finance.date] = arima_forecast[Finance.date].dt.strftime('%m-%d-%Y')
 
         # LSTM modeling
         instance_lstm = ForecastData(ticker=ticker)
-        lstm_df = instance_lstm.lstm(time_series=lstm_copy)
+        lstm_df = instance_lstm.lstm(time_series=lstm_time_series)
         features = [
             Finance.close,
             TechnicalIndicators.bbands_upper,
@@ -231,22 +225,17 @@ class Forecast(Resource):
         x, y = next(iter(data_loader))
         lstm_forecast = lstm_model.forward(dataset=x)
 
-        if len(time_series) > 7:
-            time_series = time_series.iloc[0: 7]
+        if len(arima_time_series) > 7:
+            arima_time_series = arima_time_series.iloc[0: 7]
 
-        df = pd.concat(
-            [time_series[[Finance.date, Finance.close]],
-             forecast[[Finance.date, Finance.close]]]
-        )
-
-        df.sort_values(by=Finance.date, inplace=True, ascending=False)
-        df[Finance.date] = df[Finance.date].dt.strftime('%m-%d-%Y')
-        limit = time_series.iloc[0][Finance.date].strftime('%m-%d-%Y')
+        arima_time_series[Finance.date] = arima_time_series[Finance.date].dt.strftime('%m-%d-%Y')
+        limit = arima_time_series.iloc[0][Finance.date]
 
         data_json = {
-            Finance.lstm_vals: [value[0] for value in lstm_forecast.prediction.tolist()[0]],
-            Finance.close: df[Finance.close].to_list(),
-            Finance.date: df[Finance.date].to_list(),
+            Finance.lstm_vals: [round(value[0], 2) for value in lstm_forecast.tolist()[0]] + arima_time_series[
+                Finance.close].to_list(),
+            Finance.close: arima_forecast[Finance.close].to_list() + arima_time_series[Finance.close].to_list(),
+            Finance.date: arima_forecast[Finance.date].to_list()[::-1] + arima_time_series[Finance.date].to_list(),
             Finance.symbol: ticker,
             Finance.limit: limit
         }

@@ -7,7 +7,6 @@ import {
 import { useChartId, useDrawingArea, useXScale } from "@mui/x-charts/hooks";
 import { SxProps, Theme } from "@mui/system";
 
-
 interface CustomAnimatedLineProps extends AnimatedLineProps {
   limit?: number;
   sxBefore?: SxProps<Theme>;
@@ -62,9 +61,7 @@ function CustomAnimatedLine(props: CustomAnimatedLineProps) {
   );
 }
 
-export default function LineWithPrediction({ xElements, yElements, limit_date }) {
-  console.log(limit_date);
-  console.log(xElements)
+export default function LineWithPrediction({ xElements, yElements, limit_date, lstm_vals }) {
   return (
     <LineChart
       width={1250}
@@ -78,8 +75,16 @@ export default function LineWithPrediction({ xElements, yElements, limit_date })
           color: "#6fd649",
           data: yElements,
           valueFormatter: (v, i) =>
-            `${v}${i.dataIndex > 6 ? " (estimated)" : ""}`,
+            `${v}${i.dataIndex > 6 ? " (Arima estimated)" : ""}`,
         },
+         {
+            type: "line",
+            //   dataKey: "y",
+            color: "#6fd649",
+            data: lstm_vals,
+            valueFormatter: (v, i) =>
+              `${v}${i.dataIndex > 6 ? " (LSTM estimated)" : ""}`,
+          }
       ]}
       xAxis={[{ data: xElements, scaleType: "point" }]}
       slots={{ line: CustomAnimatedLine }}
@@ -92,3 +97,4 @@ export default function LineWithPrediction({ xElements, yElements, limit_date })
     />
   );
 }
+

@@ -105,7 +105,7 @@ class LSTMModel(AutoRegressiveBaseModel):
         hidden_state = self.encode(dataset)  # encode to hidden state
         output = self.decode(dataset, hidden_state)  # decode leveraging hidden state
 
-        return self.to_network_output(prediction=output)
+        return self.to_network_output(prediction=output).prediction
 
 def convert_df(
         df: pd.DataFrame,
