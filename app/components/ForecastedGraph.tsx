@@ -63,7 +63,12 @@ function CustomAnimatedLine(props: CustomAnimatedLineProps) {
   );
 }
 
-export default function LineWithPrediction({ xElements, yElements, limit_date, lstm_vals }) {
+export default function LineWithPrediction({
+  xElements,
+  yElements,
+  limit_date,
+  lstm_vals,
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
@@ -76,7 +81,7 @@ export default function LineWithPrediction({ xElements, yElements, limit_date, l
       className="card shadow-sm align-items-center w-100"
       style={{ height: 600 }}
     >
-      <h2 className="pt-4">ARIMA</h2>
+      <h2 className="pt-4">Forecast</h2>
       <LineChart
         margin={{ left: 80 }}
         sx={{
@@ -88,22 +93,26 @@ export default function LineWithPrediction({ xElements, yElements, limit_date, l
         grid={{ vertical: true, horizontal: true }}
         //   dataset={reversedDataset}
         series={[
-        {
-          type: "line",
-          //   dataKey: "y",
-          color: "#6fd649",
-          data: yElements,
-          valueFormatter: (v, i) =>
-            `${v}${i.dataIndex > 6 ? " (Arima estimated)" : ""}`,
-        },
-         {
+          {
             type: "line",
+            curve: "linear",
             //   dataKey: "y",
             color: "#6fd649",
+            label: "ARIMA",
+            data: yElements,
+            valueFormatter: (v, i) =>
+              `${v}${i.dataIndex > 6 ? " (estimated)" : ""}`,
+          },
+          {
+            type: "line",
+            curve: "linear",
+            //   dataKey: "y",
+            color: "#2958cf",
+            label: "LSTM",
             data: lstm_vals,
             valueFormatter: (v, i) =>
-              `${v}${i.dataIndex > 6 ? " (LSTM estimated)" : ""}`,
-          }
+              `${v}${i.dataIndex > 6 ? " (estimated)" : ""}`,
+          },
         ]}
         yAxis={[
           {
@@ -112,6 +121,11 @@ export default function LineWithPrediction({ xElements, yElements, limit_date, l
         ]}
         xAxis={[
           {
+            // colorMap: {
+            //   type: "piecewise",
+            //   thresholds: [xElements[6]],
+            //   colors: ["black", "green"],
+            // },
             data: xElements,
             scaleType: "point",
 
@@ -130,6 +144,7 @@ export default function LineWithPrediction({ xElements, yElements, limit_date, l
         slotProps={{
           line: {
             limit: limit_date,
+            sxBefore: { strokeFill: "#000000" },
             sxAfter: { strokeDasharray: "10 10" },
           } as any,
         }}

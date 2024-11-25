@@ -25,6 +25,8 @@ import {
 import CompareLineChartCard from "@/app/components/CompareLineChartComponent";
 import { useRouter } from "next/navigation";
 import ColorPicker from "@/app/components/ColorPicker";
+import LinearProgress from "@mui/material/LinearProgress";
+import { motion } from "framer-motion";
 
 export default function Compare() {
   const searchParams = useSearchParams();
@@ -213,9 +215,10 @@ export default function Compare() {
     } catch (error) {
       console.error("Error getting stock data:", error);
       if (ticker1 != "" && ticker2 != "") {
-        setError(`There was an error fetching data for ${ticker1} and ${ticker2}. Please ensure these are valid stock ticker.`);
-      }
-      else if (ticker1 != "" && ticker2 == "") {
+        setError(
+          `There was an error fetching data for ${ticker1} and ${ticker2}. Please ensure these are valid stock ticker.`
+        );
+      } else if (ticker1 != "" && ticker2 == "") {
         setError(
           `There was an error fetching data for ${ticker1}. Please ensure this is a valid stock ticker.`
         );
@@ -236,6 +239,16 @@ export default function Compare() {
       fetchData(setData2, setChartData2);
     }
   };
+
+  function differenceColor(num1, num2) {
+    if (num1 > num2) {
+      return "#4caf50";
+    } else if (num1 == num2) {
+      return "#000000";
+    } else {
+      return "#ef5350";
+    }
+  }
 
   return (
     <div className="container-fluid h-100 d-flex flex-column gap-3 pb-5">
@@ -282,12 +295,16 @@ export default function Compare() {
         <>
           {loading ? (
             <>
-              <div className="d-flex align-items-center justify-content-center w-100 h-100">
-                <div
-                  className="spinner-border text-primary"
-                  style={{ width: 100, height: 100 }}
-                ></div>
+              <div
+                className="card shadow-sm align-items-center w-100 d-flex flex-column align-items-center justify-content-center"
+                style={{ height: 600 }}
+              >
+                <p className="fw-light fs-4 pb-3">L O A D I N G</p>
+                <LinearProgress color="inherit" className="w-50" />
               </div>
+              {/* <div className="d-flex align-items-center justify-content-center w-100 h-100">
+                
+              </div> */}
             </>
           ) : (
             <CompareLineChartCard
@@ -302,14 +319,24 @@ export default function Compare() {
               color2={selectedColor2}
             />
           )}
-          <div className="card fs-4 p-4 shadow-sm mt-4">
-            <table className="table table-hover">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              duration: 0.8,
+              ease: [0, 0.71, 0.2, 1.01],
+            }}
+            className="card fs-4 p-4 shadow-sm mt-4"
+          >
+            <table className="table table-hover text-center">
               <thead>
                 <tr>
                   <th scope="col"></th>
                   <th scope="col">{data.symbol}</th>
                   <th scope="col">{data2.symbol}</th>
-                  <th scope="col">Difference</th>
+                  <th scope="col">
+                    Difference ({data.symbol}-{data2.symbol})
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -317,35 +344,68 @@ export default function Compare() {
                   <th scope="row">Market Cap</th>
                   <td>{data.marketCap}</td>
                   <td>{data2.marketCap}</td>
-                  <td>{compData.marketCap}</td>
+                  <td
+                    style={{
+                      color: differenceColor(data.marketCap, data2.marketCap),
+                    }}
+                  >
+                    {compData.marketCap}
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">Reported EPS</th>
                   <td>{data.reportedEPS}</td>
                   <td>{data2.reportedEPS}</td>
-                  <td>{compData.reportedEPS}</td>
+                  <td
+                    style={{
+                      color: differenceColor(
+                        data.reportedEPS,
+                        data2.reportedEPS
+                      ),
+                    }}
+                  >
+                    {compData.reportedEPS}
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">Revenue</th>
                   <td>{data.revenue}</td>
                   <td>{data2.revenue}</td>
-                  <td>{compData.revenue}</td>
+                  <td
+                    style={{
+                      color: differenceColor(data.revenue, data2.revenue),
+                    }}
+                  >
+                    {compData.revenue}
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">Profit</th>
                   <td>{data.profit}</td>
                   <td>{data2.profit}</td>
-                  <td>{compData.profit}</td>
+                  <td
+                    style={{
+                      color: differenceColor(data.profit, data2.profit),
+                    }}
+                  >
+                    {compData.profit}
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">PPE</th>
                   <td>{data.ppe}</td>
                   <td>{data2.ppe}</td>
-                  <td>{compData.ppe}</td>
+                  <td
+                    style={{
+                      color: differenceColor(data.ppe, data2.ppe),
+                    }}
+                  >
+                    {compData.ppe}
+                  </td>
                 </tr>
               </tbody>
             </table>
-          </div>
+          </motion.div>
         </>
       )}
     </div>

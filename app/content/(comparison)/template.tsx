@@ -12,6 +12,7 @@ import Scale from "@/app/assets/images/Scale.png";
 import Image, { StaticImageData } from "next/image";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
+import LinearProgress from "@mui/material/LinearProgress";
 
 import { motion } from "framer-motion";
 import { FUN_FACT, LAST_UPDATED } from "@/app/constants/api_properties";
@@ -132,11 +133,14 @@ export default function ContentLayout({
           <div className="flex-fill d-flex justify-content-center align-items-center mx-5">
             {loading ? (
               <>
-                <div className="d-flex align-items-center justify-content-center w-100 h-100">
+                {/* <div className="d-flex align-items-center justify-content-center w-100 h-100">
                   <div
                     className="spinner-border text-primary"
                     style={{ width: 50, height: 50 }}
                   ></div>
+                </div> */}
+                <div className="d-flex flex-column flex-grow-1 align-items-center justify-content-center">
+                  <LinearProgress color="inherit" className="w-50" />
                 </div>
               </>
             ) : error ? (

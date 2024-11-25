@@ -14,6 +14,7 @@ import {
 } from "@/app/constants/api_properties";
 import SkeletonTextBox from "@/app/components/SkeletonTextBox";
 import SkeletonLineChart from "@/app/components/SkeletonLineChart";
+import LinearProgress from "@mui/material/LinearProgress";
 
 export default function Overview() {
   const searchParams = useSearchParams();
@@ -105,13 +106,16 @@ export default function Overview() {
         <>
           {loading ? (
             <>
-              <div className="d-flex align-items-center justify-content-center w-100 h-100">
+              {/* <div className="d-flex align-items-center justify-content-center w-100 h-100">
                 <div
                   className="spinner-border text-primary m-3"
                   style={{ width: 100, height: 100 }}
                 ></div>
+              </div> */}
+              <div className="d-flex flex-column flex-grow-1 align-items-center justify-content-center">
+                <p className="fw-light fs-4 pb-3 text-muted">L O A D I N G</p>
+                <LinearProgress color="inherit" className="w-50" />
               </div>
-
               {/* 
               
               If we want a skeleton loader, here is a sample:

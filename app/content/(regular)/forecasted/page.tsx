@@ -7,9 +7,10 @@ import {
   NEXT_PUBLIC_DATE,
   NEXT_PUBLIC_SYMBOL,
   LIMIT,
-  LSTM_VALS
+  LSTM_VALS,
 } from "@/app/constants/api_properties";
 import LineWithPrediction from "@/app/components/ForecastedGraph";
+import LinearProgress from "@mui/material/LinearProgress";
 
 export default function Forecasted() {
   const searchParams = useSearchParams();
@@ -57,7 +58,7 @@ export default function Forecasted() {
         Close: resp[NEXT_PUBLIC_CLOSE],
         Date: resp[NEXT_PUBLIC_DATE],
         Limit: resp[LIMIT],
-        lstm_vals: resp[LSTM_VALS]
+        lstm_vals: resp[LSTM_VALS],
       });
 
       const dates = resp[NEXT_PUBLIC_DATE];
@@ -96,12 +97,10 @@ export default function Forecasted() {
 
   return (
     <>
-      <p>
-        **Disclaimer** Our forecasting models may not be a guaranteed accurate prediction. Please invest responsibly
-      </p>
-      <div className="d-flex flex-row align-items-center col-3">
+      <h2 className="text-center p-2">Forecast Window (Days): </h2>
+      <div className="d-flex flex-row align-items-center justify-content-center">
         <select
-          className="form-select form-select-lg mb-3 me-3"
+          className="form-select form-select-lg mb-3 me-3 w-25"
           aria-label="Default select example"
           value={days}
           onChange={(e) => setDays(e.target.value)}
@@ -116,36 +115,44 @@ export default function Forecasted() {
           Submit
         </button>
       </div>
-      <div style={{ marginTop: "20px" }}>
-        {loading ? (
-          error ? (
-            <div
-              style={{ color: "red", textAlign: "center", fontWeight: "bold" }}
-            >
-              {error}
-            </div>
-          ) : (
-            <div className="d-flex align-items-center justify-content-center w-100 h-100">
-              <div
-                className="spinner-border text-primary"
-                style={{ width: 100, height: 100 }}
-              ></div>
-            </div>
-          )
-        ) : data[NEXT_PUBLIC_DATE] &&
-          data[NEXT_PUBLIC_CLOSE] &&
-          data[NEXT_PUBLIC_DATE].length > 0 &&
-          data[NEXT_PUBLIC_CLOSE].length > 0 ? (
-          <LineWithPrediction
-              xElements={[...data[NEXT_PUBLIC_DATE]].reverse()}
-              yElements={[...data[NEXT_PUBLIC_CLOSE]].reverse()}
-              limit_date={data[LIMIT]}
-              lstm_vals={[...data[LSTM_VALS]].reverse()}
-            />
+      <p className="text-center text-muted pb-4">
+        Disclaimer: The following are forecast models and do not guarantee
+        accuracy.
+      </p>
+
+      {loading ? (
+        error ? (
+          <div
+            style={{ color: "red", textAlign: "center", fontWeight: "bold" }}
+          >
+            {error}
+          </div>
         ) : (
-          <></>
-        )}
-      </div>
+          // <div className="d-flex align-items-center justify-content-center w-100 h-100">
+          //   {/* <div
+          //     className="spinner-border text-primary"
+          //     style={{ width: 100, height: 100 }}
+          //   ></div> */}
+
+          // </div>
+          <div className="d-flex flex-column flex-grow-1 align-items-center justify-content-center">
+            <p className="fw-light fs-4 pb-3">L O A D I N G</p>
+            <LinearProgress color="inherit" className="w-50" />
+          </div>
+        )
+      ) : data[NEXT_PUBLIC_DATE] &&
+        data[NEXT_PUBLIC_CLOSE] &&
+        data[NEXT_PUBLIC_DATE].length > 0 &&
+        data[NEXT_PUBLIC_CLOSE].length > 0 ? (
+        <LineWithPrediction
+          xElements={[...data[NEXT_PUBLIC_DATE]].reverse()}
+          yElements={[...data[NEXT_PUBLIC_CLOSE]].reverse()}
+          limit_date={data[LIMIT]}
+          lstm_vals={[...data[LSTM_VALS]].reverse()}
+        />
+      ) : (
+        <></>
+      )}
     </>
   );
 }

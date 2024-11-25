@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import NewsTextBox from "@/app/components/NewsTextBox";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
+import LinearProgress from "@mui/material/LinearProgress";
 
 export default function StockNews() {
   const searchParams = useSearchParams();
@@ -33,11 +34,16 @@ export default function StockNews() {
 
   if (loading) {
     return (
-      <div className="d-flex align-items-center justify-content-center w-100 h-100">
-        <div
-          className="spinner-border text-primary m-3"
-          style={{ width: 100, height: 100 }}
-        ></div>
+      // <div className="d-flex align-items-center justify-content-center w-100 h-100">
+      //   <div
+      //     className="spinner-border text-primary m-3"
+      //     style={{ width: 100, height: 100 }}
+      //   ></div>
+      // </div>
+
+      <div className="d-flex flex-column flex-grow-1 align-items-center justify-content-center">
+        <p className="fw-light fs-4 pb-3">L O A D I N G</p>
+        <LinearProgress color="inherit" className="w-50" />
       </div>
     );
   }

@@ -12,6 +12,8 @@ import Scale from "@/app/assets/images/Scale.png";
 import Image, { StaticImageData } from "next/image";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
+import Skeleton from "@mui/material/Skeleton";
+import LinearProgress from "@mui/material/LinearProgress";
 
 import { motion } from "framer-motion";
 import {
@@ -118,9 +120,15 @@ export default function ContentLayout({
             <span className="p-2 fs-5 fw-bold companyName">StockWize</span>
           </div>
         </Link>
-        <h1 className="mt-4 mx-3 col-10 fw-bold display-4">
-          {symbol[NEXT_PUBLIC_SYMBOL]}
-        </h1>
+        {symbol[NEXT_PUBLIC_SYMBOL] ? (
+          <h1 className="mt-4 mx-3 col-10 fw-bold display-4">
+            {symbol[NEXT_PUBLIC_SYMBOL]}
+          </h1>
+        ) : (
+          <h1 className="mt-4 mx-3 col-10 fw-bold display-4 invisible">
+            Ticker
+          </h1>
+        )}
         <p className="mx-3 col-10 fs-5 text-muted">
           Last Updated {metadata[LAST_UPDATED]}
         </p>
@@ -165,11 +173,14 @@ export default function ContentLayout({
           <div className="flex-fill d-flex justify-content-center align-items-center mx-5">
             {loading ? (
               <>
-                <div className="d-flex align-items-center justify-content-center w-100 h-100">
+                {/* <div className="d-flex align-items-center justify-content-center w-100 h-100">
                   <div
                     className="spinner-border text-primary"
                     style={{ width: 50, height: 50 }}
                   ></div>
+                </div> */}
+                <div className="d-flex flex-column flex-grow-1 align-items-center justify-content-center">
+                  <LinearProgress color="inherit" className="w-50" />
                 </div>
               </>
             ) : error ? (
