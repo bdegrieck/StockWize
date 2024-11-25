@@ -121,7 +121,6 @@ def convert_df(
         time_idx=time_idx,
         target=target,
         group_ids=grouped_dim,
-        # max_encoder_length=None,
         max_prediction_length=steps.days,
         static_categoricals=known_cat_vars,
         time_varying_unknown_reals=unknown_cont_vars,
