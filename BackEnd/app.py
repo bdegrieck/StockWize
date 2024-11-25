@@ -1,10 +1,6 @@
-import pandas as pd
-
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_restful import Api, Resource
-from keras.src.legacy.saving.saving_utils import model_metadata
-from pytorch_forecasting import TimeSeriesDataSet
 
 from BackEnd.Comparison.ticker_comparison import TickerComparison
 from BackEnd.Data.data import CompanyData, MicroData, ForecastData
