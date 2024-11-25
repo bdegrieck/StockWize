@@ -243,6 +243,12 @@ class Forecast(Resource):
         return jsonify(data_json)
 
 
+class Symbol(Resource):
+    def get(self):
+        symbol = request.args.get('company')
+        ticker = validate_ticker(symbol=symbol)
+        return jsonify({Finance.symbol: ticker})
+
 class Test(Resource):
     def get(self):
         return jsonify({"Test": "Test Success"})
@@ -256,6 +262,7 @@ api.add_resource(Metadata, '/api/metadata')
 api.add_resource(Comparison, '/api/comparison')
 api.add_resource(News, '/api/news')
 api.add_resource(Forecast, '/api/forecast')
+api.add_resource(Symbol, '/api/symbol')
 
 if __name__ == "__main__":
     app.run(debug=True)

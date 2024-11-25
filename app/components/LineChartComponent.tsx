@@ -37,7 +37,7 @@ export default function LineChartCard({ title, dataToDisplay, xKey, yKey }) {
             reversed: false,
             dataKey: xKey,
             tickInterval(value, index) {
-              return index % 25 === 0;
+              return index % 30 === 0;
             },
           },
         ]}

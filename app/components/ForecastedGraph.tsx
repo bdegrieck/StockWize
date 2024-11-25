@@ -4,8 +4,10 @@ import {
   AnimatedLine,
   AnimatedLineProps,
 } from "@mui/x-charts/LineChart";
+import { motion } from "framer-motion";
 import { useChartId, useDrawingArea, useXScale } from "@mui/x-charts/hooks";
 import { SxProps, Theme } from "@mui/system";
+import { axisClasses } from "@mui/x-charts";
 
 interface CustomAnimatedLineProps extends AnimatedLineProps {
   limit?: number;
@@ -63,12 +65,29 @@ function CustomAnimatedLine(props: CustomAnimatedLineProps) {
 
 export default function LineWithPrediction({ xElements, yElements, limit_date, lstm_vals }) {
   return (
-    <LineChart
-      width={1250}
-      height={500}
-      grid={{ vertical: true, horizontal: true }}
-      //   dataset={reversedDataset}
-      series={[
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{
+        duration: 0.8,
+
+        ease: [0, 0.71, 0.2, 1.01],
+      }}
+      className="card shadow-sm align-items-center w-100"
+      style={{ height: 600 }}
+    >
+      <h2 className="pt-4">ARIMA</h2>
+      <LineChart
+        margin={{ left: 80 }}
+        sx={{
+          [`.${axisClasses.left} .${axisClasses.label}`]: {
+            // Move the y-axis label with CSS
+            transform: "translateX(-25px)",
+          },
+        }}
+        grid={{ vertical: true, horizontal: true }}
+        //   dataset={reversedDataset}
+        series={[
         {
           type: "line",
           //   dataKey: "y",
@@ -85,16 +104,36 @@ export default function LineWithPrediction({ xElements, yElements, limit_date, l
             valueFormatter: (v, i) =>
               `${v}${i.dataIndex > 6 ? " (LSTM estimated)" : ""}`,
           }
-      ]}
-      xAxis={[{ data: xElements, scaleType: "point" }]}
-      slots={{ line: CustomAnimatedLine }}
-      slotProps={{
-        line: {
-          limit: limit_date,
-          sxAfter: { strokeDasharray: "10 10" },
-        } as any,
-      }}
-    />
+        ]}
+        yAxis={[
+          {
+            label: "Dollar Amount",
+          },
+        ]}
+        xAxis={[
+          {
+            data: xElements,
+            scaleType: "point",
+
+            tickLabelInterval: (value: number, index: number): boolean => {
+              if (xElements.length >= 32 && xElements.length <= 37) {
+                return index % 4 === 0;
+              } else if (xElements.length >= 8 && xElements.length <= 12) {
+                return index % 1 === 0;
+              } else {
+                return index % 2 === 0;
+              }
+            },
+          },
+        ]}
+        slots={{ line: CustomAnimatedLine }}
+        slotProps={{
+          line: {
+            limit: limit_date,
+            sxAfter: { strokeDasharray: "10 10" },
+          } as any,
+        }}
+      />
+    </motion.div>
   );
 }
-
