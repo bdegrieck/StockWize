@@ -11,8 +11,8 @@ from BackEnd.validation import validate_ticker
 class TestModels:
 
     def test_models(self):
-        symbol = "AAPL"
-        steps = ForecastField(days=7)
+        symbol = "NVDA"
+        steps = ForecastField(days=21)
         ticker = validate_ticker(symbol=symbol)
         arima_time_series = CompanyData(ticker=ticker).time_series
         lstm_time_series = arima_time_series.copy()
@@ -67,4 +67,4 @@ class TestModels:
             Finance.limit: limit
         }
 
-        jsonify(data_json)
+        print(data_json)

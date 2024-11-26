@@ -37,3 +37,4 @@ class TestLSTM:
         lstm_model = LSTMModel.from_dataset(data, n_layers=2, hidden_size=10)
         lstm_forecast = lstm_model.forward(x=data)
         lstm_vals = [value[0] for value in lstm_forecast.prediction.tolist()[0]]
+        print(lstm_vals)

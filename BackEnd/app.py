@@ -194,6 +194,7 @@ class Forecast(Resource):
         # LSTM modeling
         instance_lstm = ForecastData(ticker=ticker)
         lstm_df = instance_lstm.lstm(time_series=lstm_time_series)
+        lstm_df = lstm_df.drop(labels=Finance.date, axis=1)
         features = [
             Finance.close,
             TechnicalIndicators.bbands_upper,

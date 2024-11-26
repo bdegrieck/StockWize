@@ -234,7 +234,6 @@ class ForecastData:
             ).merge(right=indicator_instance.adx, how="outer"
             ).merge(right=time_series[[Finance.date, Finance.close]], on=Finance.date)
         )
-        df = df.drop(labels=Finance.date, axis=1)
         df = df.fillna(method='ffill').dropna().reset_index(drop=True)
         df = df.reset_index(drop=False, names="Count")
         df["ID"] = "1"
