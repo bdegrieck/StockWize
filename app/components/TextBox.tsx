@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 
 interface TextBoxProps {
@@ -9,26 +7,8 @@ interface TextBoxProps {
   centerText?: boolean;
 }
 
-const TextBox: React.FC<TextBoxProps> = ({
-  title,
-  body,
-  centerText = false,
-}) => {
+const TextBox: React.FC<TextBoxProps> = ({ title, body, centerText = false }) => {
   const textAlignClass = centerText ? "text-center" : "";
-
-  const [fontSize, setFontSize] = useState<string | null>(null);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const boxWidth = document.querySelector(".card")?.clientWidth || 0;
-      setFontSize(`${boxWidth / 12}px`);
-    };
-
-    window.addEventListener("resize", handleResize);
-    handleResize();
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   return (
     <motion.div
@@ -41,12 +21,8 @@ const TextBox: React.FC<TextBoxProps> = ({
       className="card flex-grow-1 w-100 gap-3 shadow-sm"
     >
       <div className={`card-body ${textAlignClass}`}>
-        {fontSize && (
-          <>
-            <h2 className="fw-bold">{title}</h2>
-            <p className="card-text fs-4">{body}</p>
-          </>
-        )}
+        <h2 className="fw-bold">{title}</h2>
+        <p className="card-text fs-4">{body}</p>
       </div>
     </motion.div>
   );
