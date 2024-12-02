@@ -3,7 +3,7 @@ import json
 
 import pandas as pd
 from pydantic import BaseModel
-from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
 
 from BackEnd.Models.arima import Arima, ForecastField
 from BackEnd.constants import Finance
@@ -48,7 +48,11 @@ if __name__ == "__main__":
         idx_day = time_series.index[time_series[Finance.date] == day]
         y_true = time_series.iloc[idx_day.item(): idx_day.item() + days.days][Finance.close].tolist()
         mae = mean_absolute_error(y_true=y_true, y_pred=y_pred)
+        mse = mean_squared_error(y_true=y_true, y_pred=y_pred)
+        r_squared = r2_score(y_true=y_true, y_pred=y_pred)
         print(f"MAE: {mae}")
+        print(f"MSE: {mse}")
+        print(f"R Squared: {r_squared}")
         output_list.append(MetaDataOutput(
                 ticker=data.get(MetaDataKeys.ticker),
                 mae=mae,

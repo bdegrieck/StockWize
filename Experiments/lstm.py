@@ -1,10 +1,11 @@
 import json
 import os
 
+import numpy as np
 import pandas as pd
 from flask import request
 from pydantic.v1 import BaseModel
-from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 from BackEnd.Data.base import TechIndicators
 from BackEnd.Models.arima import ForecastField, Arima
@@ -94,7 +95,11 @@ if __name__ == "__main__":
         idx_day = lstm_df.index[lstm_df[Finance.date] == day]
         y_true = lstm_df.iloc[idx_day.item(): idx_day.item() + steps.days][Finance.close].tolist()
         mae = mean_absolute_error(y_true=y_true, y_pred=y_pred)
+        mse = mean_squared_error(y_true=y_true, y_pred=y_pred)
+        r_squared = r2_score(y_true=y_true, y_pred=y_pred)
         print(f"MAE: {mae}")
+        print(f"MSE: {mse}")
+        print(f"R Squared: {r_squared}")
         output_list.append(MetaDataOutput(
                 ticker=data.get(MetaDataKeys.ticker),
                 mae=mae,
