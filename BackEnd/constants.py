@@ -1,6 +1,6 @@
 from BackEnd.Data.base import StringEnum
 
-API_KEY = "CRU63X7J4COJ46F2"
+API_KEY = "13UNMTFZ3A9GZP6K"
 
 
 class AlphaVantage:
